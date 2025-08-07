@@ -1,0 +1,5 @@
+/spotify-callback /index.html 200
+/auth/spotify/callback /index.html 200
+/artist/dashboard /index.html 200
+/auth/* /index.html 200
+/* /index.html 200 

@@ -1,0 +1,171 @@
+/* Header Responsive Styles */
+
+/* Mobile-first approach - default styles for mobile */
+.mobile-only {
+  display: block;
+}
+
+.desktop-only {
+  display: none;
+}
+
+.desktop-search {
+  display: none;
+}
+
+.mobile-search {
+  display: block;
+}
+
+/* Desktop styles - 768px ve üzeri */
+@media (min-width: 768px) {
+  /* Feed sayfasında desktop görünümü */
+  .mobile-only {
+    display: none !important;
+  }
+  
+  .desktop-only {
+    display: block !important;
+  }
+  
+  .desktop-search {
+    display: block !important;
+    flex: 1;
+    max-width: 400px;
+    margin: 0 20px;
+  }
+  
+  .mobile-search {
+    display: none !important;
+  }
+  
+  /* Desktop'ta header-content flexbox düzenlemesi */
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  
+  /* Hamburger menu button - Desktop'ta sağa kaydır */
+  .menu-button {
+    margin-left: 20px !important;
+  }
+  
+  /* User avatar - Desktop'ta sola kaydır */
+  .user-avatar {
+    margin-right: 20px !important;
+  }
+  
+  /* Header bottom border - Desktop */
+  .header {
+    border-bottom: 2px solid #fde0a1 !important;
+  }
+  
+  /* Desktop search bar styling */
+  .desktop-search .search-bar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 28px;
+    padding: 14px 20px;
+    min-height: 48px;
+    transition: all 0.3s ease;
+  }
+  
+  .desktop-search .search-bar:focus-within {
+    border-color: #feb822;
+    box-shadow: 0 0 0 3px rgba(254, 184, 34, 0.1);
+    background: #ffffff;
+  }
+  
+  .desktop-search .search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    padding: 0;
+    margin-left: 12px;
+    font-size: 15px;
+    color: #1b262e;
+    line-height: 1.5;
+  }
+  
+  .desktop-search .search-input::placeholder {
+    color: #999;
+  }
+  
+  .desktop-search .search-icon {
+    color: #666;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    min-width: 20px;
+    justify-content: center;
+  }
+}
+
+/* Large Desktop - 1200px ve üzeri */
+@media (min-width: 1200px) {
+  .desktop-search .search-bar {
+    padding: 16px 24px;
+    min-height: 52px;
+    border-radius: 32px;
+  }
+  
+  .desktop-search .search-input {
+    font-size: 16px;
+    margin-left: 14px;
+  }
+  
+  .desktop-search .search-icon {
+    font-size: 18px;
+    min-width: 22px;
+  }
+  
+  /* Hamburger menu button - Large Desktop'ta daha fazla sağa */
+  .menu-button {
+    margin-left: 24px !important;
+  }
+  
+  /* User avatar - Large Desktop'ta daha fazla sola */
+  .user-avatar {
+    margin-right: 24px !important;
+  }
+  
+  /* Header bottom border - Large Desktop */
+  .header {
+    border-bottom: 2px solid #fde0a1 !important;
+  }
+}
+
+/* Extra Large Desktop - 1400px ve üzeri */
+@media (min-width: 1400px) {
+  /* Hamburger menu button - Extra Large Desktop'ta en fazla sağa */
+  .menu-button {
+    margin-left: 32px !important;
+  }
+  
+  /* User avatar - Extra Large Desktop'ta en fazla sola */
+  .user-avatar {
+    margin-right: 32px !important;
+  }
+  
+  /* Header bottom border - Extra Large Desktop */
+  .header {
+    border-bottom: 2px solid #fde0a1 !important;
+  }
+}
+
+/* Large desktop styles - 1200px ve üzeri */
+@media (min-width: 1200px) {
+  .desktop-search {
+    max-width: 500px;
+  }
+  
+  .desktop-search .search-input {
+    font-size: 16px;
+  }
+} 
