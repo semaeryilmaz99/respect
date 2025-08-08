@@ -17,7 +17,7 @@ import LoadingSpinner from './LoadingSpinner'
 const UserPage = () => {
   const navigate = useNavigate()
   const { id: targetUserId } = useParams() // URL'den user ID'sini al
-  const { state } = useAppContext()
+  const { state, actions } = useAppContext()
   const { user: currentUser } = state
   
   const [userData, setUserData] = useState(null)
@@ -26,6 +26,19 @@ const UserPage = () => {
   const [showEditProfilePopup, setShowEditProfilePopup] = useState(false)
   const [showSendRespectPopup, setShowSendRespectPopup] = useState(false)
   
+  // Edit Profile Popup States
+  const [editProfileData, setEditProfileData] = useState({
+    username: '',
+    full_name: '',
+    bio: '',
+    avatar_url: ''
+  })
+  const [avatarFile, setAvatarFile] = useState(null)
+  const [avatarPreview, setAvatarPreview] = useState('')
+  const [savingProfile, setSavingProfile] = useState(false)
+  const [profileMessage, setProfileMessage] = useState('')
+  const [profileMessageType, setProfileMessageType] = useState('')
+  
   // Görüntülenen kullanıcının ID'si (URL'den gelen veya mevcut kullanıcı)
   const displayUserId = targetUserId || currentUser?.id
   
@@ -33,6 +46,17 @@ const UserPage = () => {
   const isOwnProfile = !targetUserId || targetUserId === currentUser?.id
   
   const handleEditProfile = () => {
+    // Initialize form data with current user data
+    setEditProfileData({
+      username: userData?.username || currentUser?.user_metadata?.username || '',
+      full_name: userData?.full_name || currentUser?.user_metadata?.full_name || '',
+      bio: userData?.bio || '',
+      avatar_url: userData?.avatar_url || currentUser?.user_metadata?.avatar_url || ''
+    })
+    setAvatarPreview(userData?.avatar_url || currentUser?.user_metadata?.avatar_url || '')
+    setAvatarFile(null)
+    setProfileMessage('')
+    setProfileMessageType('')
     setShowEditProfilePopup(true)
   }
 
@@ -42,6 +66,206 @@ const UserPage = () => {
 
   const handleCloseEditProfile = () => {
     setShowEditProfilePopup(false)
+    setEditProfileData({
+      username: '',
+      full_name: '',
+      bio: '',
+      avatar_url: ''
+    })
+    setAvatarFile(null)
+    setAvatarPreview('')
+    setProfileMessage('')
+    setProfileMessageType('')
+  }
+
+  // Handle profile form changes
+  const handleProfileFormChange = (e) => {
+    const { name, value } = e.target
+    setEditProfileData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  // Handle avatar file selection
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+      if (!allowedTypes.includes(file.type)) {
+        setProfileMessage('Sadece JPG, PNG, GIF ve WebP formatları desteklenir.')
+        setProfileMessageType('error')
+        return
+      }
+      
+      // Validate file size (max 5MB)
+      const maxSize = 5 * 1024 * 1024 // 5MB
+      if (file.size > maxSize) {
+        setProfileMessage('Dosya boyutu 5MB\'dan küçük olmalıdır.')
+        setProfileMessageType('error')
+        return
+      }
+      
+      setAvatarFile(file)
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setAvatarPreview(e.target.result)
+      }
+      reader.readAsDataURL(file)
+      
+      // Clear any previous error messages
+      setProfileMessage('')
+      setProfileMessageType('')
+    }
+  }
+
+  // Upload avatar to Supabase Storage
+  const uploadAvatar = async (file) => {
+    if (!file) return editProfileData.avatar_url
+
+    try {
+      console.log('📤 Uploading avatar:', file.name)
+      
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${currentUser.id}.${fileExt}`
+      const filePath = `${fileName}`
+
+      const { error } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true
+        })
+
+      if (error) {
+        console.error('❌ Avatar upload error:', error)
+        if (error.message.includes('Bucket not found')) {
+          throw new Error('Avatar yükleme servisi henüz hazır değil. Lütfen daha sonra tekrar deneyin.')
+        }
+        throw error
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath)
+
+      console.log('✅ Avatar uploaded successfully:', publicUrl)
+      return publicUrl
+    } catch (error) {
+      console.error('❌ Avatar upload failed:', error)
+      throw error
+    }
+  }
+
+  // Save profile settings from popup
+  const handleSaveProfileFromPopup = async () => {
+    setSavingProfile(true)
+    setProfileMessage('')
+    
+    try {
+      // Validate required fields
+      if (!editProfileData.username || !editProfileData.full_name) {
+        setProfileMessage('Kullanıcı adı ve tam ad zorunludur.')
+        setProfileMessageType('error')
+        return
+      }
+
+      // Check if username is changed and if it's already taken
+      if (editProfileData.username !== userData?.username) {
+        const isAvailable = await userService.checkUsernameAvailability(editProfileData.username, currentUser.id)
+        
+        if (!isAvailable) {
+          setProfileMessage('Bu kullanıcı adı zaten kullanılıyor. Lütfen başka bir kullanıcı adı seçin.')
+          setProfileMessageType('error')
+          return
+        }
+      }
+
+      let avatarUrl = editProfileData.avatar_url
+
+      // Upload new avatar if selected
+      if (avatarFile) {
+        try {
+          avatarUrl = await uploadAvatar(avatarFile)
+        } catch (error) {
+          console.error('Avatar upload failed:', error)
+          
+          // Check if it's a storage policy error
+          if (error.message.includes('Bucket not found') || 
+              error.message.includes('permission') ||
+              error.message.includes('policy')) {
+            setProfileMessage('Avatar yükleme servisi henüz hazır değil. Lütfen daha sonra tekrar deneyin veya avatar olmadan kaydedin.')
+          } else {
+            setProfileMessage(error.message || 'Avatar yüklenirken hata oluştu.')
+          }
+          setProfileMessageType('error')
+          
+          // Continue without avatar upload
+          console.log('Continuing without avatar upload...')
+        }
+      }
+
+      // Update profile in database
+      await userService.updateProfile(currentUser.id, {
+        username: editProfileData.username,
+        full_name: editProfileData.full_name,
+        bio: editProfileData.bio,
+        avatar_url: avatarUrl
+      })
+
+      // Update user metadata in auth
+      const { error: authError } = await supabase.auth.updateUser({
+        data: {
+          username: editProfileData.username,
+          full_name: editProfileData.full_name,
+          avatar_url: avatarUrl
+        }
+      })
+
+      if (authError) {
+        console.error('Auth update error:', authError)
+      }
+
+      // Update context with new user data
+      actions.updateUser({
+        ...editProfileData,
+        avatar_url: avatarUrl,
+        user_metadata: {
+          ...currentUser.user_metadata,
+          username: editProfileData.username,
+          full_name: editProfileData.full_name,
+          avatar_url: avatarUrl
+        }
+      })
+
+      // Update local user data
+      setUserData(prev => ({
+        ...prev,
+        username: editProfileData.username,
+        full_name: editProfileData.full_name,
+        bio: editProfileData.bio,
+        avatar_url: avatarUrl
+      }))
+
+      setProfileMessage('Profil başarıyla güncellendi!')
+      setProfileMessageType('success')
+      
+      // Clear avatar file
+      setAvatarFile(null)
+
+      // Close popup after 2 seconds
+      setTimeout(() => {
+        handleCloseEditProfile()
+      }, 2000)
+
+    } catch (error) {
+      console.error('Profile update error:', error)
+      setProfileMessage('Profil güncellenirken hata oluştu.')
+      setProfileMessageType('error')
+    } finally {
+      setSavingProfile(false)
+    }
   }
 
   const handleSendRespect = () => {
@@ -232,31 +456,45 @@ const UserPage = () => {
                 <label>Profil Fotoğrafı</label>
                 <div className="avatar-upload">
                   <div className="avatar-preview">
-                    <img src={displayUserData.avatar_url} alt="Profil" />
+                    <img src={avatarPreview || displayUserData.avatar_url} alt="Profil" />
                     <div className="avatar-overlay">
-                      <span>Değiştir</span>
+                      <label htmlFor="popup-avatar-input" className="avatar-upload-btn">
+                        📷
+                      </label>
+                      <input
+                        id="popup-avatar-input"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarChange}
+                        style={{ display: 'none' }}
+                      />
                     </div>
                   </div>
                 </div>
+                {profileMessage && (
+                  <div className={`popup-message ${profileMessageType}`}>
+                    {profileMessage}
+                  </div>
+                )}
               </div>
               <div className="form-group">
                 <label>Ad Soyad</label>
-                <input type="text" defaultValue={displayUserData.full_name} />
+                <input type="text" name="full_name" value={editProfileData.full_name} onChange={handleProfileFormChange} />
               </div>
               <div className="form-group">
                 <label>Kullanıcı Adı</label>
-                <input type="text" defaultValue={displayUserData.username} />
+                <input type="text" name="username" value={editProfileData.username} onChange={handleProfileFormChange} />
               </div>
               <div className="form-group">
                 <label>Hakkımda</label>
-                <textarea defaultValue={displayUserData.bio} rows="3"></textarea>
+                <textarea name="bio" value={editProfileData.bio} onChange={handleProfileFormChange} rows="3"></textarea>
               </div>
               <div className="popup-actions">
                 <button className="popup-cancel-btn" onClick={handleCloseEditProfile}>
                   İptal
                 </button>
-                <button className="popup-save-btn">
-                  Kaydet
+                <button className="popup-save-btn" onClick={handleSaveProfileFromPopup} disabled={savingProfile}>
+                  {savingProfile ? 'Kaydediliyor...' : 'Kaydet'}
                 </button>
               </div>
             </div>
