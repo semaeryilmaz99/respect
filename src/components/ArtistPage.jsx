@@ -21,10 +21,32 @@ const ArtistPage = () => {
       <Header />
       <div className="artist-content">
         <ArtistProfile artistId={id} />
-        <TopSupporters artistId={id} />
-        <RecentSupporters artistId={id} />
+        
+        {/* Desktop Unified Sections Layout */}
+        <div className="desktop-unified-sections">
+          <div className="unified-sections-container">
+            <div className="unified-section top-supporters-fixed">
+                <TopSupporters artistId={id} />
+            </div>
+            
+            <div className="unified-section recent-supporters-wide">
+                <RecentSupporters artistId={id} />
+            </div>
+            
+            <div className="unified-section songs-list-wide">
+                <SongsList artistId={id} />
+            </div>
+          </div>
+        </div>
+        
+        {/* Mobile Layout - Original Structure */}
+        <div className="mobile-sections">
+          <TopSupporters artistId={id} />
+          <RecentSupporters artistId={id} />
+          <SongsList artistId={id} />
+        </div>
+        
         <RealTimeChat roomId={id} roomType="artist" />
-        <SongsList artistId={id} />
       </div>
     </div>
   )

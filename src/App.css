@@ -426,10 +426,60 @@ html {
   flex-direction: column;
 }
 
-.artist-content {
-  flex: 1;
-  padding-bottom: 320px;
-}
+  .artist-content {
+    flex: 1;
+    padding-bottom: 320px;
+  }
+  
+  /* Mobile Artist Stats - Stylish Layout */
+  .artist-page .artist-stats-container {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: linear-gradient(135deg, #fef5e7 0%, #ffe8a0 100%);
+    border-radius: 20px;
+    border: 2px solid #f69f17;
+    box-shadow: 0 4px 15px rgba(246, 159, 23, 0.15);
+  }
+  
+  .artist-page .artist-stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 8px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 16px;
+    border: 1px solid rgba(246, 159, 23, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .artist-page .artist-stat-item:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(246, 159, 23, 0.2);
+  }
+  
+  .artist-page .artist-stat-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1b262e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+  
+  .artist-page .artist-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f69f17;
+    text-shadow: 0 1px 2px rgba(246, 159, 23, 0.1);
+    text-align: center;
+  }
 
 /* Desktop Artist Page Styles */
 @media (min-width: 768px) {
@@ -442,6 +492,7 @@ html {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    padding-right: 20px; /* Reduced padding to allow content to scroll behind chat */
   }
   
   /* Hide page header on desktop artist pages */
@@ -457,36 +508,345 @@ html {
     margin-bottom: 32px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
     border: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .artist-page .artist-profile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(246, 159, 23, 0.15), transparent);
+    animation: artistProfileShine 4s infinite;
+    z-index: 0;
+  }
+
+  .artist-page .artist-profile > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  @keyframes artistProfileShine {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
   }
   
   .artist-page .artist-profile-image {
-    width: 150px;
-    height: 150px;
-    margin-bottom: 24px;
+    width: 120px;
+    height: 120px;
+    margin-bottom: 0;
     border: 4px solid #ffe8a0;
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15), 0 6px 16px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+  }
+  
+  .artist-page .artist-info {
+    flex: 1;
+    text-align: left;
   }
   
   .artist-page .artist-name {
-    font-size: 32px;
+    font-size: 28px;
     margin-bottom: 8px;
+    text-align: left;
   }
   
   .artist-page .artist-respect {
     font-size: 16px;
     margin-bottom: 20px;
+    text-align: left;
   }
   
   .artist-page .artist-description {
     font-size: 16px;
-    max-width: 400px;
+    max-width: 300px;
     margin-bottom: 24px;
+    text-align: left;
+    padding: 20px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 20px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .artist-page .artist-description::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #f69f17, #feb822, #f69f17);
+    background-size: 200% 100%;
+  }
+  
+  .artist-page .artist-description::after {
+    content: '"';
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 24px;
+    color: #f69f17;
+    font-weight: bold;
+    opacity: 0.3;
+  }
+  
+  /* Desktop Artist Stats - Stylish Vertical Layout */
+  .artist-page .artist-stats-container {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 30px;
+    background: linear-gradient(135deg, #fef5e7 0%, #ffe8a0 100%);
+    border-radius: 40px;
+    border: 2px solid #f69f17;
+    box-shadow: 0 8px 25px rgba(246, 159, 23, 0.15);
+  }
+  
+  .artist-page .artist-stat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 40px;
+    border: 1px solid rgba(246, 159, 23, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .artist-page .artist-stat-item:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(246, 159, 23, 0.2);
+  }
+  
+  .artist-page .artist-stat-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1b262e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .artist-page .artist-stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #f69f17;
+    text-shadow: 0 1px 2px rgba(246, 159, 23, 0.1);
+  }
+  
+  .artist-page .artist-respect {
+    font-size: 16px;
+    margin-bottom: 20px;
+    text-align: left;
   }
   
   .artist-page .send-respect-button {
     padding: 16px 32px;
     font-size: 16px;
     border-radius: 25px;
+  }
+  
+  /* Desktop Artist Page Real-Time Chat - Fixed on Right */
+  .artist-page .real-time-chat {
+    position: fixed !important;
+    top: 110px !important;
+    right: 100px !important;
+    left: auto !important;
+    width: 350px !important;
+    height: calc(100vh - 80px) !important;
+    border-radius: 16px !important;
+    border: 2px solid #fbdb3a !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    z-index: 1000 !important;
+    max-height: none !important;
+    bottom: auto !important;
+  }
+
+  .artist-page .real-time-chat.closed {
+    height: 60px;
+  }
+  
+  /* Desktop Artist Page Unified Sections Layout */
+  .artist-page .desktop-unified-sections {
+    max-width: 1200px;
+    margin: 24px auto;
+    padding: 0 20px;
+  }
+
+  .artist-page .unified-sections-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .artist-page .unified-section {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+    height: 400px;
+    background: #fff;
+    border-radius: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+  }
+
+  /* Desktop Fixed Top Supporters */
+  .artist-page .unified-section.top-supporters-fixed {
+    position: fixed;
+    left: 100px;
+    top: 110px;
+    width: 350px;
+    height: calc(100vh - 80px);
+    z-index: 1000;
+    flex: none;
+    min-width: unset;
+    max-width: unset;
+  }
+
+  /* Wider Sections for Recent Supporters and Songs List */
+  .artist-page .unified-section.recent-supporters-wide,
+  .artist-page .unified-section.songs-list-wide {
+    width: 600px;
+    max-width: 600px;
+    min-width: 600px;
+    flex: none;
+  }
+
+  .artist-page .unified-section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Responsive adjustments for unified sections */
+  @media (min-width: 1200px) {
+    .artist-page .unified-sections-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 24px;
+    }
+    
+    .artist-page .unified-section {
+      min-width: unset;
+      max-width: unset;
+    }
+  }
+
+  /* Medium desktop screens */
+  @media (min-width: 768px) and (max-width: 1199px) {
+    .artist-page .unified-sections-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    
+    .artist-page .unified-section {
+      min-width: unset;
+      max-width: unset;
+      height: 350px;
+    }
+  }
+
+  /* Section Titles in Unified Layout */
+  .artist-page .unified-section .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1b262e;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f69f17;
+    height: 60px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Scrollable Content Areas */
+  .artist-page .unified-section .top-supporters,
+  .artist-page .unified-section .recent-supporters,
+  .artist-page .unified-section .songs-list {
+    height: 360px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background: #f8f9fa;
+  }
+
+  /* Fixed Top Supporters Content Area */
+  .artist-page .unified-section.top-supporters-fixed > div {
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 12px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background: #f8f9fa;
+  }
+
+  /* Custom scrollbar styling */
+  .artist-page .unified-section .top-supporters::-webkit-scrollbar,
+  .artist-page .unified-section .recent-supporters::-webkit-scrollbar,
+  .artist-page .unified-section .songs-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .artist-page .unified-section .top-supporters::-webkit-scrollbar-track,
+  .artist-page .unified-section .recent-supporters::-webkit-scrollbar-track,
+  .artist-page .unified-section .songs-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+
+  .artist-page .unified-section .top-supporters::-webkit-scrollbar-thumb,
+  .artist-page .unified-section .recent-supporters::-webkit-scrollbar-thumb,
+  .artist-page .unified-section .songs-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+
+  .artist-page .unified-section .top-supporters::-webkit-scrollbar-thumb:hover,
+  .artist-page .unified-section .recent-supporters::-webkit-scrollbar-thumb:hover,
+  .artist-page .unified-section .songs-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+}
+
+/* Mobile/Desktop Section Visibility */
+.artist-page .desktop-unified-sections {
+  display: none;
+}
+
+.artist-page .mobile-sections {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .artist-page .desktop-unified-sections {
+    display: block;
+  }
+  
+  .artist-page .mobile-sections {
+    display: none;
   }
 }
 
@@ -565,12 +925,45 @@ html {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
   align-self: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(51, 51, 51, 0.3);
+}
+
+.send-respect-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: respectButtonShine 2s infinite;
+}
+
+@keyframes respectButtonShine {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 .send-respect-button:hover {
   background-color: #f5d428;
+  box-shadow: 0 6px 16px rgba(51, 51, 51, 0.4);
+  transform: translateY(-2px);
+}
+
+.send-respect-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(51, 51, 51, 0.3);
 }
 
 /* Section Title Styles */

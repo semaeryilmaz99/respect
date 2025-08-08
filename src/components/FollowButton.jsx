@@ -124,11 +124,7 @@ const FollowButton = ({ artistId, artistName, initialFollowersCount = 0, size = 
         )}
       </button>
       
-      {followersCount > 0 && (
-        <span className="followers-count">
-          {followersCount.toLocaleString()} takipçi
-        </span>
-      )}
+
       
       {error && (
         <div className="follow-error">

@@ -100,13 +100,26 @@ const ArtistProfile = ({ artistId }) => {
       
       <div className="artist-info">
         <h2 className="artist-name">{artist?.name || 'Bilinmeyen Sanatçı'}</h2>
-        <p className="artist-respect">
-          {artist?.total_respect?.toLocaleString() || '0'} Respect
-        </p>
         
         <p className="artist-description">
           {artist?.bio || 'Sanatçı hakkında bilgi bulunmuyor.'}
         </p>
+        
+        {/* Desktop Artist Stats Container */}
+        <div className="artist-stats-container">
+          <div className="artist-stat-item">
+            <span className="artist-stat-label">Respect</span>
+            <span className="artist-stat-value">
+              {artist?.total_respect?.toLocaleString() || '0'}
+            </span>
+          </div>
+          <div className="artist-stat-item">
+            <span className="artist-stat-label">Takipçi</span>
+            <span className="artist-stat-value">
+              {artist?.followers_count?.toLocaleString() || '0'}
+            </span>
+          </div>
+        </div>
         
         <div className="artist-buttons">
           <button className="send-respect-button" onClick={handleSendRespect}>

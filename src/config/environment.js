@@ -10,9 +10,9 @@ const config = {
   
   // Authentication
   JWT_SECRET: import.meta.env.VITE_JWT_SECRET || 'dev-secret-key',
-  SPOTIFY_CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID || '0c57904463b9424f88e33d3e644e16da',
-  SPOTIFY_CLIENT_SECRET: import.meta.env.VITE_SPOTIFY_CLIENT_SECRET || '3720734f4154460a92cc3a6d4f4c2d79',
-  SPOTIFY_REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI || 'https://respect-m0z91e1uu-semaeryilmazs-projects.vercel.app/auth/spotify/callback',
+  SPOTIFY_CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID || '',
+  SPOTIFY_CLIENT_SECRET: import.meta.env.VITE_SPOTIFY_CLIENT_SECRET || '',
+  SPOTIFY_REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI || '',
   
   // Third Party Services
   SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN || '',
