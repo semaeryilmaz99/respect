@@ -9,13 +9,18 @@ const corsHeaders = {
   'Access-Control-Max-Age': '86400',
 }
 
-// Environment variables - Bu değerleri kendi Spotify bilgilerinizle değiştirin
-const SPOTIFY_CLIENT_ID = Deno.env.get('SPOTIFY_CLIENT_ID') || 'your_spotify_client_id_here'
-const SPOTIFY_CLIENT_SECRET = Deno.env.get('SPOTIFY_CLIENT_SECRET') || 'your_spotify_client_secret_here'
+// Environment variables - Doğrudan tanımlanmış
+const SPOTIFY_CLIENT_ID = '0c57904463b9424f88e33d3e644e16da'
+const SPOTIFY_CLIENT_SECRET = 'your_spotify_client_secret_here' // Gerçek Client Secret'ınızı buraya yazın
 
 serve(async (req) => {
+  console.log('🔧 Spotify Refresh Token Function called')
+  console.log('🔧 Method:', req.method)
+  console.log('🔧 URL:', req.url)
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('🔧 Handling OPTIONS request')
     return new Response(null, { 
       status: 200,
       headers: corsHeaders 
@@ -23,12 +28,14 @@ serve(async (req) => {
   }
 
   try {
+    console.log('🔧 Initializing Supabase client')
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
+    console.log('🔧 Getting request body')
     // Get request body
     const { userId, refreshToken } = await req.json()
 
@@ -36,6 +43,7 @@ serve(async (req) => {
       throw new Error('Missing required parameters: userId, refreshToken')
     }
 
+    console.log('🔧 Initializing Spotify API')
     // Initialize Spotify API
     const spotifyApi = new SpotifyWebApi({
       clientId: SPOTIFY_CLIENT_ID,
@@ -43,12 +51,14 @@ serve(async (req) => {
       refreshToken: refreshToken
     })
 
+    console.log('🔧 Refreshing access token')
     // Refresh the access token
     const tokenData = await spotifyApi.refreshAccessToken()
     
     const newAccessToken = tokenData.body.access_token
     const newExpiresIn = tokenData.body.expires_in
 
+    console.log('🔧 Updating connection in database')
     // Update the connection in database
     const { error: updateError } = await supabaseClient
       .from('spotify_connections')
@@ -60,6 +70,7 @@ serve(async (req) => {
 
     if (updateError) throw updateError
 
+    console.log('🔧 Success! Returning response')
     return new Response(
       JSON.stringify({
         access_token: newAccessToken,
@@ -73,7 +84,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Spotify refresh token error:', error)
+    console.error('❌ Spotify refresh token error:', error)
     
     return new Response(
       JSON.stringify({ 

@@ -9,13 +9,18 @@ const corsHeaders = {
   'Access-Control-Max-Age': '86400',
 }
 
-// Environment variables - Bu değerleri kendi Spotify bilgilerinizle değiştirin
-const SPOTIFY_CLIENT_ID = Deno.env.get('SPOTIFY_CLIENT_ID') || 'your_spotify_client_id_here'
-const SPOTIFY_CLIENT_SECRET = Deno.env.get('SPOTIFY_CLIENT_SECRET') || 'your_spotify_client_secret_here'
+// Environment variables - Doğrudan tanımlanmış
+const SPOTIFY_CLIENT_ID = '0c57904463b9424f88e33d3e644e16da'
+const SPOTIFY_CLIENT_SECRET = 'your_spotify_client_secret_here' // Gerçek Client Secret'ınızı buraya yazın
 
 serve(async (req) => {
+  console.log('🔧 Spotify Sync Function called')
+  console.log('🔧 Method:', req.method)
+  console.log('🔧 URL:', req.url)
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('🔧 Handling OPTIONS request')
     return new Response(null, { 
       status: 200,
       headers: corsHeaders 
@@ -23,12 +28,14 @@ serve(async (req) => {
   }
 
   try {
+    console.log('🔧 Initializing Supabase client')
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
+    console.log('🔧 Getting request body')
     // Get request body
     const { userId, syncType } = await req.json()
 
@@ -36,6 +43,7 @@ serve(async (req) => {
       throw new Error('Missing required parameters: userId, syncType')
     }
 
+    console.log('🔧 Getting user Spotify connection')
     // Get user's Spotify connection
     const { data: connection, error: connectionError } = await supabaseClient
       .from('spotify_connections')
@@ -47,9 +55,11 @@ serve(async (req) => {
       throw new Error('Spotify connection not found')
     }
 
+    console.log('🔧 Checking token expiration')
     // Check if token is expired and refresh if needed
     let accessToken = connection.access_token
     if (new Date() > new Date(connection.token_expires_at)) {
+      console.log('🔧 Token expired, refreshing...')
       const spotifyApiForRefresh = new SpotifyWebApi({
         clientId: SPOTIFY_CLIENT_ID,
         clientSecret: SPOTIFY_CLIENT_SECRET,
@@ -69,6 +79,7 @@ serve(async (req) => {
         .eq('user_id', userId)
     }
 
+    console.log('🔧 Initializing Spotify API')
     // Initialize Spotify API
     const spotifyApi = new SpotifyWebApi({
       accessToken: accessToken
@@ -76,6 +87,7 @@ serve(async (req) => {
 
     let syncResult
 
+    console.log('🔧 Executing sync based on type:', syncType)
     // Execute sync based on type
     switch (syncType) {
       case 'artist_profile':
@@ -91,6 +103,7 @@ serve(async (req) => {
         throw new Error('Invalid sync type. Must be: artist_profile, artist_songs, or artist_albums')
     }
 
+    console.log('🔧 Logging sync activity')
     // Log sync activity
     await supabaseClient
       .from('spotify_sync_logs')
@@ -103,6 +116,7 @@ serve(async (req) => {
         error_message: syncResult.error
       })
 
+    console.log('🔧 Success! Returning response')
     return new Response(
       JSON.stringify(syncResult),
       { 
@@ -112,7 +126,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Spotify sync error:', error)
+    console.error('❌ Spotify sync error:', error)
     
     return new Response(
       JSON.stringify({ 
