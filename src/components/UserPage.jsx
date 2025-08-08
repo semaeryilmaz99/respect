@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
 import userService from '../api/userService'
 import searchService from '../api/searchService'
@@ -17,7 +17,6 @@ import BackButton from './common/BackButton'
 import LoadingSpinner from './LoadingSpinner'
 
 const UserPage = () => {
-  const navigate = useNavigate()
   const { id: targetUserId } = useParams() // URL'den user ID'sini al
   const { state, actions } = useAppContext()
   const { user: currentUser } = state
@@ -74,7 +73,18 @@ const UserPage = () => {
   }
 
   const handleMobileEditProfile = () => {
-    navigate('/profile/settings')
+    // Initialize form data with current user data
+    setEditProfileData({
+      username: userData?.username || currentUser?.user_metadata?.username || '',
+      full_name: userData?.full_name || currentUser?.user_metadata?.full_name || '',
+      bio: userData?.bio || '',
+      avatar_url: userData?.avatar_url || currentUser?.user_metadata?.avatar_url || ''
+    })
+    setAvatarPreview(userData?.avatar_url || currentUser?.user_metadata?.avatar_url || '')
+    setAvatarFile(null)
+    setProfileMessage('')
+    setProfileMessageType('')
+    setShowEditProfilePopup(true)
   }
 
   const handleCloseEditProfile = () => {
@@ -474,6 +484,13 @@ const UserPage = () => {
           </div>
         )}
         
+        {/* Mobile Respect Gönderme Butonu */}
+        <div className="mobile-respect-section">
+          <button className="mobile-respect-btn" onClick={handleOpenSendRespect}>
+            Respect Gönder
+          </button>
+        </div>
+        
         <UserStats userData={displayUserData} userId={displayUserId} />
         
         <UserRecentRespects userId={displayUserId} />
@@ -659,14 +676,14 @@ const UserPage = () => {
                           className="search-result-item"
                           onClick={() => handleItemSelect(artist, 'artist')}
                         >
-                          <div className="result-avatar">
+                      <div className="result-avatar">
                             <img src={artist.avatar_url || '/assets/artist/Image.png'} alt={artist.name} />
-                          </div>
-                          <div className="result-info">
+                      </div>
+                      <div className="result-info">
                             <h4>{artist.name}</h4>
                             <p>Sanatçı • {artist.total_respect || 0} Respect</p>
-                          </div>
-                        </div>
+                      </div>
+                    </div>
                       ))}
                       {searchResults.songs.map((song) => (
                         <div 
@@ -674,23 +691,23 @@ const UserPage = () => {
                           className="search-result-item"
                           onClick={() => handleItemSelect(song, 'song')}
                         >
-                          <div className="result-avatar">
+                      <div className="result-avatar">
                             <img src={song.cover_url || '/assets/song/Image.png'} alt={song.title} />
-                          </div>
-                          <div className="result-info">
+                      </div>
+                      <div className="result-info">
                             <h4>{song.title}</h4>
                             <p>{song.artists?.name || 'Bilinmeyen Sanatçı'} • Şarkı</p>
                           </div>
-                        </div>
+                      </div>
                       ))}
                     </div>
                   )}
-                </div>
+                      </div>
                 {selectedItem && (
                   <div className="selected-item">
                     <div className="selected-item-avatar">
                       <img src={selectedItem.avatar_url || selectedItem.cover_url || '/assets/artist/Image.png'} alt={selectedItem.name || selectedItem.title} />
-                    </div>
+                      </div>
                     <div className="selected-item-info">
                       <h4>{selectedItem.name || selectedItem.title}</h4>
                       <p>{selectedItem.type === 'artist' ? 'Sanatçı' : `${selectedItem.artists?.name || 'Bilinmeyen Sanatçı'} • Şarkı`}</p>
@@ -775,6 +792,180 @@ const UserPage = () => {
                 </button>
                 <button 
                   className="popup-send-btn" 
+                  onClick={handleSendRespect}
+                  disabled={sendingRespect}
+                >
+                  {sendingRespect ? 'Gönderiliyor...' : 'Respect Gönder'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Send Respect Popup */}
+      {showSendRespectPopup && (
+        <div className="mobile-send-respect-popup-overlay" onClick={handleCloseSendRespect}>
+          <div className="mobile-send-respect-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-popup-header">
+              <h2>Respect Gönder</h2>
+              <button className="mobile-popup-close-btn" onClick={handleCloseSendRespect}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div className="mobile-popup-content">
+              <div className="mobile-form-group">
+                <label>Sanatçı veya Şarkı Ara</label>
+                <div className="mobile-search-container">
+                  <div className="mobile-search-input-wrapper">
+                    <div className="mobile-search-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                      </svg>
+                    </div>
+                    <input 
+                      type="text" 
+                      placeholder="Sanatçı veya şarkı adı yazın..." 
+                      className="mobile-search-input"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
+                    />
+                  </div>
+                  {showSearchResults && (searchResults.artists.length > 0 || searchResults.songs.length > 0) && (
+                    <div className="mobile-search-results">
+                      {searchResults.artists.map((artist) => (
+                        <div 
+                          key={`mobile-artist-${artist.id}`} 
+                          className="mobile-search-result-item"
+                          onClick={() => handleItemSelect(artist, 'artist')}
+                        >
+                          <div className="mobile-result-avatar">
+                            <img src={artist.avatar_url || '/assets/artist/Image.png'} alt={artist.name} />
+                          </div>
+                          <div className="mobile-result-info">
+                            <h4>{artist.name}</h4>
+                            <p>Sanatçı • {artist.total_respect || 0} Respect</p>
+                          </div>
+                        </div>
+                      ))}
+                      {searchResults.songs.map((song) => (
+                        <div 
+                          key={`mobile-song-${song.id}`} 
+                          className="mobile-search-result-item"
+                          onClick={() => handleItemSelect(song, 'song')}
+                        >
+                          <div className="mobile-result-avatar">
+                            <img src={song.cover_url || '/assets/song/Image.png'} alt={song.title} />
+                          </div>
+                          <div className="mobile-result-info">
+                            <h4>{song.title}</h4>
+                            <p>{song.artists?.name || 'Bilinmeyen Sanatçı'} • Şarkı</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {selectedItem && (
+                  <div className="mobile-selected-item">
+                    <div className="mobile-selected-item-avatar">
+                      <img src={selectedItem.avatar_url || selectedItem.cover_url || '/assets/artist/Image.png'} alt={selectedItem.name || selectedItem.title} />
+                    </div>
+                    <div className="mobile-selected-item-info">
+                      <h4>{selectedItem.name || selectedItem.title}</h4>
+                      <p>{selectedItem.type === 'artist' ? 'Sanatçı' : `${selectedItem.artists?.name || 'Bilinmeyen Sanatçı'} • Şarkı`}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              <div className="mobile-form-group">
+                <label>Respect Miktarı</label>
+                <div className="mobile-respect-amount-grid">
+                  <button 
+                    className={`mobile-respect-amount-btn ${selectedAmount === 10 ? 'selected' : ''}`} 
+                    onClick={() => handleAmountSelect(10)}
+                  >
+                    <span className="mobile-amount-value">10</span>
+                    <span className="mobile-amount-label">Respect</span>
+                  </button>
+                  <button 
+                    className={`mobile-respect-amount-btn ${selectedAmount === 25 ? 'selected' : ''}`} 
+                    onClick={() => handleAmountSelect(25)}
+                  >
+                    <span className="mobile-amount-value">25</span>
+                    <span className="mobile-amount-label">Respect</span>
+                  </button>
+                  <button 
+                    className={`mobile-respect-amount-btn ${selectedAmount === 50 ? 'selected' : ''}`} 
+                    onClick={() => handleAmountSelect(50)}
+                  >
+                    <span className="mobile-amount-value">50</span>
+                    <span className="mobile-amount-label">Respect</span>
+                  </button>
+                  <button 
+                    className={`mobile-respect-amount-btn ${selectedAmount === 100 ? 'selected' : ''}`} 
+                    onClick={() => handleAmountSelect(100)}
+                  >
+                    <span className="mobile-amount-value">100</span>
+                    <span className="mobile-amount-label">Respect</span>
+                  </button>
+                  <button 
+                    className={`mobile-respect-amount-btn ${selectedAmount === 250 ? 'selected' : ''}`} 
+                    onClick={() => handleAmountSelect(250)}
+                  >
+                    <span className="mobile-amount-value">250</span>
+                    <span className="mobile-amount-label">Respect</span>
+                  </button>
+                  <button 
+                    className={`mobile-respect-amount-btn ${selectedAmount === 500 ? 'selected' : ''}`} 
+                    onClick={() => handleAmountSelect(500)}
+                  >
+                    <span className="mobile-amount-value">500</span>
+                    <span className="mobile-amount-label">Respect</span>
+                  </button>
+                </div>
+              </div>
+              
+              <div className="mobile-form-group">
+                <label>Özel Miktar</label>
+                <input 
+                  type="number" 
+                  placeholder="Miktar girin" 
+                  min="1" 
+                  className="mobile-custom-amount-input"
+                  value={customAmount}
+                  onChange={handleCustomAmountChange}
+                />
+              </div>
+              
+              <div className="mobile-form-group">
+                <label>Mesaj (Opsiyonel)</label>
+                <textarea 
+                  placeholder="Respect ile birlikte göndermek istediğiniz mesaj..." 
+                  rows="3"
+                  className="mobile-respect-message-input"
+                  value={respectMessageText}
+                  onChange={handleRespectMessageChange}
+                ></textarea>
+              </div>
+              
+              {respectMessageText && (
+                <div className={`mobile-popup-message ${respectMessageType}`}>
+                  {respectMessageText}
+                </div>
+              )}
+              
+              <div className="mobile-popup-actions">
+                <button className="mobile-popup-cancel-btn" onClick={handleCloseSendRespect}>
+                  İptal
+                </button>
+                <button 
+                  className="mobile-popup-send-btn" 
                   onClick={handleSendRespect}
                   disabled={sendingRespect}
                 >
