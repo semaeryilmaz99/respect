@@ -7,6 +7,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Environment variables - Bu değerleri kendi Spotify bilgilerinizle değiştirin
+const SPOTIFY_CLIENT_ID = Deno.env.get('SPOTIFY_CLIENT_ID') || 'your_spotify_client_id_here'
+const SPOTIFY_CLIENT_SECRET = Deno.env.get('SPOTIFY_CLIENT_SECRET') || 'your_spotify_client_secret_here'
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -42,8 +46,8 @@ serve(async (req) => {
     let accessToken = connection.access_token
     if (new Date() > new Date(connection.token_expires_at)) {
       const spotifyApiForRefresh = new SpotifyWebApi({
-        clientId: Deno.env.get('SPOTIFY_CLIENT_ID'),
-        clientSecret: Deno.env.get('SPOTIFY_CLIENT_SECRET'),
+        clientId: SPOTIFY_CLIENT_ID,
+        clientSecret: SPOTIFY_CLIENT_SECRET,
         refreshToken: connection.refresh_token
       })
 

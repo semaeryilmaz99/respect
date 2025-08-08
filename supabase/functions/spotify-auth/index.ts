@@ -7,6 +7,11 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Environment variables - Bu değerleri kendi Spotify bilgilerinizle değiştirin
+const SPOTIFY_CLIENT_ID = Deno.env.get('SPOTIFY_CLIENT_ID') || 'your_spotify_client_id_here'
+const SPOTIFY_CLIENT_SECRET = Deno.env.get('SPOTIFY_CLIENT_SECRET') || 'your_spotify_client_secret_here'
+const SPOTIFY_REDIRECT_URI = Deno.env.get('SPOTIFY_REDIRECT_URI') || 'http://localhost:5173/auth/spotify/callback'
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -29,9 +34,9 @@ serve(async (req) => {
 
     // Initialize Spotify API
     const spotifyApi = new SpotifyWebApi({
-      clientId: Deno.env.get('SPOTIFY_CLIENT_ID'),
-      clientSecret: Deno.env.get('SPOTIFY_CLIENT_SECRET'),
-      redirectUri: Deno.env.get('SPOTIFY_REDIRECT_URI')
+      clientId: SPOTIFY_CLIENT_ID,
+      clientSecret: SPOTIFY_CLIENT_SECRET,
+      redirectUri: SPOTIFY_REDIRECT_URI
     })
 
     // Exchange authorization code for tokens
