@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
 import userService from '../api/userService'
+import searchService from '../api/searchService'
+import respectService from '../api/respectService'
 import { supabase } from '../config/supabase'
 import Header from './Header'
 import UserProfile from './UserProfile'
@@ -38,6 +40,17 @@ const UserPage = () => {
   const [savingProfile, setSavingProfile] = useState(false)
   const [profileMessage, setProfileMessage] = useState('')
   const [profileMessageType, setProfileMessageType] = useState('')
+  
+  // Send Respect Popup States
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState({ artists: [], songs: [] })
+  const [selectedItem, setSelectedItem] = useState(null)
+  const [selectedAmount, setSelectedAmount] = useState(null)
+  const [customAmount, setCustomAmount] = useState('')
+  const [sendingRespect, setSendingRespect] = useState(false)
+  const [respectMessageText, setRespectMessageText] = useState('')
+  const [respectMessageType, setRespectMessageType] = useState('')
+  const [showSearchResults, setShowSearchResults] = useState(false)
   
   // Görüntülenen kullanıcının ID'si (URL'den gelen veya mevcut kullanıcı)
   const displayUserId = targetUserId || currentUser?.id
@@ -268,12 +281,116 @@ const UserPage = () => {
     }
   }
 
-  const handleSendRespect = () => {
+  const handleOpenSendRespect = () => {
     setShowSendRespectPopup(true)
   }
 
   const handleCloseSendRespect = () => {
     setShowSendRespectPopup(false)
+    // Reset all states
+    setSearchQuery('')
+    setSearchResults({ artists: [], songs: [] })
+    setSelectedItem(null)
+    setSelectedAmount(null)
+    setCustomAmount('')
+    setRespectMessageText('')
+    setRespectMessageType('')
+    setShowSearchResults(false)
+  }
+
+  // Handle search input change
+  const handleSearchChange = async (e) => {
+    const query = e.target.value
+    setSearchQuery(query)
+    
+    if (query.trim().length >= 2) {
+      try {
+        const results = await searchService.searchArtistsAndSongs(query, 5)
+        setSearchResults(results)
+        setShowSearchResults(true)
+      } catch (error) {
+        console.error('Search error:', error)
+        setSearchResults({ artists: [], songs: [] })
+      }
+    } else {
+      setSearchResults({ artists: [], songs: [] })
+      setShowSearchResults(false)
+    }
+  }
+
+  // Handle item selection
+  const handleItemSelect = (item, type) => {
+    setSelectedItem({ ...item, type })
+    setSearchQuery(type === 'artist' ? item.name : item.title)
+    setShowSearchResults(false)
+  }
+
+  // Handle amount selection
+  const handleAmountSelect = (amount) => {
+    setSelectedAmount(amount)
+    setCustomAmount('')
+  }
+
+  // Handle custom amount change
+  const handleCustomAmountChange = (e) => {
+    const value = e.target.value
+    setCustomAmount(value)
+    if (value) {
+      setSelectedAmount(null)
+    }
+  }
+
+  // Handle respect message change
+  const handleRespectMessageChange = (e) => {
+    setRespectMessageText(e.target.value)
+  }
+
+  // Send respect
+  const handleSendRespect = async () => {
+    if (!selectedItem) {
+      setRespectMessageText('Lütfen bir sanatçı veya şarkı seçin.')
+      setRespectMessageType('error')
+      return
+    }
+
+    const amount = selectedAmount || parseInt(customAmount)
+    if (!amount || amount <= 0) {
+      setRespectMessageText('Lütfen geçerli bir miktar girin.')
+      setRespectMessageType('error')
+      return
+    }
+
+    setSendingRespect(true)
+    setRespectMessageText('')
+    setRespectMessageType('')
+
+    try {
+      let result
+      if (selectedItem.type === 'artist') {
+        result = await respectService.sendRespectToArtist(selectedItem.id, amount, respectMessageText || null)
+      } else {
+        result = await respectService.sendRespectToSong(selectedItem.id, amount, respectMessageText || null)
+      }
+
+      if (result.error) {
+        setRespectMessageText(result.error.message || 'Respect gönderilirken hata oluştu.')
+        setRespectMessageType('error')
+      } else {
+        setRespectMessageText('Respect başarıyla gönderildi!')
+        setRespectMessageType('success')
+        
+        // Close popup after 2 seconds
+        setTimeout(() => {
+          handleCloseSendRespect()
+        }, 2000)
+      }
+    } catch (error) {
+      console.error('Send respect error:', error)
+      setRespectMessageText('Respect gönderilirken hata oluştu.')
+      setRespectMessageType('error')
+    } finally {
+      setSendingRespect(false)
+    }
   }
   
   // Fetch user profile data
@@ -386,7 +503,7 @@ const UserPage = () => {
                       Profil Düzenle
                     </button>
                   )}
-                  <button className="desktop-send-respect-btn" onClick={handleSendRespect}>
+                  <button className="desktop-send-respect-btn" onClick={handleOpenSendRespect}>
                     Respect Gönder
                   </button>
                 </div>
@@ -530,63 +647,99 @@ const UserPage = () => {
                       type="text" 
                       placeholder="Sanatçı veya şarkı adı yazın..." 
                       className="search-input"
+                      value={searchQuery}
+                      onChange={handleSearchChange}
                     />
                   </div>
-                  <div className="search-results" style={{ display: 'none' }}>
-                    <div className="search-result-item">
-                      <div className="result-avatar">
-                        <img src="/assets/artist/Image (1).png" alt="Gaye Su Akyol" />
-                      </div>
-                      <div className="result-info">
-                        <h4>Gaye Su Akyol</h4>
-                        <p>Sanatçı</p>
-                      </div>
+                  {showSearchResults && (searchResults.artists.length > 0 || searchResults.songs.length > 0) && (
+                    <div className="search-results">
+                      {searchResults.artists.map((artist) => (
+                        <div 
+                          key={`artist-${artist.id}`} 
+                          className="search-result-item"
+                          onClick={() => handleItemSelect(artist, 'artist')}
+                        >
+                          <div className="result-avatar">
+                            <img src={artist.avatar_url || '/assets/artist/Image.png'} alt={artist.name} />
+                          </div>
+                          <div className="result-info">
+                            <h4>{artist.name}</h4>
+                            <p>Sanatçı • {artist.total_respect || 0} Respect</p>
+                          </div>
+                        </div>
+                      ))}
+                      {searchResults.songs.map((song) => (
+                        <div 
+                          key={`song-${song.id}`} 
+                          className="search-result-item"
+                          onClick={() => handleItemSelect(song, 'song')}
+                        >
+                          <div className="result-avatar">
+                            <img src={song.cover_url || '/assets/song/Image.png'} alt={song.title} />
+                          </div>
+                          <div className="result-info">
+                            <h4>{song.title}</h4>
+                            <p>{song.artists?.name || 'Bilinmeyen Sanatçı'} • Şarkı</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                    <div className="search-result-item">
-                      <div className="result-avatar">
-                        <img src="/assets/song/Image (1).png" alt="İstakoz" />
-                      </div>
-                      <div className="result-info">
-                        <h4>İstakoz</h4>
-                        <p>Gaye Su Akyol • Şarkı</p>
-                      </div>
+                  )}
+                </div>
+                {selectedItem && (
+                  <div className="selected-item">
+                    <div className="selected-item-avatar">
+                      <img src={selectedItem.avatar_url || selectedItem.cover_url || '/assets/artist/Image.png'} alt={selectedItem.name || selectedItem.title} />
                     </div>
-                    <div className="search-result-item">
-                      <div className="result-avatar">
-                        <img src="/assets/artist/Image (2).png" alt="Altın Gün" />
-                      </div>
-                      <div className="result-info">
-                        <h4>Altın Gün</h4>
-                        <p>Sanatçı</p>
-                      </div>
+                    <div className="selected-item-info">
+                      <h4>{selectedItem.name || selectedItem.title}</h4>
+                      <p>{selectedItem.type === 'artist' ? 'Sanatçı' : `${selectedItem.artists?.name || 'Bilinmeyen Sanatçı'} • Şarkı`}</p>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
               <div className="form-group">
                 <label>Respect Miktarı</label>
                 <div className="respect-amount-list">
-                  <button className="respect-amount-item" data-amount="10">
+                  <button 
+                    className={`respect-amount-item ${selectedAmount === 10 ? 'selected' : ''}`} 
+                    onClick={() => handleAmountSelect(10)}
+                  >
                     <span className="amount-value">10</span>
                     <span className="amount-label">Respect</span>
                   </button>
-                  <button className="respect-amount-item" data-amount="25">
+                  <button 
+                    className={`respect-amount-item ${selectedAmount === 25 ? 'selected' : ''}`} 
+                    onClick={() => handleAmountSelect(25)}
+                  >
                     <span className="amount-value">25</span>
                     <span className="amount-label">Respect</span>
                   </button>
-                  <button className="respect-amount-item" data-amount="50">
+                  <button 
+                    className={`respect-amount-item ${selectedAmount === 50 ? 'selected' : ''}`} 
+                    onClick={() => handleAmountSelect(50)}
+                  >
                     <span className="amount-value">50</span>
                     <span className="amount-label">Respect</span>
                   </button>
-                  <button className="respect-amount-item" data-amount="100">
+                  <button 
+                    className={`respect-amount-item ${selectedAmount === 100 ? 'selected' : ''}`} 
+                    onClick={() => handleAmountSelect(100)}
+                  >
                     <span className="amount-value">100</span>
                     <span className="amount-label">Respect</span>
                   </button>
-                  <button className="respect-amount-item" data-amount="250">
+                  <button 
+                    className={`respect-amount-item ${selectedAmount === 250 ? 'selected' : ''}`} 
+                    onClick={() => handleAmountSelect(250)}
+                  >
                     <span className="amount-value">250</span>
                     <span className="amount-label">Respect</span>
                   </button>
-                  <button className="respect-amount-item" data-amount="500">
+                  <button 
+                    className={`respect-amount-item ${selectedAmount === 500 ? 'selected' : ''}`} 
+                    onClick={() => handleAmountSelect(500)}
+                  >
                     <span className="amount-value">500</span>
                     <span className="amount-label">Respect</span>
                   </button>
@@ -594,18 +747,38 @@ const UserPage = () => {
               </div>
               <div className="form-group">
                 <label>Özel Miktar</label>
-                <input type="number" placeholder="Miktar girin" min="1" />
+                <input 
+                  type="number" 
+                  placeholder="Miktar girin" 
+                  min="1" 
+                  value={customAmount}
+                  onChange={handleCustomAmountChange}
+                />
               </div>
               <div className="form-group">
                 <label>Mesaj (Opsiyonel)</label>
-                <textarea placeholder="Respect ile birlikte göndermek istediğiniz mesaj..." rows="3"></textarea>
+                <textarea 
+                  placeholder="Respect ile birlikte göndermek istediğiniz mesaj..." 
+                  rows="3"
+                  value={respectMessageText}
+                  onChange={handleRespectMessageChange}
+                ></textarea>
               </div>
+              {respectMessageText && (
+                <div className={`popup-message ${respectMessageType}`}>
+                  {respectMessageText}
+                </div>
+              )}
               <div className="popup-actions">
                 <button className="popup-cancel-btn" onClick={handleCloseSendRespect}>
                   İptal
                 </button>
-                <button className="popup-send-btn">
-                  Respect Gönder
+                <button 
+                  className="popup-send-btn" 
+                  onClick={handleSendRespect}
+                  disabled={sendingRespect}
+                >
+                  {sendingRespect ? 'Gönderiliyor...' : 'Respect Gönder'}
                 </button>
               </div>
             </div>
