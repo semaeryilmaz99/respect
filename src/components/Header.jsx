@@ -15,6 +15,7 @@ const Header = () => {
   const isFeedPage = location.pathname === '/feed'
   const isSongPage = location.pathname.startsWith('/song')
   const isUserPage = location.pathname.startsWith('/user') || location.pathname === '/profile'
+  const isArtistPage = location.pathname.startsWith('/artist')
   const isSendRespectPage = location.pathname === '/send-respect'
   
   // Fetch user profile data
@@ -63,8 +64,8 @@ const Header = () => {
           <span className="hamburger-line"></span>
         </button>
         
-        {/* Desktop'ta feed, song ve user sayfasında arama motoru, send respect sayfasında "Respect Gönder", diğerlerinde title */}
-        {isFeedPage || isSongPage || isUserPage ? (
+        {/* Desktop'ta feed, song, user ve artist sayfasında arama motoru, send respect sayfasında "Respect Gönder", diğerlerinde title */}
+        {isFeedPage || isSongPage || isUserPage || isArtistPage ? (
           <>
             {/* Mobile'da title görünecek, desktop'ta gizlenecek */}
             <h1 className="app-title mobile-only">Respect Müzik</h1>
@@ -105,8 +106,8 @@ const Header = () => {
         </button>
       </div>
       
-      {/* Mobile'da feed, song ve user sayfasında arama motoru alt tarafta kalacak */}
-      {(isFeedPage || isSongPage || isUserPage) && (
+      {/* Mobile'da feed, song, user ve artist sayfasında arama motoru alt tarafta kalacak */}
+      {(isFeedPage || isSongPage || isUserPage || isArtistPage) && (
         <div className="search-container mobile-search">
           <div className="search-bar">
             <span className="search-icon">
@@ -126,7 +127,7 @@ const Header = () => {
       
       {/* Send respect sayfasında arama motoru yok */}
       {/* Diğer sayfalarda arama motoru alt tarafta */}
-      {!isFeedPage && !isSongPage && !isUserPage && !isSendRespectPage && (
+      {!isFeedPage && !isSongPage && !isUserPage && !isArtistPage && !isSendRespectPage && (
       <div className="search-container">
         <div className="search-bar">
           <span className="search-icon">

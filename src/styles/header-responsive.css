@@ -105,6 +105,29 @@
     min-width: 20px;
     justify-content: center;
   }
+  
+  /* Artist page specific desktop styles */
+  .artist-page .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  
+  .artist-page .desktop-search {
+    display: block !important;
+    flex: 1;
+    max-width: 400px;
+    margin: 0 20px;
+  }
+  
+  .artist-page .mobile-only {
+    display: none !important;
+  }
+  
+  .artist-page .mobile-search {
+    display: none !important;
+  }
 }
 
 /* Large Desktop - 1200px ve üzeri */
@@ -138,6 +161,11 @@
   /* Header bottom border - Large Desktop */
   .header {
     border-bottom: 2px solid #fde0a1 !important;
+  }
+  
+  /* Artist page specific large desktop styles */
+  .artist-page .desktop-search {
+    max-width: 500px;
   }
 }
 
