@@ -9,14 +9,19 @@ const corsHeaders = {
   'Access-Control-Max-Age': '86400',
 }
 
-// Environment variables - Bu değerleri kendi Spotify bilgilerinizle değiştirin
-const SPOTIFY_CLIENT_ID = Deno.env.get('SPOTIFY_CLIENT_ID') || 'your_spotify_client_id_here'
-const SPOTIFY_CLIENT_SECRET = Deno.env.get('SPOTIFY_CLIENT_SECRET') || 'your_spotify_client_secret_here'
-const SPOTIFY_REDIRECT_URI = Deno.env.get('SPOTIFY_REDIRECT_URI') || 'http://localhost:5173/auth/spotify/callback'
+// Environment variables - Doğrudan tanımlanmış
+const SPOTIFY_CLIENT_ID = '0c57904463b9424f88e33d3e644e16da' // Gerçek Client ID'nizi buraya yazın
+const SPOTIFY_CLIENT_SECRET = 'your_spotify_client_secret_here' // Gerçek Client Secret'ınızı buraya yazın
+const SPOTIFY_REDIRECT_URI = 'http://localhost:5173/auth/spotify/callback'
 
 serve(async (req) => {
+  console.log('🔧 Spotify Auth Function called')
+  console.log('🔧 Method:', req.method)
+  console.log('🔧 URL:', req.url)
+
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('🔧 Handling OPTIONS request')
     return new Response(null, { 
       status: 200,
       headers: corsHeaders 
@@ -24,12 +29,14 @@ serve(async (req) => {
   }
 
   try {
+    console.log('🔧 Initializing Supabase client')
     // Initialize Supabase client
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
+    console.log('🔧 Getting request body')
     // Get request body
     const { code } = await req.json()
 
@@ -37,6 +44,7 @@ serve(async (req) => {
       throw new Error('Authorization code is required')
     }
 
+    console.log('🔧 Initializing Spotify API')
     // Initialize Spotify API
     const spotifyApi = new SpotifyWebApi({
       clientId: SPOTIFY_CLIENT_ID,
@@ -44,6 +52,7 @@ serve(async (req) => {
       redirectUri: SPOTIFY_REDIRECT_URI
     })
 
+    console.log('🔧 Exchanging authorization code for tokens')
     // Exchange authorization code for tokens
     const tokenData = await spotifyApi.authorizationCodeGrant(code)
     
@@ -51,16 +60,19 @@ serve(async (req) => {
     const refreshToken = tokenData.body.refresh_token
     const expiresIn = tokenData.body.expires_in
 
+    console.log('🔧 Getting user profile from Spotify')
     // Get user profile from Spotify
     spotifyApi.setAccessToken(accessToken)
     const profile = await spotifyApi.getMe()
 
+    console.log('🔧 Checking if user exists in Supabase')
     // Check if user already exists in Supabase
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
 
     let currentUser = user
 
     if (userError || !user) {
+      console.log('🔧 Creating new user')
       // Create new user
       const { data: authData, error: authError } = await supabaseClient.auth.signUp({
         email: profile.body.email,
@@ -78,6 +90,7 @@ serve(async (req) => {
       currentUser = authData.user
     }
 
+    console.log('🔧 Saving Spotify connection')
     // Save Spotify connection
     const { error: connectionError } = await supabaseClient
       .from('spotify_connections')
@@ -93,6 +106,7 @@ serve(async (req) => {
 
     if (connectionError) throw connectionError
 
+    console.log('🔧 Creating/updating artist profile')
     // Create or update artist profile
     const { error: artistError } = await supabaseClient
       .from('artists')
@@ -109,6 +123,7 @@ serve(async (req) => {
 
     if (artistError) throw artistError
 
+    console.log('🔧 Success! Returning response')
     return new Response(
       JSON.stringify({
         user: currentUser,
@@ -122,7 +137,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Spotify auth error:', error)
+    console.error('❌ Spotify auth error:', error)
     
     return new Response(
       JSON.stringify({ 
