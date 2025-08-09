@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import SpotifyWebApi from 'https://esm.sh/spotify-web-api-node@5.0.2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,10 +8,10 @@ const corsHeaders = {
   'Access-Control-Max-Age': '86400',
 }
 
-// Environment variables - Doğrudan tanımlanmış
-const SPOTIFY_CLIENT_ID = '0c57904463b9424f88e33d3e644e16da' // Gerçek Client ID'nizi buraya yazın
-const SPOTIFY_CLIENT_SECRET = 'your_spotify_client_secret_here' // Gerçek Client Secret'ınızı buraya yazın
-const SPOTIFY_REDIRECT_URI = 'http://localhost:5173/auth/spotify/callback'
+// Environment variables (provide via Supabase secrets)
+const SPOTIFY_CLIENT_ID = Deno.env.get('SPOTIFY_CLIENT_ID') ?? ''
+const SPOTIFY_CLIENT_SECRET = Deno.env.get('SPOTIFY_CLIENT_SECRET') ?? ''
+const SPOTIFY_REDIRECT_URI = Deno.env.get('SPOTIFY_REDIRECT_URI') ?? ''
 
 serve(async (req) => {
   console.log('🔧 Spotify Auth Function called')
@@ -44,26 +43,47 @@ serve(async (req) => {
       throw new Error('Authorization code is required')
     }
 
-    console.log('🔧 Initializing Spotify API')
-    // Initialize Spotify API
-    const spotifyApi = new SpotifyWebApi({
-      clientId: SPOTIFY_CLIENT_ID,
-      clientSecret: SPOTIFY_CLIENT_SECRET,
-      redirectUri: SPOTIFY_REDIRECT_URI
+    if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET || !SPOTIFY_REDIRECT_URI) {
+      throw new Error('Spotify environment variables are not configured')
+    }
+
+    console.log('🔧 Exchanging authorization code for tokens (via fetch)')
+    const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + btoa(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`)
+      },
+      body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        code,
+        redirect_uri: SPOTIFY_REDIRECT_URI
+      })
     })
 
-    console.log('🔧 Exchanging authorization code for tokens')
-    // Exchange authorization code for tokens
-    const tokenData = await spotifyApi.authorizationCodeGrant(code)
-    
-    const accessToken = tokenData.body.access_token
-    const refreshToken = tokenData.body.refresh_token
-    const expiresIn = tokenData.body.expires_in
+    if (!tokenResponse.ok) {
+      const errText = await tokenResponse.text()
+      throw new Error(`Failed to get tokens from Spotify: ${tokenResponse.status} ${errText}`)
+    }
 
-    console.log('🔧 Getting user profile from Spotify')
-    // Get user profile from Spotify
-    spotifyApi.setAccessToken(accessToken)
-    const profile = await spotifyApi.getMe()
+    const tokenJson = await tokenResponse.json()
+    const accessToken = tokenJson.access_token
+    const refreshToken = tokenJson.refresh_token
+    const expiresIn = tokenJson.expires_in
+
+    console.log('🔧 Getting user profile from Spotify (via fetch)')
+    const profileResponse = await fetch('https://api.spotify.com/v1/me', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    })
+
+    if (!profileResponse.ok) {
+      const errText = await profileResponse.text()
+      throw new Error(`Failed to fetch Spotify profile: ${profileResponse.status} ${errText}`)
+    }
+
+    const profile = await profileResponse.json()
 
     console.log('🔧 Checking if user exists in Supabase')
     // Check if user already exists in Supabase
@@ -75,13 +95,13 @@ serve(async (req) => {
       console.log('🔧 Creating new user')
       // Create new user
       const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-        email: profile.body.email,
-        password: `spotify_${profile.body.id}_${Date.now()}`, // Temporary password
+        email: profile.email,
+        password: `spotify_${profile.id}_${Date.now()}`,
         options: {
           data: {
-            display_name: profile.body.display_name,
-            spotify_id: profile.body.id,
-            avatar_url: profile.body.images?.[0]?.url
+            display_name: profile.display_name,
+            spotify_id: profile.id,
+            avatar_url: profile.images?.[0]?.url
           }
         }
       })
@@ -96,7 +116,7 @@ serve(async (req) => {
       .from('spotify_connections')
       .upsert({
         user_id: currentUser.id,
-        spotify_user_id: profile.body.id,
+        spotify_user_id: profile.id,
         access_token: accessToken,
         refresh_token: refreshToken,
         token_expires_at: new Date(Date.now() + expiresIn * 1000)
@@ -112,10 +132,10 @@ serve(async (req) => {
       .from('artists')
       .upsert({
         user_id: currentUser.id,
-        name: profile.body.display_name,
-        avatar_url: profile.body.images?.[0]?.url,
-        spotify_id: profile.body.id,
-        bio: `Spotify Artist: ${profile.body.display_name}`,
+        name: profile.display_name,
+        avatar_url: profile.images?.[0]?.url,
+        spotify_id: profile.id,
+        bio: `Spotify Artist: ${profile.display_name}`,
         verified: true
       }, {
         onConflict: 'user_id'
@@ -127,7 +147,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         user: currentUser,
-        profile: profile.body,
+        profile,
         success: true
       }),
       { 
