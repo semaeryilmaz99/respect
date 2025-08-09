@@ -10,7 +10,7 @@ const corsHeaders = {
 }
 
 // Environment variables - Doğrudan tanımlanmış
-const SPOTIFY_CLIENT_ID = '0c57904463b9424f88e33d3e644e16da'
+const SPOTIFY_CLIENT_ID = ''
 const SPOTIFY_CLIENT_SECRET = 'your_spotify_client_secret_here' // Gerçek Client Secret'ınızı buraya yazın
 
 serve(async (req) => {
