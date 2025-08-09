@@ -10,8 +10,8 @@ const config = {
   
   // Authentication
   JWT_SECRET: import.meta.env.VITE_JWT_SECRET || 'dev-secret-key',
-  SPOTIFY_CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID || '79528320b6e142519b2207864a29ba4e',
-  SPOTIFY_CLIENT_SECRET: import.meta.env.VITE_SPOTIFY_CLIENT_SECRET || '91511d9ad2cb4457bb84b73944a2bf0f',
+  SPOTIFY_CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID || '',
+  SPOTIFY_CLIENT_SECRET: import.meta.env.VITE_SPOTIFY_CLIENT_SECRET || '',
   SPOTIFY_REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI || 'https://ghbsezyszcrzqezoanav.supabase.co/auth/v1/callback',
   
   // Third Party Services
