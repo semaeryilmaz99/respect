@@ -30,7 +30,7 @@ const SpotifyCallback = () => {
         const result = await spotifyAuthService.handleSpotifyCallback(code);
         
         if (result.error) {
-          throw result.error;
+          throw new Error(result.error);
         }
 
         console.log('✅ Spotify authentication successful');

@@ -33,8 +33,33 @@ export const spotifyAuthService = {
     return data;
   },
 
-  // Not used when using Supabase OAuth redirect flow
-  handleSpotifyCallback: async (_code) => ({ user: null, profile: null, error: null }),
+  // Spotify callback'i işle
+  handleSpotifyCallback: async (code) => {
+    try {
+      console.log('🔄 Processing Spotify callback with code:', code);
+      
+      const { data, error } = await supabase.functions.invoke('spotify-auth', {
+        body: { code }
+      });
+      
+      if (error) {
+        console.error('❌ Spotify auth function error:', error);
+        return { user: null, profile: null, error: error.message };
+      }
+      
+      if (!data || !data.success) {
+        console.error('❌ Spotify auth function returned error:', data?.error);
+        return { user: null, profile: null, error: data?.error || 'Authentication failed' };
+      }
+      
+      console.log('✅ Spotify auth successful:', data);
+      return { user: data.user, profile: data.profile, error: null };
+      
+    } catch (error) {
+      console.error('❌ Spotify callback processing error:', error);
+      return { user: null, profile: null, error: error.message };
+    }
+  },
 
   // Spotify bağlantısını kontrol et
   checkSpotifyConnection: async (userId) => {
