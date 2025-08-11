@@ -1,6 +1,6 @@
+/* eslint-disable */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import SpotifyWebApi from 'https://esm.sh/spotify-web-api-node@5.0.2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,9 +9,9 @@ const corsHeaders = {
   'Access-Control-Max-Age': '86400',
 }
 
-// Environment variables - Doğrudan tanımlanmış
-const SPOTIFY_CLIENT_ID = '0c57904463b9424f88e33d3e644e16da'
-const SPOTIFY_CLIENT_SECRET = 'your_spotify_client_secret_here' // Gerçek Client Secret'ınızı buraya yazın
+// Environment variables
+const SPOTIFY_CLIENT_ID = Deno.env.get('SPOTIFY_CLIENT_ID') ?? ''
+const SPOTIFY_CLIENT_SECRET = Deno.env.get('SPOTIFY_CLIENT_SECRET') ?? ''
 
 serve(async (req) => {
   console.log('🔧 Spotify Sync Function called')
@@ -40,7 +40,10 @@ serve(async (req) => {
     const { userId, syncType } = await req.json()
 
     if (!userId || !syncType) {
-      throw new Error('Missing required parameters: userId, syncType')
+      return new Response(
+        JSON.stringify({ success: false, processed: 0, failed: 1, error: 'Missing required parameters: userId, syncType' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
     console.log('🔧 Getting user Spotify connection')
@@ -52,38 +55,46 @@ serve(async (req) => {
       .single()
 
     if (connectionError || !connection) {
-      throw new Error('Spotify connection not found')
+      return new Response(
+        JSON.stringify({ success: false, processed: 0, failed: 1, error: 'Spotify connection not found' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
     console.log('🔧 Checking token expiration')
     // Check if token is expired and refresh if needed
     let accessToken = connection.access_token
     if (new Date() > new Date(connection.token_expires_at)) {
-      console.log('🔧 Token expired, refreshing...')
-      const spotifyApiForRefresh = new SpotifyWebApi({
-        clientId: SPOTIFY_CLIENT_ID,
-        clientSecret: SPOTIFY_CLIENT_SECRET,
-        refreshToken: connection.refresh_token
+      console.log('🔧 Token expired, refreshing via fetch...')
+      if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
+        throw new Error('Spotify client credentials are not configured')
+      }
+      const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Basic ' + btoa(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`)
+        },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          refresh_token: connection.refresh_token
+        })
       })
-
-      const tokenData = await spotifyApiForRefresh.refreshAccessToken()
-      accessToken = tokenData.body.access_token
-
+      if (!tokenResponse.ok) {
+        const errText = await tokenResponse.text()
+        throw new Error(`Failed to refresh token: ${tokenResponse.status} ${errText}`)
+      }
+      const tokenJson = await tokenResponse.json()
+      accessToken = tokenJson.access_token
       // Update the connection
       await supabaseClient
         .from('spotify_connections')
         .update({
           access_token: accessToken,
-          token_expires_at: new Date(Date.now() + tokenData.body.expires_in * 1000)
+          token_expires_at: new Date(Date.now() + tokenJson.expires_in * 1000)
         })
         .eq('user_id', userId)
     }
-
-    console.log('🔧 Initializing Spotify API')
-    // Initialize Spotify API
-    const spotifyApi = new SpotifyWebApi({
-      accessToken: accessToken
-    })
 
     let syncResult
 
@@ -91,13 +102,13 @@ serve(async (req) => {
     // Execute sync based on type
     switch (syncType) {
       case 'artist_profile':
-        syncResult = await syncArtistProfile(supabaseClient, spotifyApi, userId)
+        syncResult = await syncArtistProfile(supabaseClient, accessToken, userId)
         break
       case 'artist_songs':
-        syncResult = await syncArtistSongs(supabaseClient, spotifyApi, userId)
+        syncResult = await syncArtistSongs(supabaseClient, accessToken, userId)
         break
       case 'artist_albums':
-        syncResult = await syncArtistAlbums(supabaseClient, spotifyApi, userId)
+        syncResult = await syncArtistAlbums(supabaseClient, accessToken, userId)
         break
       default:
         throw new Error('Invalid sync type. Must be: artist_profile, artist_songs, or artist_albums')
@@ -136,7 +147,7 @@ serve(async (req) => {
         error: error.message 
       }),
       { 
-        status: 400, 
+        status: 200, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
     )
@@ -144,21 +155,27 @@ serve(async (req) => {
 })
 
 // Sync artist profile
-async function syncArtistProfile(supabase: any, spotifyApi: any, userId: string) {
+async function syncArtistProfile(supabase: any, accessToken: string, userId: string) {
   try {
     console.log('Syncing artist profile for user:', userId)
-    
-    const profile = await spotifyApi.getMe()
+    const profileResponse = await fetch('https://api.spotify.com/v1/me', {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    })
+    if (!profileResponse.ok) {
+      const errText = await profileResponse.text()
+      throw new Error(`Failed to fetch profile: ${profileResponse.status} ${errText}`)
+    }
+    const profile = await profileResponse.json()
     
     // Update or insert artist record
     const { error } = await supabase
       .from('artists')
       .upsert({
         user_id: userId,
-        name: profile.body.display_name,
-        avatar_url: profile.body.images?.[0]?.url,
-        spotify_id: profile.body.id,
-        bio: `Spotify Artist: ${profile.body.display_name}`,
+        name: profile.display_name,
+        avatar_url: profile.images?.[0]?.url,
+        spotify_id: profile.id,
+        bio: `Spotify Artist: ${profile.display_name}`,
         verified: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -180,17 +197,30 @@ async function syncArtistProfile(supabase: any, spotifyApi: any, userId: string)
 }
 
 // Sync artist songs
-async function syncArtistSongs(supabase: any, spotifyApi: any, userId: string) {
+async function syncArtistSongs(supabase: any, accessToken: string, userId: string) {
   try {
     console.log('Syncing artist songs for user:', userId)
-    
-    const profile = await spotifyApi.getMe()
-    const tracks = await spotifyApi.getArtistTopTracks(profile.body.id, 'TR')
+    const meResp = await fetch('https://api.spotify.com/v1/me', {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    })
+    if (!meResp.ok) {
+      const errText = await meResp.text()
+      throw new Error(`Failed to fetch profile: ${meResp.status} ${errText}`)
+    }
+    const me = await meResp.json()
+    const tracksResp = await fetch(`https://api.spotify.com/v1/artists/${me.id}/top-tracks?market=TR`, {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    })
+    if (!tracksResp.ok) {
+      const errText = await tracksResp.text()
+      throw new Error(`Failed to fetch top tracks: ${tracksResp.status} ${errText}`)
+    }
+    const tracks = await tracksResp.json()
     
     let processed = 0
     let failed = 0
 
-    for (const track of tracks.body.tracks) {
+    for (const track of tracks.tracks) {
       try {
         // Check if song already exists
         const { data: existingSong } = await supabase
@@ -243,20 +273,30 @@ async function syncArtistSongs(supabase: any, spotifyApi: any, userId: string) {
 }
 
 // Sync artist albums
-async function syncArtistAlbums(supabase: any, spotifyApi: any, userId: string) {
+async function syncArtistAlbums(supabase: any, accessToken: string, userId: string) {
   try {
     console.log('Syncing artist albums for user:', userId)
-    
-    const profile = await spotifyApi.getMe()
-    const albums = await spotifyApi.getArtistAlbums(profile.body.id, {
-      include_groups: 'album,single',
-      limit: 50
+    const meResp = await fetch('https://api.spotify.com/v1/me', {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
     })
+    if (!meResp.ok) {
+      const errText = await meResp.text()
+      throw new Error(`Failed to fetch profile: ${meResp.status} ${errText}`)
+    }
+    const me = await meResp.json()
+    const albumsResp = await fetch(`https://api.spotify.com/v1/artists/${me.id}/albums?include_groups=album,single&limit=50`, {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    })
+    if (!albumsResp.ok) {
+      const errText = await albumsResp.text()
+      throw new Error(`Failed to fetch albums: ${albumsResp.status} ${errText}`)
+    }
+    const albums = await albumsResp.json()
     
     let processed = 0
     let failed = 0
 
-    for (const album of albums.body.items) {
+    for (const album of albums.items) {
       try {
         // Check if album already exists
         const { data: existingAlbum } = await supabase

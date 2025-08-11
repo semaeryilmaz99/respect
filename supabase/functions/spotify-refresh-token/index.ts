@@ -1,6 +1,6 @@
+/* eslint-disable */
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import SpotifyWebApi from 'https://esm.sh/spotify-web-api-node@5.0.2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,9 +9,9 @@ const corsHeaders = {
   'Access-Control-Max-Age': '86400',
 }
 
-// Environment variables - Doğrudan tanımlanmış
-const SPOTIFY_CLIENT_ID = '0c57904463b9424f88e33d3e644e16da'
-const SPOTIFY_CLIENT_SECRET = 'your_spotify_client_secret_here' // Gerçek Client Secret'ınızı buraya yazın
+// Environment variables
+const SPOTIFY_CLIENT_ID = Deno.env.get('SPOTIFY_CLIENT_ID') ?? ''
+const SPOTIFY_CLIENT_SECRET = Deno.env.get('SPOTIFY_CLIENT_SECRET') ?? ''
 
 serve(async (req) => {
   console.log('🔧 Spotify Refresh Token Function called')
@@ -43,20 +43,31 @@ serve(async (req) => {
       throw new Error('Missing required parameters: userId, refreshToken')
     }
 
-    console.log('🔧 Initializing Spotify API')
-    // Initialize Spotify API
-    const spotifyApi = new SpotifyWebApi({
-      clientId: SPOTIFY_CLIENT_ID,
-      clientSecret: SPOTIFY_CLIENT_SECRET,
-      refreshToken: refreshToken
+    if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET) {
+      throw new Error('Spotify client credentials are not configured')
+    }
+
+    console.log('🔧 Refreshing access token via fetch')
+    const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + btoa(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`)
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken
+      })
     })
 
-    console.log('🔧 Refreshing access token')
-    // Refresh the access token
-    const tokenData = await spotifyApi.refreshAccessToken()
-    
-    const newAccessToken = tokenData.body.access_token
-    const newExpiresIn = tokenData.body.expires_in
+    if (!tokenResponse.ok) {
+      const errText = await tokenResponse.text()
+      throw new Error(`Failed to refresh token: ${tokenResponse.status} ${errText}`)
+    }
+
+    const tokenJson = await tokenResponse.json()
+    const newAccessToken = tokenJson.access_token
+    const newExpiresIn = tokenJson.expires_in
 
     console.log('🔧 Updating connection in database')
     // Update the connection in database
