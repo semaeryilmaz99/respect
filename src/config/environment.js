@@ -10,6 +10,7 @@ const config = {
   
   // Authentication
   JWT_SECRET: import.meta.env.VITE_JWT_SECRET || 'dev-secret-key',
+
   SPOTIFY_CLIENT_ID: import.meta.env.VITE_SPOTIFY_CLIENT_ID || 'a476b583cd5841a892a0719ccd1b5612',
   SPOTIFY_CLIENT_SECRET: import.meta.env.VITE_SPOTIFY_CLIENT_SECRET || '14437e6580db4d9f8ab88b98181d6ae8',
   SPOTIFY_REDIRECT_URI: import.meta.env.VITE_SPOTIFY_REDIRECT_URI || 'https://ghbsezyszcrzqezoanav.supabase.co/auth/v1/callback',

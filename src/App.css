@@ -669,7 +669,7 @@ html {
     top: 110px !important;
     right: 100px !important;
     left: auto !important;
-    width: 350px !important;
+    width: 400px !important;
     height: calc(100vh - 80px) !important;
     border-radius: 16px !important;
     border: 2px solid #fbdb3a !important;
@@ -681,6 +681,311 @@ html {
 
   .artist-page .real-time-chat.closed {
     height: 60px;
+  }
+
+  /* Desktop Artist Page Chat Content Height - Match RealTime Chat Open Height */
+  .artist-page .real-time-chat .chat-content {
+    height: calc(100vh - 80px - 60px - 80px) !important; /* Total height minus header, toggle, and input container */
+    display: flex !important;
+    flex-direction: column !important;
+    padding-bottom: 80px !important; /* Space for fixed input container */
+  }
+
+  .artist-page .real-time-chat.closed .chat-content {
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Desktop Artist Page Chat Input Container - Hide when chat is closed */
+  .artist-page .real-time-chat.closed .chat-input-container {
+    display: none !important;
+  }
+
+  /* Desktop Artist Page Chat Messages - Flexible Height */
+  .artist-page .real-time-chat .chat-messages {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    min-height: 0 !important;
+    padding: 16px !important;
+    padding-bottom: 20px !important; /* Extra padding for better scroll experience */
+    max-height: none !important; /* Ensure no height restrictions */
+  }
+
+  /* Desktop Artist Page Chat Input Container - Fixed at Bottom */
+  .artist-page .real-time-chat .chat-input-container {
+    position: fixed !important;
+    bottom: 0px !important;
+    width: 350px !important;
+    padding: 16px !important;
+    border-top: 1px solid rgba(251, 219, 58, 0.3) !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    border-radius: 0 0 16px 16px !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1) !important;
+    z-index: 1001 !important;
+  }
+
+  /* Desktop Artist Page Chat Messages Scrollbar Styling */
+  .artist-page .real-time-chat .chat-messages::-webkit-scrollbar {
+    width: 6px !important;
+  }
+
+  .artist-page .real-time-chat .chat-messages::-webkit-scrollbar-track {
+    background: rgba(251, 219, 58, 0.1) !important;
+    border-radius: 3px !important;
+  }
+
+  .artist-page .real-time-chat .chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(251, 219, 58, 0.5) !important;
+    border-radius: 3px !important;
+  }
+
+  .artist-page .real-time-chat .chat-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(251, 219, 58, 0.7) !important;
+  }
+
+  /* Desktop Artist Page Chat Message Items - Optimized for New Height */
+  .artist-page .real-time-chat .chat-message {
+    margin-bottom: 16px !important;
+    padding: 12px !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid rgba(251, 219, 58, 0.2) !important;
+  }
+
+  .artist-page .real-time-chat .chat-message:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  /* Desktop Artist Page Chat Message Avatar - Optimized Size */
+  .artist-page .real-time-chat .message-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    margin-right: 12px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .artist-page .real-time-chat .message-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+  }
+
+  /* Desktop Artist Page Chat Message Content - Better Layout */
+  .artist-page .real-time-chat .message-content {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .artist-page .real-time-chat .message-sender {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #1b262e !important;
+    margin-bottom: 4px !important;
+  }
+
+  .artist-page .real-time-chat .message-text {
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    color: #333 !important;
+    margin-bottom: 6px !important;
+    word-wrap: break-word !important;
+  }
+
+  .artist-page .real-time-chat .message-time {
+    font-size: 12px !important;
+    color: #666 !important;
+    opacity: 0.8 !important;
+  }
+
+  /* Desktop Artist Page Chat Input Elements - Optimized for New Height */
+  .artist-page .real-time-chat .chat-input-avatar {
+    width: 36px !important;
+    height: 36px !important;
+    margin-right: 12px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .artist-page .real-time-chat .chat-input-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+  }
+
+  .artist-page .real-time-chat .chat-input {
+    flex: 1 !important;
+    height: 40px !important;
+    padding: 8px 12px !important;
+    border: 1px solid rgba(251, 219, 58, 0.3) !important;
+    border-radius: 20px !important;
+    font-size: 14px !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: #1b262e !important;
+  }
+
+  .artist-page .real-time-chat .chat-input:focus {
+    outline: none !important;
+    border-color: #fbdb3a !important;
+    box-shadow: 0 0 0 2px rgba(251, 219, 58, 0.2) !important;
+  }
+
+  .artist-page .real-time-chat .send-button {
+    height: 40px !important;
+    padding: 8px 16px !important;
+    background: linear-gradient(135deg, #fbdb3a 0%, #f8a61d 100%) !important;
+    border: none !important;
+    border-radius: 20px !important;
+    color: #1b262e !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    flex-shrink: 0 !important;
+  }
+
+  .artist-page .real-time-chat .send-button:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(251, 219, 58, 0.4) !important;
+  }
+
+  .artist-page .real-time-chat .send-button:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Desktop Artist Page Chat Loading State - Optimized */
+  .artist-page .real-time-chat .chat-loading {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    color: #666 !important;
+    font-size: 14px !important;
+  }
+
+  /* Desktop Artist Page Chat Toggle Header - Better Styling */
+  .artist-page .real-time-chat .section-title.chat-toggle {
+    height: 60px !important;
+    padding: 0 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    background: linear-gradient(135deg, #fbdb3a 0%, #f8a61d 100%) !important;
+    color: #1b262e !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    border-radius: 16px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    text-align: center !important;
+  }
+
+  /* Desktop Artist Page Chat Toggle Text - Center Alignment */
+  .artist-page .real-time-chat .section-title.chat-toggle::before {
+    content: '' !important;
+    flex: 1 !important;
+  }
+
+  .artist-page .real-time-chat .section-title.chat-toggle::after {
+    content: '' !important;
+    flex: 1 !important;
+  }
+
+  .artist-page .real-time-chat .section-title.chat-toggle:hover {
+    background: linear-gradient(135deg, #f8a61d 0%, #fbdb3a 100%) !important;
+  }
+
+  .artist-page .real-time-chat .toggle-icon {
+    font-size: 18px !important;
+    transition: transform 0.2s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .artist-page .real-time-chat .toggle-icon.open {
+    transform: rotate(180deg) !important;
+  }
+
+  /* Desktop Artist Page Chat Messages - Override Global Max-Height */
+  .artist-page .real-time-chat .chat-messages {
+    max-height: none !important; /* Override global 150px limit */
+    height: auto !important; /* Allow full height usage */
+  }
+
+  /* Desktop Artist Page Recent Supporters - Reduced Height */
+  .artist-page .unified-section.recent-supporters-wide {
+    height: 300px !important; /* Reduced from default 400px */
+  }
+
+  .artist-page .unified-section.recent-supporters-wide .recent-supporters {
+    height: 240px !important; /* Reduced content area height */
+  }
+
+  /* Desktop Artist Page Recent Supporters Section Title - Center Alignment */
+  .artist-page .unified-section.recent-supporters-wide .section-title {
+    text-align: center !important;
+    justify-content: center !important;
+    border-bottom: 2px solid #f69f17 !important;
+  }
+
+  /* Desktop Artist Page Top Supporters - Enhanced Slider */
+  .artist-page .unified-section.top-supporters-fixed .slider-supporters {
+    border-top: 2px solid rgba(251, 219, 58, 0.4) !important;
+    padding-top: 20px !important;
+  }
+
+  .artist-page .unified-section.top-supporters-fixed .slider-supporters-grid {
+    animation: slideSupportersDesktop 20s linear infinite !important;
+    gap: 24px !important;
+  }
+
+  .artist-page .unified-section.top-supporters-fixed .slider-supporters {
+    height: auto !important; /* Desktop'ta otomatik yükseklik */
+    flex: 1 !important; /* Kalan alanı kapla */
+    min-height: 0 !important; /* Minimum yükseklik sınırı */
+  }
+
+  @keyframes slideSupportersDesktop {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-60%);
+    }
+  }
+
+  /* Desktop Artist Page Recent Supporters - Enhanced Slider */
+  .artist-page .unified-section.recent-supporters-wide .recent-supporters {
+    overflow: hidden !important;
+    position: relative !important;
+  }
+
+  .artist-page .unified-section.recent-supporters-wide .recent-supporters-grid {
+    animation: slideSupporterDesktop 25s linear infinite !important;
+    width: max-content !important;
+    gap: 24px !important;
+  }
+
+  /* Desktop-specific sliding animation */
+  @keyframes slideSupporterDesktop {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-60%);
+    }
+  }
+
+  /* Desktop hover pause effect */
+  .artist-page .unified-section.recent-supporters-wide .recent-supporters:hover .recent-supporters-grid {
+    animation-play-state: paused !important;
   }
   
   /* Desktop Artist Page Unified Sections Layout */
@@ -715,7 +1020,7 @@ html {
     position: fixed;
     left: 100px;
     top: 110px;
-    width: 350px;
+    width: 400px;
     height: calc(100vh - 80px);
     z-index: 1000;
     flex: none;
@@ -790,6 +1095,8 @@ html {
     border: 1px solid #e9ecef;
     border-radius: 8px;
     background: #f8f9fa;
+    display: flex !important; /* Flexbox layout */
+    flex-direction: column !important; /* Dikey düzen */
   }
 
   /* Fixed Top Supporters Content Area */
@@ -801,6 +1108,8 @@ html {
     border: 1px solid #e9ecef;
     border-radius: 8px;
     background: #f8f9fa;
+    display: flex !important; /* Flexbox layout */
+    flex-direction: column !important; /* Dikey düzen */
   }
 
   /* Custom scrollbar styling */
@@ -1026,17 +1335,33 @@ html {
 /* Top Supporters Styles */
 .top-supporters {
   margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Tüm içeriği ortala */
+  width: 100%;
+  flex: 1 !important; /* Kalan alanı kapla */
+  min-height: 0 !important; /* Minimum yükseklik sınırı */
 }
 
 .supporters-list {
   padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Supporter item'ları yatayda ortala */
+  width: 100%;
+  flex: 1 !important; /* Kalan alanı kapla */
+  min-height: 0 !important; /* Minimum yükseklik sınırı */
 }
 
 .supporter-item {
   display: flex;
   align-items: center;
-  padding: 12px 0;
+  padding: 8px 0; /* Padding'i azalt */
   border-bottom: 1px solid #f0f0f0;
+  gap: 8px; /* Supporter öğeleri arasındaki mesafeyi azalt */
+  justify-content: center; /* Supporter öğelerini ortada konumlandır */
+  width: 100%; /* Tam genişlik */
+  max-width: 280px; /* Maksimum genişlik sınırı */
 }
 
 .supporter-item:last-child {
@@ -1048,31 +1373,50 @@ html {
   font-weight: 600;
   color: #999;
   width: 24px;
-  margin-right: 16px;
+  margin-right: 4px; /* Margin'i daha da azalt */
+  flex-shrink: 0;
+  text-align: center; /* Number'ı ortala */
 }
 
 .supporter-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* Supporter name ve respect arasındaki mesafeyi azalt */
+  max-width: 100px; /* Supporter info genişliğini daha da azalt */
+  min-width: 80px; /* Minimum genişliği de azalt */
 }
 
 .supporter-name {
   font-size: 16px;
   font-weight: 500;
   color: #1b262e;
-  margin: 0 0 2px 0;
+  margin: 0;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .supporter-respect {
   font-size: 12px;
   color: #666;
   margin: 0;
+  line-height: 1.1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .supporter-image {
-  width: 70px;
-  height: 70px;
-  border-radius: 12px;
+  width: 60px; /* Boyutu azalt */
+  height: 60px; /* Boyutu azalt */
+  border-radius: 10px; /* Border radius'u da azalt */
   overflow: hidden;
+  flex-shrink: 0;
+  margin-left: 4px; /* Sol margin ekle */
 }
 
 .supporter-image img {
@@ -1084,19 +1428,168 @@ html {
 /* Recent Supporters Styles */
 .recent-supporters {
   margin-bottom: 24px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Top Supporters - Fixed + Slider Layout */
+.fixed-supporters {
+  margin-bottom: 16px;
+  border: 2px solid #fbdb3a; /* Respect sarısı border */
+  border-radius: 12px; /* Yuvarlatılmış köşeler */
+  padding: 16px; /* İç boşluk */
+  box-shadow: 0 4px 12px rgba(51, 51, 51, 0.3); /* #333 gölge */
+  background: rgba(255, 255, 255, 0.95); /* Hafif şeffaf arka plan */
+  position: relative; /* Gölge için position */
+}
+
+/* Fixed supporters içindeki son supporter item'ın border'ını kaldır */
+.fixed-supporters .supporter-item:last-child {
+  border-bottom: none;
+}
+
+/* Fixed supporters hover efekti */
+.fixed-supporters:hover {
+  box-shadow: 0 6px 20px rgba(51, 51, 51, 0.4); /* Hover'da daha belirgin gölge */
+  transform: translateY(-2px); /* Hafif yukarı hareket */
+  transition: all 0.3s ease; /* Smooth geçiş */
+}
+
+/* Fixed supporters içindeki supporter item'lar için özel styling */
+.fixed-supporters .supporter-item {
+  background: rgba(255, 255, 255, 0.8); /* Hafif şeffaf arka plan */
+  border-radius: 8px; /* Yuvarlatılmış köşeler */
+  margin-bottom: 8px; /* Alt margin */
+  padding: 12px 16px; /* İç boşluk artırıldı */
+}
+
+.fixed-supporters .supporter-item:last-child {
+  margin-bottom: 0; /* Son item'da alt margin yok */
+}
+
+.slider-supporters {
+  overflow: hidden;
+  position: relative;
+  border-top: 1px solid rgba(251, 219, 58, 0.3);
+  padding-top: 16px;
+  height: 200px; /* Slider için sabit yükseklik */
+}
+
+.slider-supporters-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+  overflow-y: hidden;
+  animation: slideSupporters 15s linear infinite;
+  height: max-content;
+  transition: transform 0.3s ease;
+}
+
+.slider-supporters-grid .supporter-item {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  width: 100%;
+}
+
+.slider-supporters-grid .supporter-item:hover {
+  transform: scale(1.05);
+}
+
+/* Auto-scrolling animation for top supporters slider */
+@keyframes slideSupporters {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+/* Pause animation on hover */
+.slider-supporters:hover .slider-supporters-grid {
+  animation-play-state: paused;
 }
 
 .recent-supporters-grid {
   display: flex;
   gap: 20px;
   padding: 0 16px;
-  overflow-x: auto;
+  overflow-x: hidden;
+  animation: slideSupporter 20s linear infinite;
+  width: max-content;
+}
+
+/* Auto-scrolling animation for recent supporters */
+@keyframes slideSupporter {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Pause animation on hover */
+.recent-supporters:hover .recent-supporters-grid {
+  animation-play-state: paused;
+}
+
+/* Mobile-specific slider enhancements */
+@media (max-width: 768px) {
+  .recent-supporters-grid {
+    animation: slideSupporterMobile 15s linear infinite;
+    gap: 16px;
+  }
+
+  @keyframes slideSupporterMobile {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-40%);
+    }
+  }
+
+  /* Touch-friendly pause on mobile */
+  .recent-supporters:active .recent-supporters-grid {
+    animation-play-state: paused;
+  }
+
+  /* Mobile Top Supporters Slider */
+  .slider-supporters-grid {
+    animation: slideSupportersMobile 12s linear infinite !important;
+    gap: 16px !important;
+  }
+
+  .slider-supporters {
+    height: 350px !important; /* Mobile için daha büyük slider alanı */
+  }
+
+  @keyframes slideSupportersMobile {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-45%);
+    }
+  }
+
+  /* Touch-friendly pause on mobile */
+  .slider-supporters:active .slider-supporters-grid {
+    animation-play-state: paused;
+  }
 }
 
 .recent-supporter-item {
   flex-shrink: 0;
   text-align: center;
   width: 100px;
+  transition: transform 0.3s ease;
+}
+
+.recent-supporter-item:hover {
+  transform: scale(1.05);
 }
 
 .recent-supporter-image {
@@ -1792,9 +2285,16 @@ html {
 .song-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 0;
+  gap: 16px;
+  padding: 16px 0;
   border-bottom: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.song-item:hover {
+  background-color: rgba(251, 219, 58, 0.05);
+  transform: translateX(4px);
 }
 
 .song-item:last-child {
@@ -1802,11 +2302,17 @@ html {
 }
 
 .song-cover {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
   overflow: hidden;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.song-item:hover .song-cover {
+  transform: scale(1.05);
 }
 
 .song-cover img {
@@ -1815,17 +2321,226 @@ html {
   object-fit: cover;
 }
 
+.song-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
 .song-title {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   color: #1b262e;
-  margin: 0 0 2px 0;
+  margin: 0;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .song-artist {
-  font-size: 12px;
+  font-size: 14px;
   color: #666;
   margin: 0;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.song-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.song-duration {
+  font-size: 12px;
+  color: #999;
+  font-weight: 500;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.song-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .songs-container {
+    padding: 0 12px;
+  }
+  
+  .song-item {
+    gap: 12px;
+    padding: 12px 0;
+  }
+  
+  .song-cover {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+  }
+  
+  .song-title {
+    font-size: 15px;
+    margin: 0;
+  }
+  
+  .song-artist {
+    font-size: 13px;
+  }
+  
+  .song-stats {
+    gap: 12px;
+  }
+  
+  .song-duration {
+    font-size: 11px;
+    padding: 3px 6px;
+    border-radius: 8px;
+  }
+  
+  .song-actions {
+    margin-left: 8px;
+    gap: 6px;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  .songs-container {
+    padding: 0 8px;
+  }
+  
+  .song-item {
+    gap: 10px;
+    padding: 10px 0;
+  }
+  
+  .song-cover {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+  }
+  
+  .song-title {
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  .song-artist {
+    font-size: 12px;
+  }
+  
+  .song-stats {
+    gap: 8px;
+  }
+  
+  .song-duration {
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 6px;
+  }
+  
+  .song-actions {
+    margin-left: 6px;
+    gap: 4px;
+  }
+}
+
+/* Desktop Optimizations */
+@media (min-width: 1024px) {
+  .songs-container {
+    padding: 0 24px;
+  }
+  
+  .song-item {
+    gap: 20px;
+    padding: 20px 0;
+  }
+  
+  .song-cover {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+  }
+  
+  .song-title {
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  .song-artist {
+    font-size: 15px;
+  }
+  
+  .song-stats {
+    gap: 20px;
+  }
+  
+  .song-duration {
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 16px;
+  }
+  
+  .song-actions {
+    margin-left: 20px;
+    gap: 12px;
+  }
+}
+
+/* Large Desktop Screens */
+@media (min-width: 1400px) {
+  .songs-container {
+    padding: 0 32px;
+  }
+  
+  .song-item {
+    gap: 24px;
+    padding: 24px 0;
+  }
+  
+  .song-cover {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+  }
+  
+  .song-title {
+    font-size: 20px;
+    margin: 0;
+  }
+  
+  .song-artist {
+    font-size: 16px;
+  }
+  
+  .song-stats {
+    gap: 24px;
+  }
+  
+  .song-duration {
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 20px;
+  }
+  
+  .song-actions {
+    margin-left: 24px;
+    gap: 16px;
+  }
 }
 
 /* Bottom Navigation Styles */

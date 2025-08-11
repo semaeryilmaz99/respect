@@ -9,9 +9,11 @@ const corsHeaders = {
   'Access-Control-Max-Age': '86400',
 }
 
+
 // Environment variables
 const SPOTIFY_CLIENT_ID = Deno.env.get('SPOTIFY_CLIENT_ID') ?? ''
 const SPOTIFY_CLIENT_SECRET = Deno.env.get('SPOTIFY_CLIENT_SECRET') ?? ''
+
 
 serve(async (req) => {
   console.log('🔧 Spotify Refresh Token Function called')

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
 import authService from '../api/authService'
+import { supabase } from '../config/supabase'
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -57,12 +58,17 @@ const LoginPage = () => {
       // Use modern spotify auth service
       const { spotifyAuthService } = await import('../api/spotifyAuthService')
       spotifyAuthService.initiateSpotifyLogin()
+
+    // supabase.auth.signInWithOAuth({
+    //     provider: 'spotify',
+    //     redirectTo: 'http://localhost:5173/auth/spotify/callback'
+    //   })
       
     } catch (err) {
       console.error('❌ Spotify login error:', err)
       setError(err.message || 'Spotify ile giriş yapılırken bir hata oluştu')
       setLoading(false)
-    }
+     }
   }
 
   const handleGoogleLogin = async () => {
