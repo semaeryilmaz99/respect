@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { chatManager } from '../utils/realtimeChat'
 import { supabase } from '../config/supabase'
@@ -10,6 +10,7 @@ const RealTimeChat = ({ roomId = 'general', roomType = 'artist' }) => {
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState(null)
+  const chatMessagesRef = useRef(null)
   
   console.log('💬 RealTimeChat props:', { roomId, roomType })
 
@@ -99,6 +100,9 @@ const RealTimeChat = ({ roomId = 'general', roomType = 'artist' }) => {
       console.log('✅ Message sent result:', result)
       setNewMessage('')
       
+      // Mesaj gönderildikten sonra otomatik scroll
+      setTimeout(scrollToBottom, 150)
+      
       // Manuel olarak mesajları yenile (real-time çalışmazsa)
       setTimeout(async () => {
         const { data: updatedMessages, error } = await supabase
@@ -120,6 +124,28 @@ const RealTimeChat = ({ roomId = 'general', roomType = 'artist' }) => {
       console.error('❌ Send message error:', error)
     }
   }
+
+  // Otomatik scroll fonksiyonu - en son mesaja scroll et
+  const scrollToBottom = () => {
+    if (chatMessagesRef.current) {
+      chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight
+    }
+  }
+
+  // Mesajlar değiştiğinde otomatik scroll
+  useEffect(() => {
+    if (messages.length > 0 && isOpen) {
+      // Kısa bir gecikme ile scroll et (DOM güncellemesi için)
+      setTimeout(scrollToBottom, 100)
+    }
+  }, [messages, isOpen])
+
+  // Chat açıldığında da en son mesaja scroll et
+  useEffect(() => {
+    if (isOpen && messages.length > 0) {
+      setTimeout(scrollToBottom, 200)
+    }
+  }, [isOpen, messages.length])
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -155,7 +181,7 @@ const RealTimeChat = ({ roomId = 'general', roomType = 'artist' }) => {
           </div>
         ) : (
           <>
-            <div className="chat-messages">
+            <div className="chat-messages" ref={chatMessagesRef}>
               {messages.map((message) => {
                 const isOwn = currentUser?.id === message.user_id
                 const senderName = message.profiles?.full_name || message.profiles?.username || 'Anonim'
