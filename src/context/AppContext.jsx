@@ -57,8 +57,9 @@ const appReducer = (state, action) => {
       }
       
     case ACTIONS.LOGOUT:
-      localStorage.removeItem(config.STORAGE_KEYS.AUTH_TOKEN)
-      localStorage.removeItem(config.STORAGE_KEYS.USER)
+      // ❌ localStorage kullanma - Supabase session otomatik temizlenir
+      // localStorage.removeItem(config.STORAGE_KEYS.AUTH_TOKEN)
+      // localStorage.removeItem(config.STORAGE_KEYS.USER)
       return {
         ...state,
         user: null,
@@ -81,11 +82,13 @@ const appReducer = (state, action) => {
       return { ...state, error: null }
       
     case ACTIONS.COMPLETE_ONBOARDING:
-      localStorage.setItem(config.STORAGE_KEYS.ONBOARDING_COMPLETED, 'true')
+      // ❌ localStorage kullanma - Supabase user metadata kullan
+      // localStorage.setItem(config.STORAGE_KEYS.ONBOARDING_COMPLETED, 'true')
       return { ...state, onboardingCompleted: true }
       
     case ACTIONS.COMPLETE_PROFILE:
-      localStorage.setItem(config.STORAGE_KEYS.PROFILE_COMPLETED, 'true')
+      // ❌ localStorage kullanma - Supabase user metadata kullan
+      // localStorage.setItem(config.STORAGE_KEYS.PROFILE_COMPLETED, 'true')
       return { ...state, profileCompleted: true }
       
     // UI cases
@@ -96,11 +99,11 @@ const appReducer = (state, action) => {
       return { ...state, sidebarOpen: false }
       
     case ACTIONS.SET_THEME:
-      localStorage.setItem(config.STORAGE_KEYS.THEME, action.payload)
+      // localStorage.setItem(config.STORAGE_KEYS.THEME, action.payload) // Removed localStorage
       return { ...state, theme: action.payload }
       
     case ACTIONS.SET_LANGUAGE:
-      localStorage.setItem(config.STORAGE_KEYS.LANGUAGE, action.payload)
+      // localStorage.setItem(config.STORAGE_KEYS.LANGUAGE, action.payload) // Removed localStorage
       return { ...state, language: action.payload }
       
     // Data cases
@@ -336,7 +339,8 @@ export const useAuth = () => {
   return {
     user: state.user,
     isAuthenticated: state.isAuthenticated,
-    token: state.token,
+    // ❌ token'ı context'te saklama - Supabase session kullan
+    // token: state.token,
     loading: state.loading,
     error: state.error,
     // Auth actions

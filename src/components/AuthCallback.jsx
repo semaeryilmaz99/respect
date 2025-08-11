@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../config/supabase.js'
 import { useAppContext } from '../context/AppContext.jsx'
-import { spotifyAuthService } from '../api/spotifyAuthService.js'
 import LoadingSpinner from './LoadingSpinner.jsx'
 
 const AuthCallback = () => {
@@ -44,25 +43,22 @@ const AuthCallback = () => {
         }
 
         if (data.session) {
-          // Store user data
+          // Store user data - Supabase session kullan, localStorage kullanma
           const user = data.session.user
           const providerToken = data.session.provider_token
           const providerRefreshToken = data.session.provider_refresh_token
-          localStorage.setItem('authToken', data.session.access_token)
-          localStorage.setItem('user', JSON.stringify({
-            id: user.id,
-            email: user.email,
-            name: user.user_metadata?.full_name || user.email,
-            respectBalance: 1000
-          }))
-
-          // Update app context
+          
+          // ❌ localStorage kullanma - Supabase session yeterli
+          // localStorage.setItem('authToken', data.session.access_token)
+          // localStorage.setItem('user', JSON.stringify({...}))
+          
+          // ✅ App context'i güncelle (user ID ve email ile)
           actions.setUser({
             id: user.id,
             email: user.email,
             name: user.user_metadata?.full_name || user.email,
             respectBalance: 1000,
-            token: data.session.access_token
+            // Token'ı context'te saklama, Supabase session kullan
           })
 
           // Complete onboarding if not done
@@ -80,7 +76,7 @@ const AuthCallback = () => {
                 })
                 if (resp.ok) {
                   const profile = await resp.json()
-                  await supabase
+                  const { error: upsertError } = await supabase
                     .from('spotify_connections')
                     .upsert({
                       user_id: user.id,
@@ -89,10 +85,18 @@ const AuthCallback = () => {
                       refresh_token: providerRefreshToken || '',
                       token_expires_at: new Date(Date.now() + 55 * 60 * 1000) // ~55 minutes
                     }, { onConflict: 'user_id' })
+                  
+                  if (upsertError) {
+                    console.error('❌ Spotify connections upsert failed:', upsertError);
+                    // Hata olsa bile kullanıcıyı feed'e yönlendir
+                  } else {
+                    console.log('✅ Spotify connections updated successfully');
+                  }
                 }
               }
             } catch (e) {
-              console.warn('spotify_connections upsert failed:', e)
+              console.warn('⚠️ Spotify connections upsert failed:', e);
+              // Hata olsa bile kullanıcıyı feed'e yönlendir
             }
             navigate('/feed')
           } else {
