@@ -75,6 +75,21 @@ serve(async (req) => {
       }
     }
 
+    // Tables with different foreign key column names
+    try {
+      console.log('🧹 Deleting from feed_items by user_id...')
+      await supabaseAdmin.from('feed_items').delete().eq('user_id', user.id)
+    } catch (e) {
+      console.warn('⚠️ Cleanup warning on feed_items:', e)
+    }
+
+    try {
+      console.log('🧹 Deleting from respect_transactions by from_user_id...')
+      await supabaseAdmin.from('respect_transactions').delete().eq('from_user_id', user.id)
+    } catch (e) {
+      console.warn('⚠️ Cleanup warning on respect_transactions:', e)
+    }
+
     // Artists table may use user ownership
     try {
       console.log('🧹 Deleting from artists by user ownership...')
