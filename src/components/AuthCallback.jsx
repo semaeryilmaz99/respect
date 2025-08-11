@@ -94,7 +94,7 @@ const AuthCallback = () => {
             } catch (e) {
               console.warn('spotify_connections upsert failed:', e)
             }
-            navigate('/artist/dashboard')
+            navigate('/feed')
           } else {
             navigate('/feed')
           }

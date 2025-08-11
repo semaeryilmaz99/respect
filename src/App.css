@@ -2384,6 +2384,9 @@ html {
   .song-item {
     gap: 12px;
     padding: 12px 0;
+    display: flex !important; /* Flexbox layout */
+    flex-direction: row !important; /* Yatay düzen */
+    align-items: center !important; /* Dikey ortala */
   }
   
   .song-cover {
@@ -2426,6 +2429,9 @@ html {
   .song-item {
     gap: 10px;
     padding: 10px 0;
+    display: flex !important; /* Flexbox layout */
+    flex-direction: row !important; /* Yatay düzen */
+    align-items: center !important; /* Dikey ortala */
   }
   
   .song-cover {
@@ -2468,12 +2474,27 @@ html {
   .song-item {
     gap: 20px;
     padding: 20px 0;
+    display: flex !important; /* Flexbox layout */
+    flex-direction: column !important; /* Dikey düzen */
+    align-items: center !important; /* Sola hizala */
   }
   
   .song-cover {
     width: 64px;
     height: 64px;
     border-radius: 16px;
+  }
+  
+  /* Desktop için song-cover ve song-info yan yana */
+  .song-item .song-cover,
+  .song-item .song-info {
+    display: inline-block !important;
+    vertical-align: top !important;
+  }
+  
+  .song-item .song-info {
+    margin-left: 20px !important; /* Song cover'dan sonra boşluk */
+    flex: 1 !important; /* Kalan alanı kapla */
   }
   
   .song-title {
@@ -2496,8 +2517,10 @@ html {
   }
   
   .song-actions {
-    margin-left: 20px;
+    margin-left: 0 !important; /* Sol margin kaldırıldı */
+    margin-top: 16px !important; /* Üst margin eklendi */
     gap: 12px;
+    align-self: flex-start !important; /* Sola hizala */
   }
 }
 
@@ -2510,12 +2533,20 @@ html {
   .song-item {
     gap: 24px;
     padding: 24px 0;
+    display: flex !important; /* Flexbox layout */
+    flex-direction: column !important; /* Dikey düzen */
+    align-items: flex-start !important; /* Sola hizala */
   }
   
   .song-cover {
     width: 72px;
     height: 72px;
     border-radius: 20px;
+  }
+  
+  /* Büyük Desktop için song-cover ve song-info yan yana */
+  .song-item .song-info {
+    margin-left: 24px !important; /* Song cover'dan sonra boşluk */
   }
   
   .song-title {
@@ -2538,8 +2569,10 @@ html {
   }
   
   .song-actions {
-    margin-left: 24px;
+    margin-left: 0 !important; /* Sol margin kaldırıldı */
+    margin-top: 20px !important; /* Üst margin eklendi */
     gap: 16px;
+    align-self: flex-start !important; /* Sola hizala */
   }
 }
 

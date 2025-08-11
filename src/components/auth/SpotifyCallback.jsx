@@ -36,9 +36,9 @@ const SpotifyCallback = () => {
         console.log('✅ Spotify authentication successful');
         setSuccess(true);
         
-        // 3 saniye sonra yönlendir
+        // 3 saniye sonra feed sayfasına yönlendir
         setTimeout(() => {
-          navigate('/artist/dashboard');
+          navigate('/feed');
         }, 3000);
         
       } catch (err) {

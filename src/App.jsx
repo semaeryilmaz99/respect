@@ -24,7 +24,7 @@ import UserPage from './components/UserPage'
 import ProfileSettingsPage from './components/ProfileSettingsPage'
 import ArtistsPage from './components/ArtistsPage'
 import SongsPage from './components/SongsPage'
-import ArtistDashboard from './components/artist/ArtistDashboard'
+
 import Sidebar from './components/Sidebar'
 import ProtectedRoute from './components/ProtectedRoute'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -130,11 +130,7 @@ function App() {
                       <SongsPage />
                     </ProtectedRoute>
                   } />
-                  <Route path="/artist/dashboard" element={
-                    <ProtectedRoute>
-                      <ArtistDashboard />
-                    </ProtectedRoute>
-                  } />
+
                 
                 {/* Default redirects */}
                 <Route path="/" element={<Navigate to="/onboarding" replace />} />

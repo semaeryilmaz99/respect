@@ -80,8 +80,6 @@ const SongsList = ({ artistId: propArtistId }) => {
             
             <div className="song-info">
               <h4 className="song-title">{song.title}</h4>
-              <p className="song-album">{song.album}</p>
-              <p className="song-duration">{song.duration}</p>
               <div className="song-stats">
                 <span className="song-respect">{song.total_respect || 0} Respect</span>
                 <span className="song-favorites">{song.favorites_count || 0} Favori</span>
