@@ -18,17 +18,25 @@ const ArtistDashboard = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUser(user);
-        const { connected } = await spotifyAuthService.checkSpotifyConnection(user.id);
-        setSpotifyConnected(connected);
-        
-        if (connected) {
+        // If the user logged in via Spotify OAuth, consider them connected for UI purposes
+        const provider = user.app_metadata?.provider;
+        let isConnected = false;
+        if (provider === 'spotify') {
+          isConnected = true;
+        } else {
+          const { connected } = await spotifyAuthService.checkSpotifyConnection(user.id);
+          isConnected = connected;
+        }
+        setSpotifyConnected(isConnected);
+
+        if (isConnected) {
           // Spotify bağlantı bilgilerini getir
           const { data: connection } = await supabase
             .from('spotify_connections')
             .select('*')
             .eq('user_id', user.id)
-            .single();
-          
+            .maybeSingle();
+
           if (connection) {
             setSpotifyProfile({
               display_name: user.user_metadata?.display_name || 'Spotify Artist',

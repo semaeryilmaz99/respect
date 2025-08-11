@@ -29,18 +29,27 @@ serve(async (req) => {
 
   try {
     console.log('🔧 Initializing Supabase client')
-    // Initialize Supabase client
+    // Initialize Supabase client with caller auth header forwarded
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: {
+            Authorization: req.headers.get('Authorization') || ''
+          }
+        }
+      }
     )
 
     console.log('🔧 Getting request body')
-    // Get request body
     const { code } = await req.json()
 
     if (!code) {
-      throw new Error('Authorization code is required')
+      return new Response(
+        JSON.stringify({ success: false, error: 'Authorization code is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
     if (!SPOTIFY_CLIENT_ID || !SPOTIFY_CLIENT_SECRET || !SPOTIFY_REDIRECT_URI) {
@@ -85,37 +94,20 @@ serve(async (req) => {
 
     const profile = await profileResponse.json()
 
-    console.log('🔧 Checking if user exists in Supabase')
-    // Check if user already exists in Supabase
+    console.log('🔧 Getting current authenticated user from request')
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
-
-    let currentUser = user
-
     if (userError || !user) {
-      console.log('🔧 Creating new user')
-      // Create new user
-      const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-        email: profile.email,
-        password: `spotify_${profile.id}_${Date.now()}`,
-        options: {
-          data: {
-            display_name: profile.display_name,
-            spotify_id: profile.id,
-            avatar_url: profile.images?.[0]?.url
-          }
-        }
-      })
-
-      if (authError) throw authError
-      currentUser = authData.user
+      return new Response(
+        JSON.stringify({ success: false, error: 'Unauthorized: user not authenticated' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
     }
 
     console.log('🔧 Saving Spotify connection')
-    // Save Spotify connection
     const { error: connectionError } = await supabaseClient
       .from('spotify_connections')
       .upsert({
-        user_id: currentUser.id,
+        user_id: user.id,
         spotify_user_id: profile.id,
         access_token: accessToken,
         refresh_token: refreshToken,
@@ -127,11 +119,10 @@ serve(async (req) => {
     if (connectionError) throw connectionError
 
     console.log('🔧 Creating/updating artist profile')
-    // Create or update artist profile
     const { error: artistError } = await supabaseClient
       .from('artists')
       .upsert({
-        user_id: currentUser.id,
+        user_id: user.id,
         name: profile.display_name,
         avatar_url: profile.images?.[0]?.url,
         spotify_id: profile.id,
@@ -145,11 +136,7 @@ serve(async (req) => {
 
     console.log('🔧 Success! Returning response')
     return new Response(
-      JSON.stringify({
-        user: currentUser,
-        profile,
-        success: true
-      }),
+      JSON.stringify({ user, profile, success: true }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200

@@ -2,8 +2,8 @@ import { supabase } from '../config/supabase';
 import config from '../config/environment';
 
 export const spotifyAuthService = {
-  // Spotify ile giriş başlat
-  initiateSpotifyLogin: () => {
+  // Spotify ile giriş: Supabase OAuth üzerinden
+  initiateSpotifyLogin: async () => {
     const scopes = [
       'user-read-private',
       'user-read-email',
@@ -11,40 +11,30 @@ export const spotifyAuthService = {
       'user-read-recently-played',
       'playlist-read-private',
       'playlist-read-collaborative'
-    ];
-    
-    const params = new URLSearchParams({
-      client_id: config.SPOTIFY_CLIENT_ID,
-      response_type: 'code',
-      redirect_uri: config.SPOTIFY_REDIRECT_URI,
-      scope: scopes.join(' '),
-      state: Math.random().toString(36).substring(7)
+    ].join(' ');
+
+    const redirectTo = `${window.location.origin}/auth/callback`;
+
+    console.log('🎵 Starting Supabase OAuth (spotify) with redirectTo:', redirectTo);
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'spotify',
+      options: {
+        redirectTo,
+        scopes
+      }
     });
-    
-    const authUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
-    console.log('🔧 Spotify Auth URL:', authUrl);
-    console.log('🔧 Spotify Client ID:', config.SPOTIFY_CLIENT_ID);
-    console.log('🔧 Spotify Redirect URI:', config.SPOTIFY_REDIRECT_URI);
-    console.log('🔧 Force redeploy for Spotify callback fix');
-    window.location.href = authUrl;
-  },
 
-  // Spotify callback'i işle
-  handleSpotifyCallback: async (code) => {
-    try {
-      // Backend'e authorization code'u gönder
-      const { data, error } = await supabase.functions.invoke('spotify-auth', {
-        body: { code }
-      });
-
-      if (error) throw error;
-
-      return { user: data.user, profile: data.profile, error: null };
-    } catch (error) {
-      console.error('Spotify callback error:', error);
-      return { user: null, profile: null, error };
+    if (error) {
+      console.error('❌ Supabase OAuth start error:', error);
+      throw error;
     }
+
+    return data;
   },
+
+  // Not used when using Supabase OAuth redirect flow
+  handleSpotifyCallback: async (_code) => ({ user: null, profile: null, error: null }),
 
   // Spotify bağlantısını kontrol et
   checkSpotifyConnection: async (userId) => {
@@ -52,8 +42,9 @@ export const spotifyAuthService = {
       const { data, error } = await supabase
         .from('spotify_connections')
         .select('*')
+        .limit(1)
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
       if (error) return { connected: false, data: null, error };
 

@@ -17,16 +17,22 @@ const AuthCallback = () => {
         console.log('🔧 AuthCallback search:', location.search);
         console.log('🔧 AuthCallback full URL:', window.location.href);
         
-        // Check if this is a Spotify callback
+        // Supabase OAuth (Spotify dahil) sonrası buraya dönüyor
         const urlParams = new URLSearchParams(location.search)
-        const code = urlParams.get('code')
         const error = urlParams.get('error')
-        
-        console.log('🔧 Code:', code);
-        console.log('🔧 Error:', error);
-        
-        // Note: Spotify callbacks are now handled by dedicated SpotifyCallback component
-        // This callback handler is only for regular Supabase OAuth (Google, etc.)
+        const errorCode = urlParams.get('error_code')
+        const errorDescription = urlParams.get('error_description')
+        console.log('🔧 OAuth error param:', error)
+        if (error) {
+          // Handle known errors explicitly, then return early
+          if (errorCode === 'provider_email_needs_verification') {
+            console.warn('🔐 Spotify email unverified. Description:', errorDescription)
+            navigate('/login?error=spotify_email_unverified')
+            return
+          }
+          navigate('/login?error=auth_failed')
+          return
+        }
 
         // Handle regular Supabase auth callback
         const { data, error: sessionError } = await supabase.auth.getSession()
@@ -40,6 +46,8 @@ const AuthCallback = () => {
         if (data.session) {
           // Store user data
           const user = data.session.user
+          const providerToken = data.session.provider_token
+          const providerRefreshToken = data.session.provider_refresh_token
           localStorage.setItem('authToken', data.session.access_token)
           localStorage.setItem('user', JSON.stringify({
             id: user.id,
@@ -60,8 +68,36 @@ const AuthCallback = () => {
           // Complete onboarding if not done
           actions.completeOnboarding()
 
-          // Navigate to feed after successful authentication
-          navigate('/feed')
+          // Navigate to dashboard if spotify, otherwise feed
+          const provider = user.app_metadata?.provider
+          if (provider === 'spotify') {
+            // Ensure spotify_connections row exists
+            try {
+              if (providerToken) {
+                // Get Spotify profile to retrieve spotify_user_id
+                const resp = await fetch('https://api.spotify.com/v1/me', {
+                  headers: { Authorization: `Bearer ${providerToken}` }
+                })
+                if (resp.ok) {
+                  const profile = await resp.json()
+                  await supabase
+                    .from('spotify_connections')
+                    .upsert({
+                      user_id: user.id,
+                      spotify_user_id: profile.id,
+                      access_token: providerToken,
+                      refresh_token: providerRefreshToken || '',
+                      token_expires_at: new Date(Date.now() + 55 * 60 * 1000) // ~55 minutes
+                    }, { onConflict: 'user_id' })
+                }
+              }
+            } catch (e) {
+              console.warn('spotify_connections upsert failed:', e)
+            }
+            navigate('/artist/dashboard')
+          } else {
+            navigate('/feed')
+          }
         } else {
           // No session, redirect to login
           navigate('/login')
