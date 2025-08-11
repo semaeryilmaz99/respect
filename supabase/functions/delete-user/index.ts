@@ -102,16 +102,21 @@ serve(async (req) => {
     // If you need to remove storage assets, add logic here.
 
     console.log('✅ User deleted successfully')
-    return new Response(
-      JSON.stringify({ success: true }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    })
   } catch (error) {
     console.error('❌ Delete user error:', error)
-    return new Response(
-      JSON.stringify({ success: false, error: error.message || 'Unknown error', details: String(error) }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    // Always return 200 and include success flag so client doesn't throw FunctionsHttpError
+    return new Response(JSON.stringify({
+      success: false,
+      error: (error as any)?.message || 'Unknown error',
+      details: String(error)
+    }), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    })
   }
 })
 
