@@ -30,6 +30,30 @@ const userService = {
     }
   },
 
+  // Delete account (auth user) via Edge Function
+  deleteAccount: async () => {
+    try {
+      console.log('🗑️ Deleting current user account via Edge Function')
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        method: 'POST',
+        body: {}
+      })
+
+      if (error) {
+        throw error
+      }
+
+      if (!data?.success) {
+        throw new Error(data?.error || 'Hesap silme başarısız oldu')
+      }
+
+      return true
+    } catch (error) {
+      console.error('❌ Delete account error:', error)
+      throw error
+    }
+  },
+
   // Update user profile
   updateProfile: async (userId, profileData) => {
     try {

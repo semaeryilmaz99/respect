@@ -301,6 +301,33 @@ const ProfileSettingsPage = () => {
     }
   }
 
+  // Delete account handler
+  const handleDeleteAccount = async () => {
+    try {
+      const confirmOnce = window.confirm('Hesabınızı kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.')
+      if (!confirmOnce) return
+      const confirmTwice = window.prompt('Onaylamak için "SİL" yazın:')
+      if ((confirmTwice || '').trim().toUpperCase() !== 'SİL') return
+
+      setSaving(true)
+      setMessage('Hesabınız siliniyor...')
+      setMessageType('info')
+
+      await userService.deleteAccount()
+
+      // Clear client session and redirect
+      await supabase.auth.signOut()
+      actions.logout()
+      navigate('/signup')
+    } catch (error) {
+      console.error('Delete account error:', error)
+      setMessage(error.message || 'Hesap silinirken bir hata oluştu.')
+      setMessageType('error')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   if (!user) {
     return <LoadingSpinner />
   }
@@ -516,7 +543,7 @@ const ProfileSettingsPage = () => {
           <div className="settings-section danger-zone">
             
             <div className="danger-options">
-              <button className="danger-btn">
+              <button className="danger-btn" onClick={handleDeleteAccount} disabled={saving}>
                 🗑️ Hesabı Sil
               </button>
             </div>
