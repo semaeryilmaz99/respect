@@ -2285,9 +2285,16 @@ html {
 .song-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 0;
+  gap: 16px;
+  padding: 16px 0;
   border-bottom: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.song-item:hover {
+  background-color: rgba(251, 219, 58, 0.05);
+  transform: translateX(4px);
 }
 
 .song-item:last-child {
@@ -2295,11 +2302,17 @@ html {
 }
 
 .song-cover {
-  width: 48px;
-  height: 48px;
-  border-radius: 8px;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
   overflow: hidden;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.song-item:hover .song-cover {
+  transform: scale(1.05);
 }
 
 .song-cover img {
@@ -2308,17 +2321,226 @@ html {
   object-fit: cover;
 }
 
+.song-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
 .song-title {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   color: #1b262e;
-  margin: 0 0 2px 0;
+  margin: 0;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .song-artist {
-  font-size: 12px;
+  font-size: 14px;
   color: #666;
   margin: 0;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.song-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.song-duration {
+  font-size: 12px;
+  color: #999;
+  font-weight: 500;
+  background: rgba(0, 0, 0, 0.05);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.song-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .songs-container {
+    padding: 0 12px;
+  }
+  
+  .song-item {
+    gap: 12px;
+    padding: 12px 0;
+  }
+  
+  .song-cover {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+  }
+  
+  .song-title {
+    font-size: 15px;
+    margin: 0;
+  }
+  
+  .song-artist {
+    font-size: 13px;
+  }
+  
+  .song-stats {
+    gap: 12px;
+  }
+  
+  .song-duration {
+    font-size: 11px;
+    padding: 3px 6px;
+    border-radius: 8px;
+  }
+  
+  .song-actions {
+    margin-left: 8px;
+    gap: 6px;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+  .songs-container {
+    padding: 0 8px;
+  }
+  
+  .song-item {
+    gap: 10px;
+    padding: 10px 0;
+  }
+  
+  .song-cover {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+  }
+  
+  .song-title {
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  .song-artist {
+    font-size: 12px;
+  }
+  
+  .song-stats {
+    gap: 8px;
+  }
+  
+  .song-duration {
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 6px;
+  }
+  
+  .song-actions {
+    margin-left: 6px;
+    gap: 4px;
+  }
+}
+
+/* Desktop Optimizations */
+@media (min-width: 1024px) {
+  .songs-container {
+    padding: 0 24px;
+  }
+  
+  .song-item {
+    gap: 20px;
+    padding: 20px 0;
+  }
+  
+  .song-cover {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+  }
+  
+  .song-title {
+    font-size: 18px;
+    margin: 0;
+  }
+  
+  .song-artist {
+    font-size: 15px;
+  }
+  
+  .song-stats {
+    gap: 20px;
+  }
+  
+  .song-duration {
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 16px;
+  }
+  
+  .song-actions {
+    margin-left: 20px;
+    gap: 12px;
+  }
+}
+
+/* Large Desktop Screens */
+@media (min-width: 1400px) {
+  .songs-container {
+    padding: 0 32px;
+  }
+  
+  .song-item {
+    gap: 24px;
+    padding: 24px 0;
+  }
+  
+  .song-cover {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+  }
+  
+  .song-title {
+    font-size: 20px;
+    margin: 0;
+  }
+  
+  .song-artist {
+    font-size: 16px;
+  }
+  
+  .song-stats {
+    gap: 24px;
+  }
+  
+  .song-duration {
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 20px;
+  }
+  
+  .song-actions {
+    margin-left: 24px;
+    gap: 16px;
+  }
 }
 
 /* Bottom Navigation Styles */
