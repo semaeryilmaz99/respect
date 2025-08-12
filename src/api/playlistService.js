@@ -1,33 +1,66 @@
 import { supabase } from '../config/supabase';
 
 export const playlistService = {
+  // Spotify bağlantısını kontrol et ve gerekirse hata ver
+  _ensureSpotifyConnection: async (userId) => {
+    const { data: connection, error: connectionError } = await supabase
+      .from('spotify_connections')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (connectionError || !connection) {
+      throw new Error('Spotify bağlantısı bulunamadı. Lütfen önce Spotify hesabınızı bağlayın.');
+    }
+
+    return connection;
+  },
   // Kullanıcının Spotify çalma listelerini getir
   getUserPlaylists: async (userId) => {
     try {
       console.log('🎵 Fetching user playlists for:', userId);
       
+      // First, get playlists with a simpler query to avoid order clause issues
       const { data, error } = await supabase
         .from('spotify_playlists')
         .select(`
           *,
-          user_playlist_preferences!inner(
+          user_playlist_preferences(
             is_favorite,
             is_visible,
             sort_order
           )
         `)
-        .eq('user_id', userId)
-        .eq('user_playlist_preferences.is_visible', true)
-        .order('user_playlist_preferences.sort_order', { ascending: true })
-        .order('name', { ascending: true });
+        .eq('user_id', userId);
 
       if (error) {
         console.error('❌ Error fetching playlists:', error);
         throw error;
       }
 
-      console.log('✅ Playlists fetched:', data?.length || 0);
-      return data || [];
+      // Filter visible playlists and sort them in JavaScript
+      const visiblePlaylists = data
+        ?.filter(playlist => {
+          const prefs = playlist.user_playlist_preferences?.[0];
+          return prefs?.is_visible !== false; // Default to visible if no preference
+        })
+        ?.sort((a, b) => {
+          const prefsA = a.user_playlist_preferences?.[0];
+          const prefsB = b.user_playlist_preferences?.[0];
+          
+          // Sort by sort_order first, then by name
+          const orderA = prefsA?.sort_order || 0;
+          const orderB = prefsB?.sort_order || 0;
+          
+          if (orderA !== orderB) {
+            return orderA - orderB;
+          }
+          
+          return (a.name || '').localeCompare(b.name || '');
+        }) || [];
+
+      console.log('✅ Playlists fetched:', visiblePlaylists.length);
+      return visiblePlaylists;
     } catch (error) {
       console.error('❌ Playlist fetch error:', error);
       return [];
@@ -87,6 +120,10 @@ export const playlistService = {
     try {
       console.log('🔄 Syncing user playlists for:', userId);
       
+      // Ensure Spotify connection exists
+      await playlistService._ensureSpotifyConnection(userId);
+      console.log('✅ Spotify connection verified, proceeding with sync');
+      
       const { data, error } = await supabase.functions.invoke('spotify-sync-playlists', {
         body: { userId, syncType: 'user_playlists' }
       });
@@ -113,6 +150,10 @@ export const playlistService = {
   syncPlaylistTracks: async (userId, playlistId) => {
     try {
       console.log('🔄 Syncing playlist tracks for:', playlistId);
+      
+      // Ensure Spotify connection exists
+      await playlistService._ensureSpotifyConnection(userId);
+      console.log('✅ Spotify connection verified, proceeding with track sync');
       
       const { data, error } = await supabase.functions.invoke('spotify-sync-playlists', {
         body: { userId, syncType: 'playlist_tracks', playlistId }
@@ -281,24 +322,30 @@ export const playlistService = {
           id,
           name,
           total_tracks,
-          user_playlist_preferences!inner(
+          is_public,
+          user_playlist_preferences(
             is_favorite,
             is_visible
           )
         `)
-        .eq('user_id', userId)
-        .eq('user_playlist_preferences.is_visible', true);
+        .eq('user_id', userId);
 
       if (error) {
         console.error('❌ Error fetching playlist stats:', error);
         throw error;
       }
 
+      // Filter visible playlists
+      const visiblePlaylists = data?.filter(playlist => {
+        const prefs = playlist.user_playlist_preferences?.[0];
+        return prefs?.is_visible !== false; // Default to visible if no preference
+      }) || [];
+
       const stats = {
-        total_playlists: data?.length || 0,
-        total_tracks: data?.reduce((sum, playlist) => sum + (playlist.total_tracks || 0), 0) || 0,
-        favorite_playlists: data?.filter(p => p.user_playlist_preferences?.is_favorite).length || 0,
-        public_playlists: data?.filter(p => p.is_public).length || 0
+        total_playlists: visiblePlaylists.length,
+        total_tracks: visiblePlaylists.reduce((sum, playlist) => sum + (playlist.total_tracks || 0), 0),
+        favorite_playlists: visiblePlaylists.filter(p => p.user_playlist_preferences?.[0]?.is_favorite).length,
+        public_playlists: visiblePlaylists.filter(p => p.is_public).length
       };
 
       console.log('✅ Playlist stats fetched:', stats);
@@ -311,6 +358,31 @@ export const playlistService = {
         favorite_playlists: 0,
         public_playlists: 0
       };
+    }
+  },
+
+  // Spotify bağlantı durumunu kontrol et
+  checkSpotifyConnection: async (userId) => {
+    try {
+      const { data: connection, error } = await supabase
+        .from('spotify_connections')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error || !connection) {
+        return { connected: false, error: 'Spotify bağlantısı bulunamadı' };
+      }
+
+      // Token'ın geçerliliğini kontrol et
+      if (new Date() > new Date(connection.token_expires_at)) {
+        return { connected: false, error: 'Spotify token süresi dolmuş' };
+      }
+
+      return { connected: true, connection };
+    } catch (error) {
+      console.error('❌ Spotify connection check error:', error);
+      return { connected: false, error: error.message };
     }
   }
 };
