@@ -53,6 +53,33 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     )
 
+    // Get authorization header
+    const authHeader = req.headers.get('authorization')
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ success: false, processed: 0, failed: 1, error: 'Missing authorization header' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // Extract token from Bearer header
+    const token = authHeader.replace('Bearer ', '')
+    console.log('🔧 Token extracted from header')
+
+    // Verify user authentication
+    console.log('🔧 Verifying user authentication')
+    const { data: { user }, error: authError } = await supabaseClient.auth.getUser(token)
+    
+    if (authError || !user) {
+      console.log('❌ Authentication failed:', authError?.message)
+      return new Response(
+        JSON.stringify({ success: false, processed: 0, failed: 1, error: 'Authentication failed' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    console.log('✅ User authenticated:', user.id)
+
     console.log('🔧 Getting request body')
     const { userId, syncType = 'user_playlists' } = await req.json()
 
@@ -63,6 +90,17 @@ serve(async (req) => {
       )
     }
 
+    // Verify that the authenticated user matches the requested userId
+    if (user.id !== userId) {
+      console.log('❌ User ID mismatch:', user.id, '!=', userId)
+      return new Response(
+        JSON.stringify({ success: false, processed: 0, failed: 1, error: 'User ID mismatch' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    console.log('✅ User ID verified')
+
     console.log('🔧 Getting user Spotify connection')
     const { data: connection, error: connectionError } = await supabaseClient
       .from('spotify_connections')
@@ -71,11 +109,15 @@ serve(async (req) => {
       .single()
 
     if (connectionError || !connection) {
+      console.log('❌ Spotify connection not found for user:', userId)
+      console.log('🔍 Connection error:', connectionError)
       return new Response(
         JSON.stringify({ success: false, processed: 0, failed: 1, error: 'Spotify connection not found' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+
+    console.log('✅ Spotify connection found')
 
     console.log('🔧 Checking token expiration')
     let accessToken = connection.access_token
