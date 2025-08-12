@@ -47,10 +47,11 @@ serve(async (req) => {
   }
 
   try {
-    console.log('🔧 Initializing Supabase client')
+    console.log('🔧 Initializing Supabase client with service role')
+    // Use service role key to bypass RLS
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
     // Get authorization header
@@ -101,7 +102,7 @@ serve(async (req) => {
 
     console.log('✅ User ID verified')
 
-    console.log('🔧 Getting user Spotify connection')
+    console.log('🔧 Getting user Spotify connection with service role')
     const { data: connection, error: connectionError } = await supabaseClient
       .from('spotify_connections')
       .select('*')
@@ -111,13 +112,22 @@ serve(async (req) => {
     if (connectionError || !connection) {
       console.log('❌ Spotify connection not found for user:', userId)
       console.log('🔍 Connection error:', connectionError)
+      
+      // Debug: Check if any connections exist
+      const { data: allConnections, error: allError } = await supabaseClient
+        .from('spotify_connections')
+        .select('user_id, spotify_user_id')
+      
+      console.log('🔍 All connections in DB:', allConnections)
+      console.log('🔍 All connections error:', allError)
+      
       return new Response(
         JSON.stringify({ success: false, processed: 0, failed: 1, error: 'Spotify connection not found' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    console.log('✅ Spotify connection found')
+    console.log('✅ Spotify connection found:', connection.id)
 
     console.log('🔧 Checking token expiration')
     let accessToken = connection.access_token
