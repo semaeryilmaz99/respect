@@ -118,7 +118,7 @@ const OnboardingPage = () => {
         {currentStep === 1 && (
           <div className="artist-list-container">
             <div className="artist-list-card">
-              {artists.map((artist, index) => (
+              {artists && Array.isArray(artists) ? artists.map((artist, index) => (
                 <div key={artist.id} className="artist-item">
                   <span className="artist-number">{index + 1}</span>
                   <div className="artist-info">
@@ -129,7 +129,11 @@ const OnboardingPage = () => {
                     <img src={artist.avatar} alt={artist.name} />
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="no-artists">
+                  <p>Sanatçı listesi yükleniyor...</p>
+                </div>
+              )}
             </div>
           </div>
         )}

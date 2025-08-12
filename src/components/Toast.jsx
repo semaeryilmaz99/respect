@@ -193,13 +193,13 @@ const ToastContainer = () => {
 
   return (
     <div className="toast-container">
-      {toasts.map((toast) => (
+      {toasts && Array.isArray(toasts) ? toasts.map((toast) => (
         <ToastItem 
           key={toast.id} 
           toast={toast} 
           onClose={removeNotification}
         />
-      ))}
+      )) : null}
       
       <style jsx>{`
         .toast-container {

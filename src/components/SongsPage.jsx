@@ -82,7 +82,7 @@ const SongsPage = () => {
         </div>
 
         <div className="songs-grid">
-          {songs.map((song) => (
+          {songs && Array.isArray(songs) ? songs.map((song) => (
             <div key={song.id} className="song-card">
               <div className="song-image-container" onClick={() => handleSongClick(song.id)}>
                 <img 
@@ -116,7 +116,11 @@ const SongsPage = () => {
                 </div>
               </div>
             </div>
-          ))}
+          )) : (
+            <div className="no-songs">
+              <p>Henüz şarkı bulunamadı</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

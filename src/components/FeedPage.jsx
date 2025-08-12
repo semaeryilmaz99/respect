@@ -5,6 +5,7 @@ import FeedCard from './FeedCard'
 import RealTimeChat from './RealTimeChat'
 import { useApi } from '../hooks/useApi'
 import { feedService } from '../api'
+import { debugArray, debugRender, debugWarn } from '../utils/debug.js'
 
 const FeedPage = () => {
   const [activeTab, setActiveTab] = useState('community')
@@ -49,6 +50,15 @@ const FeedPage = () => {
 
   // Database'den gelen verileri formatla
   const formatFeedData = (data) => {
+    // Debug array
+    debugArray('feedData', data);
+    
+    // Null check ekle
+    if (!data || !Array.isArray(data)) {
+      debugWarn('Feed data is null or not an array:', data);
+      return [];
+    }
+    
     return data.map(item => {
       const formattedItem = {
         type: item.type,
@@ -166,11 +176,8 @@ const FeedPage = () => {
   }
 
   // Database'den gelen verileri kullan
-  console.log('📊 Raw feed data:', feedData)
-  console.log('📊 Active tab:', activeTab)
-  console.log('📊 Feed data type:', activeTab === 'community' ? 'Community' : 'Personal')
+  debugRender('FeedPage', { activeTab, feedDataLength: feedData?.length });
   const currentData = formatFeedData(feedData)
-  console.log('📊 Formatted feed data:', currentData)
 
   return (
     <div className="feed-page">
@@ -215,7 +222,7 @@ const FeedPage = () => {
         <div className="respect-flow-panel desktop-only">
           <h2 className="respect-flow-title">Respect Akışı</h2>
           <div className="respect-flow-items">
-            {respectFlowData.map((item) => (
+            {respectFlowData && Array.isArray(respectFlowData) ? respectFlowData.map((item) => (
               <div key={item.id} className="respect-flow-item">
                 <div className="respect-flow-header">
                   <img src={item.user.avatar} alt={item.user.name} className="user-avatar-small" />
@@ -238,7 +245,11 @@ const FeedPage = () => {
                   <p className="respect-message">"{item.message}"</p>
                 )}
               </div>
-            ))}
+            )) : (
+              <div className="no-respect-flow">
+                <p>Henüz respect akışı yok</p>
+              </div>
+            )}
           </div>
         </div>
         
@@ -250,7 +261,7 @@ const FeedPage = () => {
           </div>
           
           <div className="feed">
-            {currentData.map((item, index) => (
+            {currentData && Array.isArray(currentData) ? currentData.map((item, index) => (
               <FeedCard
                 key={index}
                 type={item.type}
@@ -261,7 +272,11 @@ const FeedPage = () => {
                 songId={item.songId}
                 userId={item.userId}
               />
-            ))}
+            )) : (
+              <div className="no-feed-data">
+                <p>Henüz feed verisi yok</p>
+              </div>
+            )}
           </div>
         </div>
         

@@ -75,7 +75,7 @@ const ArtistsPage = () => {
         </div>
 
         <div className="artists-grid">
-          {artists.map((artist) => (
+          {artists && Array.isArray(artists) ? artists.map((artist) => (
             <div key={artist.id} className="artist-card">
               <div className="artist-image-container" onClick={() => handleArtistClick(artist.id)}>
                 <img 
@@ -106,7 +106,11 @@ const ArtistsPage = () => {
                 </div>
               </div>
             </div>
-          ))}
+          )) : (
+            <div className="no-artists">
+              <p>Henüz sanatçı bulunamadı</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

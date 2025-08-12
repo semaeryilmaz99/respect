@@ -182,7 +182,7 @@ const RealTimeChat = ({ roomId = 'general', roomType = 'artist' }) => {
         ) : (
           <>
             <div className="chat-messages" ref={chatMessagesRef}>
-              {messages.map((message) => {
+              {messages && Array.isArray(messages) ? messages.map((message) => {
                 const isOwn = currentUser?.id === message.user_id
                 const senderName = message.profiles?.full_name || message.profiles?.username || 'Anonim'
                 const avatar = message.profiles?.avatar_url || '/assets/user/Image.png'
@@ -209,7 +209,11 @@ const RealTimeChat = ({ roomId = 'general', roomType = 'artist' }) => {
                     </div>
                   </div>
                 )
-              })}
+              }) : (
+                <div className="no-messages">
+                  <p>Henüz mesaj yok</p>
+                </div>
+              )}
             </div>
             
             <div className="chat-input-container">
