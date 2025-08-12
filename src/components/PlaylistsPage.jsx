@@ -4,7 +4,7 @@ import { useAppContext } from '../context/AppContext'
 import { playlistService } from '../api'
 import Header from './Header'
 import LoadingSpinner from './LoadingSpinner'
-import { Heart, Eye, EyeOff, RefreshCw, Music, Users, Clock } from 'lucide-react'
+import { Heart, Eye, EyeOff, RefreshCw, Music, Users, Clock, Play, Star } from 'lucide-react'
 
 const PlaylistsPage = () => {
   const navigate = useNavigate()
@@ -101,9 +101,10 @@ const PlaylistsPage = () => {
       <Header />
       
       <div className="playlists-container">
+        {/* Header Section */}
         <div className="playlists-header">
           <div className="header-content">
-            <h1 className="page-title">Çalma Listelerim</h1>
+            <h1 className="page-title">🎵 Çalma Listelerim</h1>
             <p className="page-subtitle">Spotify çalma listelerinizi yönetin ve keşfedin</p>
           </div>
           
@@ -121,44 +122,44 @@ const PlaylistsPage = () => {
 
         {/* Stats Cards */}
         {stats && (
-          <div className="stats-grid">
+          <div className="user-stats">
             <div className="stat-card">
               <div className="stat-icon">
-                <Music />
+                <Music className="w-6 h-6 text-orange-500" />
               </div>
               <div className="stat-content">
-                <h3 className="stat-number">{stats.total_playlists}</h3>
-                <p className="stat-label">Toplam Liste</p>
+                <div className="stat-value">{stats.total_playlists || 0}</div>
+                <div className="stat-label">Toplam Liste</div>
               </div>
             </div>
             
             <div className="stat-card">
               <div className="stat-icon">
-                <Clock />
+                <Clock className="w-6 h-6 text-blue-500" />
               </div>
               <div className="stat-content">
-                <h3 className="stat-number">{stats.total_tracks}</h3>
-                <p className="stat-label">Toplam Şarkı</p>
+                <div className="stat-value">{stats.total_tracks || 0}</div>
+                <div className="stat-label">Toplam Şarkı</div>
               </div>
             </div>
             
             <div className="stat-card">
               <div className="stat-icon">
-                <Heart />
+                <Heart className="w-6 h-6 text-red-500" />
               </div>
               <div className="stat-content">
-                <h3 className="stat-number">{stats.favorite_playlists}</h3>
-                <p className="stat-label">Favori Liste</p>
+                <div className="stat-value">{stats.favorite_playlists || 0}</div>
+                <div className="stat-label">Favori Liste</div>
               </div>
             </div>
             
             <div className="stat-card">
               <div className="stat-icon">
-                <Users />
+                <Users className="w-6 h-6 text-green-500" />
               </div>
               <div className="stat-content">
-                <h3 className="stat-number">{stats.public_playlists}</h3>
-                <p className="stat-label">Herkese Açık</p>
+                <div className="stat-value">{stats.public_playlists || 0}</div>
+                <div className="stat-label">Herkese Açık</div>
               </div>
             </div>
           </div>
@@ -168,7 +169,7 @@ const PlaylistsPage = () => {
         {error && (
           <div className="error-message">
             <p>{error}</p>
-            <button onClick={loadPlaylists}>Tekrar Dene</button>
+            <button onClick={loadPlaylists} className="retry-button">Tekrar Dene</button>
           </div>
         )}
 
@@ -181,10 +182,11 @@ const PlaylistsPage = () => {
                 className="playlist-card"
                 onClick={() => handlePlaylistClick(playlist.id)}
               >
-                <div className="playlist-image">
+                <div className="playlist-image-container">
                   <img 
                     src={playlist.cover_url || '/assets/playlist/default.png'} 
                     alt={playlist.name}
+                    className="playlist-image"
                     onError={(e) => {
                       e.target.src = '/assets/playlist/default.png'
                     }}
@@ -197,7 +199,7 @@ const PlaylistsPage = () => {
                         title={playlist.user_playlist_preferences?.is_favorite ? 'Favorilerden Çıkar' : 'Favorilere Ekle'}
                       >
                         <Heart 
-                          className={playlist.user_playlist_preferences?.is_favorite ? 'filled' : ''} 
+                          className={`w-5 h-5 ${playlist.user_playlist_preferences?.is_favorite ? 'text-red-500 fill-current' : 'text-white'}`}
                         />
                       </button>
                       
@@ -206,7 +208,14 @@ const PlaylistsPage = () => {
                         onClick={(e) => handleToggleVisibility(playlist.id, e)}
                         title={playlist.user_playlist_preferences?.is_visible ? 'Gizle' : 'Göster'}
                       >
-                        {playlist.user_playlist_preferences?.is_visible ? <Eye /> : <EyeOff />}
+                        {playlist.user_playlist_preferences?.is_visible ? 
+                          <Eye className="w-5 h-5 text-white" /> : 
+                          <EyeOff className="w-5 h-5 text-white" />
+                        }
+                      </button>
+                      
+                      <button className="action-button play-button">
+                        <Play className="w-5 h-5 text-white" />
                       </button>
                     </div>
                   </div>
@@ -220,6 +229,7 @@ const PlaylistsPage = () => {
                   
                   <div className="playlist-meta">
                     <span className="track-count">
+                      <Music className="w-4 h-4 inline mr-1" />
                       {playlist.total_tracks} şarkı
                     </span>
                     <span className="playlist-owner">
@@ -229,13 +239,13 @@ const PlaylistsPage = () => {
                   
                   <div className="playlist-badges">
                     {playlist.is_public && (
-                      <span className="badge public">Herkese Açık</span>
+                      <span className="badge public">🌍 Herkese Açık</span>
                     )}
                     {playlist.is_collaborative && (
-                      <span className="badge collaborative">İşbirlikçi</span>
+                      <span className="badge collaborative">👥 İşbirlikçi</span>
                     )}
                     {playlist.user_playlist_preferences?.is_favorite && (
-                      <span className="badge favorite">Favori</span>
+                      <span className="badge favorite">⭐ Favori</span>
                     )}
                   </div>
                 </div>
@@ -244,12 +254,12 @@ const PlaylistsPage = () => {
           ) : (
             <div className="empty-state">
               <div className="empty-icon">
-                <Music />
+                <Music className="w-16 h-16 text-gray-400" />
               </div>
-              <h3>Henüz çalma listeniz yok</h3>
-              <p>Spotify hesabınızdan çalma listelerinizi senkronize edin</p>
+              <h3 className="empty-title">Henüz çalma listeniz yok</h3>
+              <p className="empty-description">Spotify hesabınızdan çalma listelerinizi senkronize edin</p>
               <button 
-                className="sync-button"
+                className="sync-button empty-sync-button"
                 onClick={handleSyncPlaylists}
                 disabled={syncing}
               >
@@ -264,8 +274,8 @@ const PlaylistsPage = () => {
       <style jsx>{`
         .playlists-page {
           min-height: 100vh;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          padding: 20px;
+          background: linear-gradient(135deg, #fef5e7 0%, #ffe8a0 100%);
+          padding: 16px;
         }
 
         .playlists-container {
@@ -277,43 +287,46 @@ const PlaylistsPage = () => {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 30px;
-          background: rgba(255, 255, 255, 0.1);
-          padding: 20px;
-          border-radius: 12px;
-          backdrop-filter: blur(10px);
+          margin-bottom: 24px;
+          background: linear-gradient(135deg, #f69f17 0%, #f9dc38 100%);
+          padding: 24px;
+          border-radius: 20px;
+          box-shadow: 0 8px 25px rgba(246, 159, 23, 0.25);
+          border: 2px solid #f69f17;
         }
 
         .header-content h1 {
-          color: white;
+          color: #1b262e;
           margin: 0 0 8px 0;
           font-size: 28px;
           font-weight: 700;
         }
 
         .header-content p {
-          color: rgba(255, 255, 255, 0.8);
+          color: #1b262e;
           margin: 0;
           font-size: 16px;
+          opacity: 0.8;
         }
 
         .sync-button {
+          background: linear-gradient(135deg, #1b262e 0%, #2d3748 100%);
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 12px;
+          font-weight: 600;
+          cursor: pointer;
           display: flex;
           align-items: center;
           gap: 8px;
-          background: #f9dc38;
-          color: #1b262e;
-          border: none;
-          padding: 12px 20px;
-          border-radius: 8px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(27, 38, 46, 0.2);
         }
 
         .sync-button:hover:not(:disabled) {
-          background: #f5d428;
-          transform: translateY(-1px);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(27, 38, 46, 0.3);
         }
 
         .sync-button:disabled {
@@ -335,79 +348,57 @@ const PlaylistsPage = () => {
           to { transform: rotate(360deg); }
         }
 
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 20px;
-          margin-bottom: 30px;
-        }
-
-        .stat-card {
-          background: rgba(255, 255, 255, 0.1);
-          padding: 20px;
-          border-radius: 12px;
-          backdrop-filter: blur(10px);
-          display: flex;
-          align-items: center;
-          gap: 15px;
-        }
-
-        .stat-icon {
-          color: #f9dc38;
-          width: 32px;
-          height: 32px;
-        }
-
-        .stat-number {
-          color: white;
-          font-size: 24px;
-          font-weight: 700;
-          margin: 0;
-        }
-
-        .stat-label {
-          color: rgba(255, 255, 255, 0.8);
-          margin: 0;
-          font-size: 14px;
-        }
-
         .error-message {
-          background: rgba(220, 53, 69, 0.1);
-          border: 1px solid rgba(220, 53, 69, 0.3);
-          color: #dc3545;
-          padding: 15px;
-          border-radius: 8px;
-          margin-bottom: 20px;
+          background: linear-gradient(135deg, #fef5e7 0%, #ffebee 100%);
+          border: 2px solid #ff6b6b;
+          border-radius: 16px;
+          padding: 20px;
+          margin: 20px 0;
           text-align: center;
+          color: #1b262e;
+        }
+
+        .retry-button {
+          background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 8px;
+          font-weight: 600;
+          cursor: pointer;
+          margin-top: 12px;
         }
 
         .playlists-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
           gap: 20px;
+          margin-top: 24px;
         }
 
         .playlist-card {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
+          background: linear-gradient(135deg, #fef5e7 0%, #ffe8a0 100%);
+          border: 2px solid #f69f17;
+          border-radius: 20px;
           overflow: hidden;
           cursor: pointer;
           transition: all 0.3s ease;
-          backdrop-filter: blur(10px);
+          box-shadow: 0 4px 15px rgba(246, 159, 23, 0.15);
         }
 
         .playlist-card:hover {
           transform: translateY(-4px);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 8px 25px rgba(246, 159, 23, 0.25);
+          border-color: #f9dc38;
         }
 
-        .playlist-image {
+        .playlist-image-container {
           position: relative;
           height: 200px;
           overflow: hidden;
         }
 
-        .playlist-image img {
+        .playlist-image {
           width: 100%;
           height: 100%;
           object-fit: cover;
@@ -419,12 +410,12 @@ const PlaylistsPage = () => {
           left: 0;
           right: 0;
           bottom: 0;
-          background: rgba(0, 0, 0, 0.5);
-          opacity: 0;
-          transition: opacity 0.3s ease;
+          background: rgba(27, 38, 46, 0.7);
           display: flex;
           align-items: center;
           justify-content: center;
+          opacity: 0;
+          transition: opacity 0.3s ease;
         }
 
         .playlist-card:hover .playlist-overlay {
@@ -433,36 +424,32 @@ const PlaylistsPage = () => {
 
         .playlist-actions {
           display: flex;
-          gap: 10px;
+          gap: 12px;
         }
 
         .action-button {
           background: rgba(255, 255, 255, 0.2);
-          border: none;
-          color: white;
+          border: 2px solid rgba(255, 255, 255, 0.3);
+          border-radius: 50%;
           width: 40px;
           height: 40px;
-          border-radius: 50%;
-          cursor: pointer;
-          transition: all 0.2s ease;
           display: flex;
           align-items: center;
           justify-content: center;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
         }
 
         .action-button:hover {
           background: rgba(255, 255, 255, 0.3);
+          border-color: rgba(255, 255, 255, 0.5);
           transform: scale(1.1);
         }
 
-        .action-button svg {
-          width: 18px;
-          height: 18px;
-        }
-
-        .action-button .filled {
-          fill: #ff6b6b;
-          color: #ff6b6b;
+        .play-button {
+          background: linear-gradient(135deg, #f69f17 0%, #f9dc38 100%);
+          border-color: #f69f17;
         }
 
         .playlist-info {
@@ -470,17 +457,17 @@ const PlaylistsPage = () => {
         }
 
         .playlist-name {
-          color: white;
           font-size: 18px;
-          font-weight: 600;
+          font-weight: 700;
+          color: #1b262e;
           margin: 0 0 8px 0;
           line-height: 1.3;
         }
 
         .playlist-description {
-          color: rgba(255, 255, 255, 0.7);
           font-size: 14px;
-          margin: 0 0 15px 0;
+          color: #666;
+          margin: 0 0 16px 0;
           line-height: 1.4;
           display: -webkit-box;
           -webkit-line-clamp: 2;
@@ -493,93 +480,140 @@ const PlaylistsPage = () => {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 12px;
+          font-size: 12px;
+          color: #666;
         }
 
         .track-count {
-          color: rgba(255, 255, 255, 0.8);
-          font-size: 14px;
-          font-weight: 500;
+          display: flex;
+          align-items: center;
+          font-weight: 600;
         }
 
         .playlist-owner {
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 12px;
+          font-weight: 500;
         }
 
         .playlist-badges {
           display: flex;
-          gap: 8px;
           flex-wrap: wrap;
+          gap: 6px;
         }
 
         .badge {
+          font-size: 10px;
+          font-weight: 600;
           padding: 4px 8px;
           border-radius: 12px;
-          font-size: 11px;
-          font-weight: 600;
           text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
 
         .badge.public {
-          background: rgba(40, 167, 69, 0.2);
-          color: #28a745;
+          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+          color: white;
         }
 
         .badge.collaborative {
-          background: rgba(0, 123, 255, 0.2);
-          color: #007bff;
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          color: white;
         }
 
         .badge.favorite {
-          background: rgba(255, 107, 107, 0.2);
-          color: #ff6b6b;
+          background: linear-gradient(135deg, #f69f17 0%, #f9dc38 100%);
+          color: #1b262e;
         }
 
         .empty-state {
           grid-column: 1 / -1;
           text-align: center;
           padding: 60px 20px;
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
-          backdrop-filter: blur(10px);
+          background: linear-gradient(135deg, #fef5e7 0%, #ffe8a0 100%);
+          border: 2px solid #f69f17;
+          border-radius: 20px;
+          box-shadow: 0 4px 15px rgba(246, 159, 23, 0.15);
         }
 
         .empty-icon {
-          color: rgba(255, 255, 255, 0.5);
-          width: 64px;
-          height: 64px;
-          margin: 0 auto 20px;
+          margin-bottom: 20px;
         }
 
-        .empty-state h3 {
-          color: white;
+        .empty-title {
           font-size: 24px;
+          font-weight: 700;
+          color: #1b262e;
           margin: 0 0 12px 0;
         }
 
-        .empty-state p {
-          color: rgba(255, 255, 255, 0.7);
+        .empty-description {
           font-size: 16px;
-          margin: 0 0 30px 0;
+          color: #666;
+          margin: 0 0 24px 0;
         }
 
+        .empty-sync-button {
+          background: linear-gradient(135deg, #f69f17 0%, #f9dc38 100%);
+          color: #1b262e;
+          font-weight: 700;
+        }
+
+        /* Mobile Responsive */
         @media (max-width: 768px) {
           .playlists-page {
-            padding: 15px;
+            padding: 12px;
           }
 
           .playlists-header {
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
             text-align: center;
           }
 
-          .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
+          .header-content h1 {
+            font-size: 24px;
           }
 
           .playlists-grid {
             grid-template-columns: 1fr;
+            gap: 16px;
+          }
+
+          .playlist-card {
+            border-radius: 16px;
+          }
+
+          .playlist-image-container {
+            height: 160px;
+          }
+
+          .playlist-info {
+            padding: 16px;
+          }
+
+          .playlist-name {
+            font-size: 16px;
+          }
+
+          .playlist-meta {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+          }
+        }
+
+        /* Desktop Enhancements */
+        @media (min-width: 1024px) {
+          .playlists-grid {
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+          }
+
+          .playlist-card {
+            border-radius: 24px;
+          }
+
+          .playlist-image-container {
+            height: 220px;
           }
         }
       `}</style>
