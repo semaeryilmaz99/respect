@@ -221,5 +221,28 @@ export const spotifyAuthService = {
       console.error('Spotify sync error:', error);
       return { success: false, data: null, error };
     }
+  },
+
+  // Spotify çalma listelerini senkronize et
+  syncSpotifyPlaylists: async (userId) => {
+    try {
+      console.log('🎵 Syncing Spotify playlists for user:', userId);
+      
+      const { data, error } = await supabase.functions.invoke('spotify-sync-playlists', {
+        body: { userId, syncType: 'user_playlists' }
+      });
+
+      if (error) throw error;
+
+      if (!data || !data.success) {
+        throw new Error(data?.error || 'Playlist sync failed');
+      }
+
+      console.log('✅ Spotify playlists synced successfully');
+      return { success: true, data, error: null };
+    } catch (error) {
+      console.error('Spotify playlist sync error:', error);
+      return { success: false, data: null, error };
+    }
   }
 };

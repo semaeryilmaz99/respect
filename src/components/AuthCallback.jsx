@@ -68,12 +68,22 @@ const AuthCallback = () => {
               .then(result => {
                 if (result.success) {
                   console.log('✅ Spotify connection setup completed');
+                  
+                  // Çalma listelerini de senkronize et
+                  return spotifyAuthService.syncSpotifyPlaylists(user.id);
                 } else {
                   console.warn('⚠️ Spotify connection setup failed:', result.error);
                 }
               })
+              .then(playlistResult => {
+                if (playlistResult?.success) {
+                  console.log('✅ Spotify playlists synced successfully');
+                } else {
+                  console.warn('⚠️ Spotify playlist sync failed:', playlistResult?.error);
+                }
+              })
               .catch(error => {
-                console.error('❌ Spotify connection setup error:', error);
+                console.error('❌ Spotify setup error:', error);
               });
           }
 
