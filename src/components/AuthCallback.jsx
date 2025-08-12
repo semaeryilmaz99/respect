@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../config/supabase.js'
 import { useAppContext } from '../context/AppContext.jsx'
 import LoadingSpinner from './LoadingSpinner.jsx'
+import { spotifyAuthService } from '../api/spotifyAuthService.js'
 
 const AuthCallback = () => {
   const navigate = useNavigate()
@@ -48,60 +49,36 @@ const AuthCallback = () => {
           const providerToken = data.session.provider_token
           const providerRefreshToken = data.session.provider_refresh_token
           
-          // ❌ localStorage kullanma - Supabase session yeterli
-          // localStorage.setItem('authToken', data.session.access_token)
-          // localStorage.setItem('user', JSON.stringify({...}))
-          
           // ✅ App context'i güncelle (user ID ve email ile)
           actions.setUser({
             id: user.id,
             email: user.email,
             name: user.user_metadata?.full_name || user.email,
             respectBalance: 1000,
-            // Token'ı context'te saklama, Supabase session kullan
           })
 
           // Complete onboarding if not done
           actions.completeOnboarding()
 
-          // Navigate to dashboard if spotify, otherwise feed
+          // Spotify provider ise bağlantıyı kur (background'da)
           const provider = user.app_metadata?.provider
-          if (provider === 'spotify') {
-            // Ensure spotify_connections row exists
-            try {
-              if (providerToken) {
-                // Get Spotify profile to retrieve spotify_user_id
-                const resp = await fetch('https://api.spotify.com/v1/me', {
-                  headers: { Authorization: `Bearer ${providerToken}` }
-                })
-                if (resp.ok) {
-                  const profile = await resp.json()
-                  const { error: upsertError } = await supabase
-                    .from('spotify_connections')
-                    .upsert({
-                      user_id: user.id,
-                      spotify_user_id: profile.id,
-                      access_token: providerToken,
-                      refresh_token: providerRefreshToken || '',
-                      token_expires_at: new Date(Date.now() + 55 * 60 * 1000) // ~55 minutes
-                    }, { onConflict: 'user_id' })
-                  
-                  if (upsertError) {
-                    console.error('❌ Spotify connections upsert failed:', upsertError);
-                    // Hata olsa bile kullanıcıyı feed'e yönlendir
-                  } else {
-                    console.log('✅ Spotify connections updated successfully');
-                  }
+          if (provider === 'spotify' && providerToken) {
+            // Spotify bağlantısını arka planda kur (async)
+            spotifyAuthService.setupSpotifyConnection(user, providerToken, providerRefreshToken)
+              .then(result => {
+                if (result.success) {
+                  console.log('✅ Spotify connection setup completed');
+                } else {
+                  console.warn('⚠️ Spotify connection setup failed:', result.error);
                 }
-              }
-            } catch (e) {
-              console.warn('⚠️ Spotify connections upsert failed:', e);
-              // Hata olsa bile kullanıcıyı feed'e yönlendir
-            }
-            navigate('/feed')
-          } else {
-            navigate('/feed')
+              })
+              .catch(error => {
+                console.error('❌ Spotify connection setup error:', error);
+              });
           }
+
+          // Navigate to feed for all providers
+          navigate('/feed')
         } else {
           // No session, redirect to login
           navigate('/login')

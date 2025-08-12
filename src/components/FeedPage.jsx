@@ -3,14 +3,20 @@ import { useNavigate } from 'react-router-dom'
 import Header from './Header'
 import FeedCard from './FeedCard'
 import RealTimeChat from './RealTimeChat'
-import { useApi, usePaginatedApi } from '../hooks/useApi'
+import { useApi } from '../hooks/useApi'
 import { feedService } from '../api'
 
 const FeedPage = () => {
   const [activeTab, setActiveTab] = useState('community')
   const navigate = useNavigate()
   
-  // API hook'ları kullanarak veri yükleme
+  // Rate limiting uyarısı
+  React.useEffect(() => {
+    console.log('🎵 FeedPage loaded - Spotify API rate limiting is active');
+    console.log('⏳ API calls are rate limited to prevent 429 errors');
+  }, []);
+  
+  // API hook'ları kullanarak veri yükleme (optimized)
   const { 
     data: feedData, 
     loading: feedLoading, 
@@ -24,31 +30,14 @@ const FeedPage = () => {
     true // component mount olduğunda otomatik çalışsın
   )
 
+  // Sadece gerekli olan API çağrılarını yap
   const { 
     data: respectFlowData, 
     loading: respectFlowLoading 
   } = useApi(
     () => feedService.getRespectFlow(),
     [],
-    true
-  )
-
-  const { 
-    data: topArtists, 
-    loading: artistsLoading 
-  } = useApi(
-    () => feedService.getTopArtists(),
-    [],
-    true
-  )
-
-  const { 
-    data: topSongs, 
-    loading: songsLoading 
-  } = useApi(
-    () => feedService.getTopSongs(),
-    [],
-    true
+    false // Otomatik çalışmasın, sadece gerektiğinde çağır
   )
   
   const handleRespectSend = () => {
@@ -56,7 +45,7 @@ const FeedPage = () => {
   }
 
   // Loading durumlarını birleştir
-  const isLoading = feedLoading || respectFlowLoading || artistsLoading || songsLoading
+  const isLoading = feedLoading || respectFlowLoading
 
   // Database'den gelen verileri formatla
   const formatFeedData = (data) => {

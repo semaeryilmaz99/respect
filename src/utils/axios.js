@@ -1,5 +1,6 @@
 import axios from 'axios'
 import config from '../config/environment'
+import { supabase } from '../config/supabase'
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -10,13 +11,17 @@ const api = axios.create({
   }
 })
 
-// Request interceptor - Add auth token
+// Request interceptor - Add auth token from Supabase session
 api.interceptors.request.use(
-  (requestConfig) => {
-    // Add auth token if available
-    const token = localStorage.getItem(config.STORAGE_KEYS.AUTH_TOKEN)
-    if (token) {
-      requestConfig.headers.Authorization = `Bearer ${token}`
+  async (requestConfig) => {
+    try {
+      // ✅ Supabase session'dan token al
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.access_token) {
+        requestConfig.headers.Authorization = `Bearer ${session.access_token}`
+      }
+    } catch (error) {
+      console.warn('⚠️ Could not get Supabase session for API request:', error)
     }
     
     // Add request ID for debugging
@@ -57,30 +62,28 @@ api.interceptors.response.use(
       originalRequest._retry = true
       
       try {
-        // Try to refresh token
-        const refreshToken = localStorage.getItem('refreshToken')
-        if (refreshToken) {
-          const response = await axios.post(`${config.API_BASE_URL}/auth/refresh`, {
-            refresh_token: refreshToken
-          })
-          
-          const { access_token } = response.data
-          localStorage.setItem(config.STORAGE_KEYS.AUTH_TOKEN, access_token)
-          
+        // ✅ Supabase ile token yenile
+        const { data, error: refreshError } = await supabase.auth.refreshSession()
+        
+        if (refreshError) {
+          throw refreshError
+        }
+        
+        if (data.session) {
           // Retry original request with new token
-          originalRequest.headers.Authorization = `Bearer ${access_token}`
+          originalRequest.headers.Authorization = `Bearer ${data.session.access_token}`
           return api(originalRequest)
         }
-              } catch {
-          // Refresh failed, redirect to login
-          localStorage.removeItem(config.STORAGE_KEYS.AUTH_TOKEN)
-          localStorage.removeItem('refreshToken')
-          localStorage.removeItem(config.STORAGE_KEYS.USER)
-          
-          if (window.location.pathname !== '/login') {
+      } catch (refreshError) {
+        console.error('❌ Token refresh failed:', refreshError)
+        
+        // Refresh failed, sign out user
+        await supabase.auth.signOut()
+        
+        if (window.location.pathname !== '/login') {
           window.location.href = '/login'
-          }
         }
+      }
     }
     
     // Handle network errors

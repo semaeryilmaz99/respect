@@ -1,5 +1,6 @@
 import { supabase } from '../config/supabase';
 import config from '../config/environment';
+import spotifyRateLimiter from '../utils/spotifyRateLimit.js';
 
 export const spotifyAuthService = {
   // Spotify ile giriş: Supabase OAuth üzerinden
@@ -58,6 +59,100 @@ export const spotifyAuthService = {
     } catch (error) {
       console.error('❌ Spotify callback processing error:', error);
       return { user: null, profile: null, error: error.message };
+    }
+  },
+
+  // Supabase OAuth sonrası Spotify bağlantısını kur (rate limiting önlemli)
+  setupSpotifyConnection: async (user, providerToken, providerRefreshToken) => {
+    try {
+      console.log('🔗 Setting up Spotify connection for user:', user.id);
+      
+      // Rate limiting: Eğer son 5 saniyede aynı kullanıcı için istek atıldıysa bekle
+      const lastRequestKey = `spotify_setup_${user.id}`;
+      const lastRequest = sessionStorage.getItem(lastRequestKey);
+      const now = Date.now();
+      
+      if (lastRequest && (now - parseInt(lastRequest)) < 5000) {
+        console.log('⏳ Rate limiting: Waiting before making Spotify API request...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+      
+      // Son istek zamanını kaydet
+      sessionStorage.setItem(lastRequestKey, now.toString());
+      
+      if (!providerToken) {
+        console.log('⚠️ No provider token available, skipping Spotify connection setup');
+        return { success: true, error: null };
+      }
+
+      // Spotify profile'ını al (rate limited)
+      console.log('🎵 Fetching Spotify profile...');
+      const resp = await spotifyRateLimiter.rateLimitedFetch('https://api.spotify.com/v1/me', {
+        headers: { Authorization: `Bearer ${providerToken}` }
+      }, user.id);
+      
+      if (!resp.ok) {
+        console.warn('⚠️ Failed to fetch Spotify profile:', resp.status, resp.statusText);
+        return { success: false, error: `Spotify API error: ${resp.status}` };
+      }
+      
+      const profile = await resp.json();
+      console.log('✅ Spotify profile fetched:', profile.id);
+      
+      // Mevcut bağlantıyı kontrol et
+      const { data: existingConnection, error: selectError } = await supabase
+        .from('spotify_connections')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      if (selectError) {
+        console.error('❌ Select error:', selectError);
+        return { success: false, error: selectError.message };
+      }
+      
+      const connectionData = {
+        spotify_user_id: profile.id,
+        access_token: providerToken,
+        refresh_token: providerRefreshToken || '',
+        token_expires_at: new Date(Date.now() + 55 * 60 * 1000)
+      };
+      
+      if (existingConnection) {
+        // Kayıt varsa güncelle
+        const { error: updateError } = await supabase
+          .from('spotify_connections')
+          .update(connectionData)
+          .eq('user_id', user.id);
+        
+        if (updateError) {
+          console.error('❌ Update error:', updateError);
+          return { success: false, error: updateError.message };
+        }
+        
+        console.log('✅ Spotify connections updated successfully');
+      } else {
+        // Kayıt yoksa ekle
+        const { error: insertError } = await supabase
+          .from('spotify_connections')
+          .insert({
+            user_id: user.id,
+            ...connectionData
+          });
+        
+        if (insertError) {
+          console.error('❌ Insert error:', insertError);
+          return { success: false, error: insertError.message };
+        }
+        
+        console.log('✅ Spotify connections created successfully');
+      }
+      
+      return { success: true, error: null };
+      
+    } catch (error) {
+      console.error('❌ Spotify connection setup error:', error);
+      return { success: false, error: error.message };
     }
   },
 

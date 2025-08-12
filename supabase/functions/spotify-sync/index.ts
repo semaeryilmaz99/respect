@@ -2,6 +2,30 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
+// Rate limiting utility
+const rateLimitMap = new Map<string, number>()
+
+function checkRateLimit(key: string, limitMs: number = 1000): boolean {
+  const now = Date.now()
+  const lastCall = rateLimitMap.get(key)
+  
+  if (lastCall && (now - lastCall) < limitMs) {
+    return false // Rate limit exceeded
+  }
+  
+  rateLimitMap.set(key, now)
+  return true // OK to proceed
+}
+
+async function rateLimitedFetch(url: string, options: RequestInit, key: string): Promise<Response> {
+  if (!checkRateLimit(key)) {
+    console.log(`Rate limit exceeded for ${key}, waiting...`)
+    await new Promise(resolve => setTimeout(resolve, 1000))
+  }
+  
+  return fetch(url, options)
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -159,9 +183,9 @@ serve(async (req) => {
 async function syncArtistProfile(supabase: any, accessToken: string, userId: string) {
   try {
     console.log('Syncing artist profile for user:', userId)
-    const profileResponse = await fetch('https://api.spotify.com/v1/me', {
+    const profileResponse = await rateLimitedFetch('https://api.spotify.com/v1/me', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
-    })
+    }, `profile_${userId}`)
     if (!profileResponse.ok) {
       const errText = await profileResponse.text()
       throw new Error(`Failed to fetch profile: ${profileResponse.status} ${errText}`)
@@ -201,17 +225,17 @@ async function syncArtistProfile(supabase: any, accessToken: string, userId: str
 async function syncArtistSongs(supabase: any, accessToken: string, userId: string) {
   try {
     console.log('Syncing artist songs for user:', userId)
-    const meResp = await fetch('https://api.spotify.com/v1/me', {
+    const meResp = await rateLimitedFetch('https://api.spotify.com/v1/me', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
-    })
+    }, `profile_${userId}`)
     if (!meResp.ok) {
       const errText = await meResp.text()
       throw new Error(`Failed to fetch profile: ${meResp.status} ${errText}`)
     }
     const me = await meResp.json()
-    const tracksResp = await fetch(`https://api.spotify.com/v1/artists/${me.id}/top-tracks?market=TR`, {
+    const tracksResp = await rateLimitedFetch(`https://api.spotify.com/v1/artists/${me.id}/top-tracks?market=TR`, {
       headers: { 'Authorization': `Bearer ${accessToken}` }
-    })
+    }, `tracks_${userId}`)
     if (!tracksResp.ok) {
       const errText = await tracksResp.text()
       throw new Error(`Failed to fetch top tracks: ${tracksResp.status} ${errText}`)
@@ -277,17 +301,17 @@ async function syncArtistSongs(supabase: any, accessToken: string, userId: strin
 async function syncArtistAlbums(supabase: any, accessToken: string, userId: string) {
   try {
     console.log('Syncing artist albums for user:', userId)
-    const meResp = await fetch('https://api.spotify.com/v1/me', {
+    const meResp = await rateLimitedFetch('https://api.spotify.com/v1/me', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
-    })
+    }, `profile_${userId}`)
     if (!meResp.ok) {
       const errText = await meResp.text()
       throw new Error(`Failed to fetch profile: ${meResp.status} ${errText}`)
     }
     const me = await meResp.json()
-    const albumsResp = await fetch(`https://api.spotify.com/v1/artists/${me.id}/albums?include_groups=album,single&limit=50`, {
+    const albumsResp = await rateLimitedFetch(`https://api.spotify.com/v1/artists/${me.id}/albums?include_groups=album,single&limit=50`, {
       headers: { 'Authorization': `Bearer ${accessToken}` }
-    })
+    }, `albums_${userId}`)
     if (!albumsResp.ok) {
       const errText = await albumsResp.text()
       throw new Error(`Failed to fetch albums: ${albumsResp.status} ${errText}`)

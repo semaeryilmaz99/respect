@@ -22,7 +22,23 @@ export const useApi = (apiFunction, dependencies = [], immediate = true) => {
 
   useEffect(() => {
     if (immediate) {
-      execute()
+      // Rate limiting: Eğer son 2 saniyede aynı API çağrısı yapıldıysa bekle
+      const apiKey = apiFunction.toString();
+      const lastCallKey = `api_call_${apiKey}`;
+      const lastCall = sessionStorage.getItem(lastCallKey);
+      const now = Date.now();
+      
+      if (lastCall && (now - parseInt(lastCall)) < 2000) {
+        console.log('⏳ Rate limiting: Waiting before API call...');
+        const timeoutId = setTimeout(() => {
+          execute();
+        }, 1000);
+        return () => clearTimeout(timeoutId);
+      }
+      
+      // Son çağrı zamanını kaydet
+      sessionStorage.setItem(lastCallKey, now.toString());
+      execute();
     }
   }, dependencies)
 
