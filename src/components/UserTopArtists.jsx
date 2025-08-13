@@ -54,8 +54,8 @@ const UserTopArtists = ({ userId }) => {
         .select(`
           id,
           name,
-          image_url,
-          total_respect
+          COALESCE(image_url, '') as image_url,
+          COALESCE(total_respect, 0) as total_respect
         `)
         .in('id', sortedArtistIds)
 
@@ -122,6 +122,12 @@ const UserTopArtists = ({ userId }) => {
                   alt={artist.name}
                   onError={(e) => {
                     e.target.src = '/src/assets/artist/Image.png'
+                  }}
+                  style={{ 
+                    width: '60px', 
+                    height: '60px', 
+                    borderRadius: '50%',
+                    objectFit: 'cover'
                   }}
                 />
               </div>

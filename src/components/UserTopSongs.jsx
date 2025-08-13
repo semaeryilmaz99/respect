@@ -55,8 +55,8 @@ const UserTopSongs = ({ userId }) => {
           id,
           title,
           artist_id,
-          image_url,
-          total_respect
+          COALESCE(cover_url, '') as image_url,
+          COALESCE(total_respect, 0) as total_respect
         `)
         .in('id', sortedSongIds)
 
@@ -137,10 +137,16 @@ const UserTopSongs = ({ userId }) => {
             >
               <div className="song-image">
                 <img 
-                  src={song.image_url || '/src/assets/song/Image.png'} 
+                  src={song.image_url || song.cover_url || '/src/assets/song/Image.png'} 
                   alt={song.title}
                   onError={(e) => {
                     e.target.src = '/src/assets/song/Image.png'
+                  }}
+                  style={{ 
+                    width: '60px', 
+                    height: '60px', 
+                    borderRadius: '8px',
+                    objectFit: 'cover'
                   }}
                 />
               </div>

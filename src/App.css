@@ -102,6 +102,26 @@ body {
     color: white;
   }
 
+  /* Artist/Song Image Styling */
+  .artist-image img,
+  .song-image img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: border-color 0.3s ease;
+  }
+
+  .artist-image img:hover,
+  .song-image img:hover {
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .song-image img {
+    border-radius: 8px;
+  }
+
   .user-top-respects-slider .slider-item p {
     margin: 4px 0;
     font-size: 14px;
