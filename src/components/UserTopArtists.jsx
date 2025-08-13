@@ -164,4 +164,3 @@ const UserTopArtists = ({ userId }) => {
 }
 
 export default UserTopArtists 
-export default UserTopArtists 
