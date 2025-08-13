@@ -5520,7 +5520,7 @@ html {
   border-radius: 20px;
   padding: 25px;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #f9dc38;
   transition: all 0.3s ease;
   cursor: pointer;
 }
@@ -5528,7 +5528,8 @@ html {
 .artist-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 30px rgba(249, 220, 56, 0.2);
-  border-color: rgba(249, 220, 56, 0.3);
+  border-width: 3px;
+  border-color: #f4d430;
 }
 
 .artist-image-container {
