@@ -22,6 +22,7 @@ const ArtistsPage = () => {
   const [hasSpotifyConnection, setHasSpotifyConnection] = useState(false)
   const [syncStatus, setSyncStatus] = useState(null)
   const [sessionSyncKey, setSessionSyncKey] = useState(null) // Oturum bazlı sync kontrolü
+  const [followedArtists, setFollowedArtists] = useState(new Set()) // Takip edilen sanatçılar set'i
 
   // syncStatus'u useMemo ile optimize et - sadece gerekli alanlar değiştiğinde yeniden hesapla
   const memoizedSyncStatus = useMemo(() => {
@@ -90,6 +91,38 @@ const ArtistsPage = () => {
     }
   }, [memoizedSyncStatus]) // memoizedSyncStatus'u kullan
 
+  // Toplu takip durumu kontrolü - tüm sanatçılar için tek seferde
+  const fetchFollowedArtists = async () => {
+    if (!user || !artists.length) return
+    
+    try {
+      console.log('🔍 Toplu takip durumu kontrol ediliyor...')
+      
+      // Tüm sanatçı ID'lerini al
+      const artistIds = artists.map(artist => artist.id)
+      
+      // Tek seferde tüm takip durumlarını kontrol et
+      const { data, error } = await supabase
+        .from('artist_follows')
+        .select('artist_id')
+        .eq('user_id', user.id)
+        .in('artist_id', artistIds)
+
+      if (error) {
+        console.error('❌ Toplu takip durumu kontrol hatası:', error)
+        return
+      }
+
+      // Takip edilen sanatçı ID'lerini Set'e ekle
+      const followedIds = new Set(data?.map(item => item.artist_id) || [])
+      setFollowedArtists(followedIds)
+      
+      console.log(`📊 ${followedIds.size} sanatçı takip ediliyor`)
+    } catch (error) {
+      console.error('❌ Toplu takip durumu kontrol hatası:', error)
+    }
+  }
+
   const fetchArtists = async () => {
     try {
       let query = supabase
@@ -114,6 +147,11 @@ const ArtistsPage = () => {
 
       setArtists(data || [])
       console.log(`📊 ${data?.length || 0} sanatçı yüklendi`)
+      
+      // Sanatçılar yüklendikten sonra takip durumlarını kontrol et
+      if (user && data?.length > 0) {
+        await fetchFollowedArtists()
+      }
     } catch (error) {
       console.error('Error fetching artists:', error)
       setError('Sanatçılar yüklenirken hata oluştu')
@@ -267,6 +305,18 @@ const ArtistsPage = () => {
                     artistId={artist.id} 
                     artistName={artist.name}
                     initialFollowersCount={artist.followers_count || 0}
+                    isFollowing={followedArtists.has(artist.id)}
+                    onFollowChange={(artistId, isFollowing) => {
+                      setFollowedArtists(prev => {
+                        const newSet = new Set(prev)
+                        if (isFollowing) {
+                          newSet.add(artistId)
+                        } else {
+                          newSet.delete(artistId)
+                        }
+                        return newSet
+                      })
+                    }}
                   />
                 </div>
               </div>

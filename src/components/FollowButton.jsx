@@ -3,19 +3,33 @@ import { useAppContext } from '../context/AppContext'
 import followService from '../api/followService'
 import feedService from '../api/feedService'
 
-const FollowButton = ({ artistId, artistName, initialFollowersCount = 0, size = 'medium' }) => {
+const FollowButton = ({ 
+  artistId, 
+  artistName, 
+  initialFollowersCount = 0, 
+  size = 'medium',
+  isFollowing: propIsFollowing = null, // Prop olarak gelen takip durumu
+  onFollowChange = null // Takip durumu değiştiğinde çağrılacak callback
+}) => {
   const { state } = useAppContext()
   const { user } = state
 
-  const [isFollowing, setIsFollowing] = useState(false)
+  const [isFollowing, setIsFollowing] = useState(propIsFollowing || false)
   const [followersCount, setFollowersCount] = useState(initialFollowersCount)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // Check initial following status
+  // Prop'tan gelen takip durumunu izle
+  useEffect(() => {
+    if (propIsFollowing !== null) {
+      setIsFollowing(propIsFollowing)
+    }
+  }, [propIsFollowing])
+
+  // Eğer prop olarak takip durumu gelmiyorsa, manuel kontrol yap
   useEffect(() => {
     const checkFollowingStatus = async () => {
-      if (!user || !artistId) return
+      if (!user || !artistId || propIsFollowing !== null) return // Prop varsa kontrol etme
       
       try {
         console.log('🔍 Checking following status for artist:', artistId)
@@ -29,7 +43,7 @@ const FollowButton = ({ artistId, artistName, initialFollowersCount = 0, size = 
     }
 
     checkFollowingStatus()
-  }, [user?.id, artistId]) // Only depend on user.id, not entire user object
+  }, [user?.id, artistId, propIsFollowing]) // propIsFollowing'i de dependency'ye ekle
 
   // Get initial followers count
   useEffect(() => {
@@ -68,8 +82,14 @@ const FollowButton = ({ artistId, artistName, initialFollowersCount = 0, size = 
       await followService.toggleFollowArtist(artistId, isFollowing)
       
       // Update local state
-      setIsFollowing(!isFollowing)
+      const newFollowingState = !isFollowing
+      setIsFollowing(newFollowingState)
       setFollowersCount(prev => isFollowing ? prev - 1 : prev + 1)
+      
+      // Callback'i çağır (eğer varsa)
+      if (onFollowChange) {
+        onFollowChange(artistId, newFollowingState)
+      }
       
       // Feed item oluştur (sadece follow edildiğinde)
       if (!isFollowing) {
