@@ -15,8 +15,7 @@
 
 .mobile-search {
   display: block;
-  width: calc(100% + 5px);
-  max-width: calc(100% + 5px);
+  width: 200px;
 }
 
 /* Desktop styles - 768px ve üzeri */
