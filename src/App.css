@@ -5470,8 +5470,8 @@ html {
 /* Artists Page Styles */
 .artists-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1b262e 0%, #2d3748 100%);
-  color: white;
+  background: #fff;
+  color: #1b262e;
 }
 
 .artists-container {
