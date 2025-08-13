@@ -2,6 +2,8 @@
 // Bu script'i browser console'da çalıştırın
 
 console.log('🔍 User Recent Respects Debug Test Başlıyor...')
+console.log('📱 Mevcut URL:', window.location.href)
+console.log('🔍 URL'den user ID var mı:', window.location.pathname.includes('/user/'))
 
 // 1. Kullanıcı kontrolü
 async function checkUser() {

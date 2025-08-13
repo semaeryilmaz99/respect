@@ -19,17 +19,25 @@ const UserRecentRespects = ({ userId, showCurrentUserOnly = false }) => {
 
   useEffect(() => {
     const fetchRecentRespects = async () => {
+      console.log('🔄 UserRecentRespects: fetchRecentRespects çağrıldı')
+      console.log('🆔 targetUserId:', targetUserId)
+      console.log('👤 currentUser?.id:', currentUser?.id)
+      console.log('🔍 showCurrentUserOnly:', showCurrentUserOnly)
+      
       if (!targetUserId) {
+        console.log('❌ targetUserId yok, loading false yapılıyor')
         setLoading(false)
         return
       }
 
       try {
+        console.log('📡 API çağrısı yapılıyor...')
         setLoading(true)
         const respects = await userService.getRecentRespectTransactions(targetUserId, 8)
+        console.log('✅ API'den gelen veriler:', respects)
         setRecentRespects(respects)
       } catch (error) {
-        console.error('Error fetching recent respects:', error)
+        console.error('❌ Error fetching recent respects:', error)
         setError('Son respect gönderimleri yüklenirken hata oluştu')
         setRecentRespects([])
       } finally {

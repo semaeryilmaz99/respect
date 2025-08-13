@@ -57,6 +57,13 @@ const UserPage = () => {
   // Mevcut kullanıcının kendi profilini görüntüleyip görüntülemediği
   const isOwnProfile = !targetUserId || targetUserId === currentUser?.id
   
+  // Debug log'ları
+  console.log('🔍 UserPage Debug:')
+  console.log('📱 targetUserId (URL):', targetUserId)
+  console.log('👤 currentUser?.id:', currentUser?.id)
+  console.log('🆔 displayUserId:', displayUserId)
+  console.log('✅ isOwnProfile:', isOwnProfile)
+  
   const handleEditProfile = () => {
     // Initialize form data with current user data
     setEditProfileData({
