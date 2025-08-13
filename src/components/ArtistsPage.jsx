@@ -74,6 +74,9 @@ const ArtistsPage = () => {
         
         // Fetch artists (will show mock data if no Spotify sync)
         await fetchArtists()
+        
+        // Sayfa yüklendiğinde mevcut takip durumlarını kontrol et
+        // Bu kısım fetchArtists içinde zaten yapılıyor, burada tekrar yapmaya gerek yok
       } catch (error) {
         console.error('Error initializing page:', error)
         setError('Sayfa yüklenirken hata oluştu')
@@ -94,19 +97,21 @@ const ArtistsPage = () => {
   }, [memoizedSyncStatus]) // memoizedSyncStatus'u kullan
 
   // Toplu takip durumu kontrolü - tüm sanatçılar için tek seferde
-  const fetchFollowedArtists = async () => {
-    if (!user || !artists.length) return
+  const fetchFollowedArtists = async (artistIds = null) => {
+    if (!user) return
     
     try {
-      // Tüm sanatçı ID'lerini al
-      const artistIds = artists.map(artist => artist.id)
+      // Eğer artistIds parametresi verilmişse onu kullan, yoksa artists state'inden al
+      const idsToCheck = artistIds || artists.map(artist => artist.id)
+      
+      if (!idsToCheck.length) return
       
       // Tek seferde tüm takip durumlarını kontrol et
       const { data, error } = await supabase
         .from('artist_follows')
         .select('artist_id')
         .eq('user_id', user.id)
-        .in('artist_id', artistIds)
+        .in('artist_id', idsToCheck)
 
       if (error) {
         console.error('❌ Toplu takip durumu kontrol hatası:', error)
@@ -144,7 +149,7 @@ const ArtistsPage = () => {
       
       // Sanatçılar yüklendikten sonra takip durumlarını kontrol et
       if (user && data?.length > 0) {
-        await fetchFollowedArtists()
+        await fetchFollowedArtists(data.map(artist => artist.id))
       }
     } catch (error) {
       console.error('Error fetching artists:', error)
