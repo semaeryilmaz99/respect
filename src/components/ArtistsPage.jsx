@@ -24,6 +24,11 @@ const ArtistsPage = () => {
   const [sessionSyncKey, setSessionSyncKey] = useState(null) // Oturum bazlı sync kontrolü
   const [followedArtists, setFollowedArtists] = useState(new Set()) // Takip edilen sanatçılar set'i
 
+  // Debug için followedArtists state'ini izle
+  useEffect(() => {
+    console.log('📊 followedArtists state güncellendi:', Array.from(followedArtists))
+  }, [followedArtists])
+
   // syncStatus'u useMemo ile optimize et - sadece gerekli alanlar değiştiğinde yeniden hesapla
   const memoizedSyncStatus = useMemo(() => {
     if (!syncStatus) return null
@@ -97,9 +102,12 @@ const ArtistsPage = () => {
     
     try {
       console.log('🔍 Toplu takip durumu kontrol ediliyor...')
+      console.log('👤 Kullanıcı ID:', user.id)
+      console.log('🎵 Sanatçı sayısı:', artists.length)
       
       // Tüm sanatçı ID'lerini al
       const artistIds = artists.map(artist => artist.id)
+      console.log('📋 Sanatçı ID\'leri:', artistIds)
       
       // Tek seferde tüm takip durumlarını kontrol et
       const { data, error } = await supabase
@@ -117,6 +125,7 @@ const ArtistsPage = () => {
       const followedIds = new Set(data?.map(item => item.artist_id) || [])
       setFollowedArtists(followedIds)
       
+      console.log('📊 Takip edilen sanatçılar:', Array.from(followedIds))
       console.log(`📊 ${followedIds.size} sanatçı takip ediliyor`)
     } catch (error) {
       console.error('❌ Toplu takip durumu kontrol hatası:', error)
@@ -307,6 +316,7 @@ const ArtistsPage = () => {
                     initialFollowersCount={artist.followers_count || 0}
                     isFollowing={followedArtists.has(artist.id)}
                     onFollowChange={(artistId, isFollowing) => {
+                      console.log(`🔄 Takip durumu değişti: ${artist.name} (${artistId}) -> ${isFollowing ? 'Takip ediliyor' : 'Takip edilmiyor'}`)
                       setFollowedArtists(prev => {
                         const newSet = new Set(prev)
                         if (isFollowing) {
@@ -314,6 +324,7 @@ const ArtistsPage = () => {
                         } else {
                           newSet.delete(artistId)
                         }
+                        console.log('📊 Yeni takip edilen sanatçılar:', Array.from(newSet))
                         return newSet
                       })
                     }}
