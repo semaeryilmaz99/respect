@@ -4,12 +4,13 @@ import userService from '../api/userService'
 import LoadingSpinner from './LoadingSpinner'
 import realtimeRespects from '../utils/realtimeRespects'
 
-const UserRecentRespects = ({ userId }) => {
+const UserRecentRespects = ({ userId, showCurrentUserOnly = false }) => {
   const { state } = useAppContext()
   const { user: currentUser } = state
   
-  // userId prop'u verilmişse onu kullan, yoksa mevcut kullanıcının ID'sini kullan
-  const targetUserId = userId || currentUser?.id
+  // showCurrentUserOnly true ise sadece mevcut kullanıcının respect'lerini göster
+  // false ise userId prop'unu kullan (başka kullanıcının respect'leri için)
+  const targetUserId = showCurrentUserOnly ? currentUser?.id : (userId || currentUser?.id)
   
   const [recentRespects, setRecentRespects] = useState([])
   const [loading, setLoading] = useState(true)
@@ -45,8 +46,6 @@ const UserRecentRespects = ({ userId }) => {
 
     // Real-time subscription
     const unsubscribe = realtimeRespects.subscribeToRespects(targetUserId, (event) => {
-      console.log('🔄 Real-time respect event:', event)
-      
       if (event.type === 'NEW_RESPECT') {
         // Yeni respect gönderimi - listenin başına ekle
         setRecentRespects(prev => {
@@ -117,10 +116,12 @@ const UserRecentRespects = ({ userId }) => {
     }
   }
 
+  const sectionTitle = showCurrentUserOnly ? 'Son Respect Gönderimlerim' : 'Son Respect Gönderimleri'
+
   if (loading) {
     return (
       <div className="user-recent-respects">
-        <h3 className="section-title">Son Respect Gönderimleri</h3>
+        <h3 className="section-title">{sectionTitle}</h3>
         <LoadingSpinner />
       </div>
     )
@@ -129,7 +130,7 @@ const UserRecentRespects = ({ userId }) => {
   if (error && recentRespects.length === 0) {
     return (
       <div className="user-recent-respects">
-        <h3 className="section-title">Son Respect Gönderimleri</h3>
+        <h3 className="section-title">{sectionTitle}</h3>
         <div className="error-message">{error}</div>
       </div>
     )
@@ -137,11 +138,11 @@ const UserRecentRespects = ({ userId }) => {
 
   return (
     <div className="user-recent-respects">
-      <h3 className="section-title">Son Respect Gönderimleri</h3>
+      <h3 className="section-title">{sectionTitle}</h3>
       
       {recentRespects.length === 0 ? (
         <div className="empty-state">
-          <p>Henüz hiç respect göndermemiş</p>
+          <p>{showCurrentUserOnly ? 'Henüz hiç respect göndermemiş' : 'Henüz hiç respect göndermemiş'}</p>
         </div>
       ) : (
         <div className="recent-respects-list">

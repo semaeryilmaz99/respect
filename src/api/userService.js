@@ -212,8 +212,6 @@ const userService = {
   // Get user's recent respect transactions
   getRecentRespectTransactions: async (userId, limit = 10) => {
     try {
-      console.log('💰 Getting recent respect transactions for user:', userId)
-      
       const { data, error } = await supabase
         .from('respect_transactions')
         .select(`
@@ -241,7 +239,6 @@ const userService = {
         throw error
       }
       
-      console.log('✅ Recent respect transactions fetched:', data?.length || 0)
       return data?.map(transaction => ({
         ...transaction,
         recipient_name: transaction.artists?.name || transaction.songs?.artists?.name,

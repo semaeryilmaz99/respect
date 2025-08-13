@@ -493,7 +493,7 @@ const UserPage = () => {
         
         <UserStats userData={displayUserData} userId={displayUserId} />
         
-        <UserRecentRespects userId={displayUserId} />
+        <UserRecentRespects showCurrentUserOnly={isOwnProfile} />
         <UserFollowedArtists userId={displayUserId} />
         <UserFavoritedSongs userId={displayUserId} />
         <UserTopArtists userId={displayUserId} />
@@ -554,7 +554,7 @@ const UserPage = () => {
         <div className="desktop-unified-user-sections">
           <div className="unified-sections-container">
             <div className="unified-section">
-              <UserRecentRespects userId={displayUserId} />
+              <UserRecentRespects showCurrentUserOnly={isOwnProfile} />
             </div>
             <div className="unified-section">
               <UserFollowedArtists userId={displayUserId} />
