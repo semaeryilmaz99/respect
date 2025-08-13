@@ -5509,13 +5509,14 @@ html {
 }
 
 .artist-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, #1b262e 0%, #2d3748 100%);
   border-radius: 20px;
   padding: 25px;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(249, 220, 56, 0.2);
   transition: all 0.3s ease;
   cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .artist-card:hover {
