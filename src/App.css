@@ -4391,6 +4391,13 @@ html {
   border-radius: 16px;
 }
 
+/* Hide back button on mobile devices */
+@media (max-width: 767px) {
+  .back-button {
+    display: none !important;
+  }
+}
+
 .back-button.compact .back-icon {
   font-size: 14px;
 }
