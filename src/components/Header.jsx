@@ -67,9 +67,6 @@ const Header = () => {
         {/* Desktop'ta feed, song, user ve artist sayfasında arama motoru, send respect sayfasında "Respect Gönder", diğerlerinde title */}
         {isFeedPage || isSongPage || isUserPage || isArtistPage ? (
           <>
-            {/* Mobile'da title görünecek, desktop'ta gizlenecek */}
-            <h1 className="app-title mobile-only">Respect Müzik</h1>
-            
             {/* Desktop'ta arama motoru buraya gelecek */}
             <div className="search-container desktop-search">
               <div className="search-bar">
@@ -89,14 +86,10 @@ const Header = () => {
           </>
         ) : isSendRespectPage ? (
           <>
-            {/* Mobile'da normal title */}
-            <h1 className="app-title mobile-only">Respect Müzik</h1>
             {/* Desktop'ta "Respect Gönder" yazısı */}
             <h1 className="app-title desktop-only">Respect Gönder</h1>
           </>
-        ) : (
-        <h1 className="app-title">Respect Müzik</h1>
-        )}
+        ) : null}
         
         <button className="user-avatar" onClick={() => navigate('/profile')}>
           <img 
