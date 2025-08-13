@@ -32,7 +32,14 @@ const initialState = {
   
   // Notifications
   notifications: [],
-  unreadCount: 0
+  unreadCount: 0,
+  
+  // Spotify sync state
+  spotifySync: {
+    hasConnection: false,
+    syncStatus: null,
+    lastSyncCheck: null
+  }
 }
 
 
@@ -195,6 +202,35 @@ const appReducer = (state, action) => {
       
     case ACTIONS.SET_UNREAD_COUNT:
       return { ...state, unreadCount: action.payload }
+      
+    // Spotify sync cases
+    case ACTIONS.SET_SPOTIFY_CONNECTION:
+      return {
+        ...state,
+        spotifySync: {
+          ...state.spotifySync,
+          hasConnection: action.payload
+        }
+      }
+      
+    case ACTIONS.SET_SPOTIFY_SYNC_STATUS:
+      return {
+        ...state,
+        spotifySync: {
+          ...state.spotifySync,
+          syncStatus: action.payload,
+          lastSyncCheck: new Date().toISOString()
+        }
+      }
+      
+    case ACTIONS.UPDATE_SPOTIFY_SYNC:
+      return {
+        ...state,
+        spotifySync: {
+          ...state.spotifySync,
+          ...action.payload
+        }
+      }
       
     default:
       return state

@@ -11,7 +11,7 @@ import Toast from './Toast'
 
 const ArtistsPage = () => {
   const navigate = useNavigate()
-  const { state } = useAppContext()
+  const { state, dispatch } = useAppContext()
   const { user } = state
   
   const [artists, setArtists] = useState([])
@@ -19,9 +19,12 @@ const ArtistsPage = () => {
   const [error, setError] = useState('')
   const [syncing, setSyncing] = useState(false)
   const [toast, setToast] = useState({ show: false, message: '', type: 'info' })
-  const [hasSpotifyConnection, setHasSpotifyConnection] = useState(false)
-  const [syncStatus, setSyncStatus] = useState(null)
   const [sessionSyncKey, setSessionSyncKey] = useState(null) // Oturum bazlı sync kontrolü
+  
+  // Global state'den Spotify sync durumunu al
+  const { spotifySync } = state
+  const hasSpotifyConnection = spotifySync.hasConnection
+  const syncStatus = spotifySync.syncStatus
   const [followedArtists, setFollowedArtists] = useState(new Set()) // Takip edilen sanatçılar set'i
 
 
@@ -56,18 +59,21 @@ const ArtistsPage = () => {
         setSessionSyncKey(null)
         
         if (user) {
-          // Check if user has Spotify connection
-          const connectionCheck = await checkSpotifyConnection(user.id)
-          setHasSpotifyConnection(connectionCheck.hasConnection)
-          
-          if (connectionCheck.hasConnection) {
-            // Get sync status
-            const status = await getSyncStatus(user.id)
-            setSyncStatus(status)
+          // Global state'de zaten sync durumu varsa tekrar kontrol etme
+          if (!spotifySync.hasConnection || !spotifySync.syncStatus) {
+            // Check if user has Spotify connection
+            const connectionCheck = await checkSpotifyConnection(user.id)
+            dispatch({ type: 'SET_SPOTIFY_CONNECTION', payload: connectionCheck.hasConnection })
             
-            // If no recent sync, show sync option
-            if (!status.hasSyncHistory || !status.isRecent) {
-              console.log('No recent sync found, user can sync their Spotify data')
+            if (connectionCheck.hasConnection) {
+              // Get sync status
+              const status = await getSyncStatus(user.id)
+              dispatch({ type: 'SET_SPOTIFY_SYNC_STATUS', payload: status })
+              
+              // If no recent sync, show sync option
+              if (!status.hasSyncHistory || !status.isRecent) {
+                console.log('No recent sync found, user can sync their Spotify data')
+              }
             }
           }
         }
@@ -181,7 +187,7 @@ const ArtistsPage = () => {
         await fetchArtists()
         // Update sync status
         const status = await getSyncStatus(user.id)
-        setSyncStatus(status)
+        dispatch({ type: 'SET_SPOTIFY_SYNC_STATUS', payload: status })
       } else {
         setToast({
           show: true,
