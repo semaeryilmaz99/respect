@@ -2,48 +2,118 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
 import { supabase } from '../config/supabase'
+import { syncUserSpotifyData, checkSpotifyConnection, getSyncStatus } from '../api/spotifyUserDataService'
 import Header from './Header'
 import FollowButton from './FollowButton'
 import LoadingSpinner from './LoadingSpinner'
 import BackButton from './common/BackButton'
+import Toast from './Toast'
 
 const ArtistsPage = () => {
   const navigate = useNavigate()
   const { state } = useAppContext()
-  const { user: _user } = state
+  const { user } = state
   
   const [artists, setArtists] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [syncing, setSyncing] = useState(false)
+  const [toast, setToast] = useState({ show: false, message: '', type: 'info' })
+  const [hasSpotifyConnection, setHasSpotifyConnection] = useState(false)
+  const [syncStatus, setSyncStatus] = useState(null)
 
   useEffect(() => {
-    const fetchArtists = async () => {
+    const initializePage = async () => {
       try {
         setLoading(true)
         
-        const { data, error } = await supabase
-          .from('artists')
-          .select('*')
-          .order('total_respect', { ascending: false })
-
-        if (error) {
-          throw error
+        if (user) {
+          // Check if user has Spotify connection
+          const connectionCheck = await checkSpotifyConnection(user.id)
+          setHasSpotifyConnection(connectionCheck.hasConnection)
+          
+          if (connectionCheck.hasConnection) {
+            // Get sync status
+            const status = await getSyncStatus(user.id)
+            setSyncStatus(status)
+            
+            // If no recent sync, show sync option
+            if (!status.hasSyncHistory || !status.isRecent) {
+              console.log('No recent sync found, user can sync their Spotify data')
+            }
+          }
         }
-
-        setArtists(data || [])
+        
+        // Fetch artists (will show mock data if no Spotify sync)
+        await fetchArtists()
       } catch (error) {
-        console.error('Error fetching artists:', error)
-        setError('Sanatçılar yüklenirken hata oluştu')
+        console.error('Error initializing page:', error)
+        setError('Sayfa yüklenirken hata oluştu')
       } finally {
         setLoading(false)
       }
     }
 
-    fetchArtists()
-  }, [])
+    initializePage()
+  }, [user])
+
+  const fetchArtists = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('artists')
+        .select('*')
+        .order('total_respect', { ascending: false })
+
+      if (error) {
+        throw error
+      }
+
+      setArtists(data || [])
+    } catch (error) {
+      console.error('Error fetching artists:', error)
+      setError('Sanatçılar yüklenirken hata oluştu')
+    }
+  }
 
   const handleArtistClick = (artistId) => {
     navigate(`/artist/${artistId}`)
+  }
+
+  const handleSyncSpotifyData = async () => {
+    if (!user) return
+    
+    try {
+      setSyncing(true)
+      const result = await syncUserSpotifyData(user.id)
+      
+      if (result.success) {
+        setToast({
+          show: true,
+          message: result.message,
+          type: 'success'
+        })
+        // Refresh artists after sync
+        await fetchArtists()
+        // Update sync status
+        const status = await getSyncStatus(user.id)
+        setSyncStatus(status)
+      } else {
+        setToast({
+          show: true,
+          message: result.message,
+          type: 'error'
+        })
+      }
+    } catch (error) {
+      console.error('Error syncing Spotify data:', error)
+      setToast({
+        show: true,
+        message: 'Spotify verilerini senkronize ederken hata oluştu',
+        type: 'error'
+      })
+    } finally {
+      setSyncing(false)
+    }
   }
 
   if (loading) {
@@ -72,6 +142,29 @@ const ArtistsPage = () => {
         <div className="artists-header">
           <h1 className="artists-title">Sanatçılar</h1>
           <p className="artists-subtitle">Favori sanatçılarınızı keşfedin ve takip edin</p>
+          
+          {/* Spotify Sync Section */}
+          {user && hasSpotifyConnection && (
+            <div className="spotify-sync-section">
+              {!syncStatus?.hasSyncHistory || !syncStatus?.isRecent ? (
+                <div className="sync-prompt">
+                  <p>🎵 Spotify çalma listelerinizden sanatçıları senkronize edin</p>
+                  <button 
+                    className="sync-button"
+                    onClick={handleSyncSpotifyData}
+                    disabled={syncing}
+                  >
+                    {syncing ? 'Senkronize ediliyor...' : 'Spotify Verilerini Senkronize Et'}
+                  </button>
+                </div>
+              ) : (
+                <div className="sync-status">
+                  <p>✅ Spotify verileriniz güncel</p>
+                  <small>Son senkronizasyon: {new Date(syncStatus.lastSync.created_at).toLocaleString('tr-TR')}</small>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="artists-grid">
@@ -113,6 +206,15 @@ const ArtistsPage = () => {
           )}
         </div>
       </div>
+      
+      {/* Toast Notification */}
+      {toast.show && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast({ show: false, message: '', type: 'info' })}
+        />
+      )}
     </div>
   )
 }

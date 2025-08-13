@@ -131,3 +131,90 @@
 .stat-card.updated {
   animation: statUpdate 0.4s ease-in-out;
 }
+
+/* Spotify Sync Section Styles */
+.spotify-sync-section {
+  margin: 20px 0;
+  padding: 16px;
+  background: linear-gradient(135deg, #1db954 0%, #1ed760 100%);
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 4px 15px rgba(29, 185, 84, 0.2);
+}
+
+.sync-prompt {
+  text-align: center;
+}
+
+.sync-prompt p {
+  margin-bottom: 12px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.sync-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 10px 20px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.sync-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.sync-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.sync-status {
+  text-align: center;
+}
+
+.sync-status p {
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.sync-status small {
+  opacity: 0.8;
+  font-size: 12px;
+}
+
+/* Desktop styles for Spotify sync */
+@media (min-width: 768px) {
+  .spotify-sync-section {
+    margin: 24px 0;
+    padding: 20px;
+    border-radius: 16px;
+  }
+  
+  .sync-prompt p {
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .sync-button {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+  
+  .sync-status p {
+    font-size: 16px;
+  }
+  
+  .sync-status small {
+    font-size: 14px;
+  }
+}
