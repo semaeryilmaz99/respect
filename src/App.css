@@ -5525,8 +5525,11 @@ html {
 }
 
 .artist-image-container {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .artist-image {
