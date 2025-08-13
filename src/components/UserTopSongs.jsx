@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useAppContext } from '../context/AppContext'
 import userService from '../api/userService'
 import LoadingSpinner from './LoadingSpinner'
+import MobileSlider from './common/MobileSlider'
 
 const UserTopSongs = ({ userId }) => {
   const { state } = useAppContext()
@@ -55,6 +56,54 @@ const UserTopSongs = ({ userId }) => {
     )
   }
 
+  // Desktop için normal grid layout
+  const desktopLayout = (
+    <div className="top-songs-grid">
+      {topSongs.map((song, index) => (
+        <div key={song.id} className="top-song-card">
+          <div className="top-song-cover">
+            <img 
+              src={song.cover_url || "/assets/song/Image.png"} 
+              alt={`${song.title} kapağı`} 
+            />
+          </div>
+          <h4 className="top-song-title">{song.title}</h4>
+          <p className="top-song-artist">{song.artist_name}</p>
+          <p className="top-song-respect">{song.total_respect?.toLocaleString()} Respect</p>
+        </div>
+      ))}
+    </div>
+  )
+
+  // Mobile için slider layout
+  const mobileLayout = (
+    <MobileSlider 
+      autoPlay={true} 
+      interval={3500} 
+      showDots={true}
+      showArrows={false}
+      className="mobile-top-songs-slider"
+    >
+      {topSongs.map((song, index) => (
+        <div key={song.id} className="mobile-top-song-slide">
+          <div className="mobile-top-song-content">
+            <div className="mobile-top-song-cover">
+              <img 
+                src={song.cover_url || "/assets/song/Image.png"} 
+                alt={`${song.title} kapağı`} 
+              />
+            </div>
+            <div className="mobile-top-song-info">
+              <h4 className="mobile-top-song-title">{song.title}</h4>
+              <p className="mobile-top-song-artist">{song.artist_name}</p>
+              <p className="mobile-top-song-respect">{song.total_respect?.toLocaleString()} Respect</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </MobileSlider>
+  )
+
   return (
     <div className="user-top-songs">
       <h3 className="section-title">En Çok Desteklediği Şarkılar</h3>
@@ -64,21 +113,17 @@ const UserTopSongs = ({ userId }) => {
           <p>Henüz hiç şarkıya respect göndermemiş</p>
         </div>
       ) : (
-        <div className="top-songs-grid">
-          {topSongs.map((song, index) => (
-            <div key={song.id} className="top-song-card">
-              <div className="top-song-cover">
-                <img 
-                  src={song.cover_url || "/assets/song/Image.png"} 
-                  alt={`${song.title} kapağı`} 
-                />
-              </div>
-              <h4 className="top-song-title">{song.title}</h4>
-              <p className="top-song-artist">{song.artist_name}</p>
-              <p className="top-song-respect">{song.total_respect?.toLocaleString()} Respect</p>
-            </div>
-          ))}
-        </div>
+        <>
+          {/* Desktop Layout - Sadece desktop'ta görünür */}
+          <div className="desktop-only">
+            {desktopLayout}
+          </div>
+          
+          {/* Mobile Layout - Sadece mobile'da görünür */}
+          <div className="mobile-only">
+            {mobileLayout}
+          </div>
+        </>
       )}
     </div>
   )
