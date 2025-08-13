@@ -55,7 +55,7 @@ const ArtistsPage = () => {
     }
 
     initializePage()
-  }, [user, syncStatus]) // syncStatus'u dependency olarak ekledik
+  }, [user]) // Sadece user dependency'si kalsın
 
   const fetchArtists = async () => {
     try {
@@ -104,11 +104,15 @@ const ArtistsPage = () => {
           message: result.message,
           type: 'success'
         })
-        // Refresh artists after sync
-        await fetchArtists()
-        // Update sync status
+        
+        // Update sync status first
         const status = await getSyncStatus(user.id)
         setSyncStatus(status)
+        
+        // Then refresh artists with new sync status
+        setTimeout(() => {
+          fetchArtists()
+        }, 100)
       } else {
         setToast({
           show: true,

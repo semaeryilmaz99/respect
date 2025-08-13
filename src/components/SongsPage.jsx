@@ -55,7 +55,7 @@ const SongsPage = () => {
     }
 
     initializePage()
-  }, [user, syncStatus]) // syncStatus'u dependency olarak ekledik
+  }, [user]) // Sadece user dependency'si kalsın
 
   const fetchSongs = async () => {
     try {
@@ -111,11 +111,15 @@ const SongsPage = () => {
           message: result.message,
           type: 'success'
         })
-        // Refresh songs after sync
-        await fetchSongs()
-        // Update sync status
+        
+        // Update sync status first
         const status = await getSyncStatus(user.id)
         setSyncStatus(status)
+        
+        // Then refresh songs with new sync status
+        setTimeout(() => {
+          fetchSongs()
+        }, 100)
       } else {
         setToast({
           show: true,
