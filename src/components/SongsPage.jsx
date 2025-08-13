@@ -55,11 +55,11 @@ const SongsPage = () => {
     }
 
     initializePage()
-  }, [user])
+  }, [user, syncStatus]) // syncStatus'u dependency olarak ekledik
 
   const fetchSongs = async () => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('songs')
         .select(`
           *,
@@ -67,11 +67,23 @@ const SongsPage = () => {
         `)
         .order('total_respect', { ascending: false })
 
+      // Eğer kullanıcının Spotify bağlantısı varsa ve sync yapılmışsa, 
+      // sadece Spotify ID'li şarkıları getir (kullanıcının playlist verileri)
+      if (user && hasSpotifyConnection && syncStatus?.hasSyncHistory && syncStatus?.isRecent) {
+        console.log('🎵 Kullanıcının Spotify playlist şarkıları getiriliyor...')
+        query = query.not('spotify_id', 'is', null)
+      } else {
+        console.log('📋 Tüm şarkılar getiriliyor (mock data)')
+      }
+
+      const { data, error } = await query
+
       if (error) {
         throw error
       }
 
       setSongs(data || [])
+      console.log(`📊 ${data?.length || 0} şarkı yüklendi`)
     } catch (error) {
       console.error('Error fetching songs:', error)
       setError('Şarkılar yüklenirken hata oluştu')
@@ -168,7 +180,20 @@ const SongsPage = () => {
                 <div className="sync-status">
                   <p>✅ Spotify verileriniz güncel</p>
                   <small>Son senkronizasyon: {new Date(syncStatus.lastSync.created_at).toLocaleString('tr-TR')}</small>
+                  <p className="data-source-info">
+                    📋 Şu anda <strong>Spotify playlist'inizdeki şarkılar</strong> gösteriliyor
+                  </p>
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* Data Source Info */}
+          {(!user || !hasSpotifyConnection || !syncStatus?.hasSyncHistory || !syncStatus?.isRecent) && (
+            <div className="data-source-info">
+              <p>📋 Şu anda <strong>tüm şarkılar</strong> gösteriliyor</p>
+              {user && hasSpotifyConnection && (
+                <p>💡 Spotify verilerinizi senkronize ederek kişiselleştirilmiş şarkı listesi alabilirsiniz</p>
               )}
             </div>
           )}
