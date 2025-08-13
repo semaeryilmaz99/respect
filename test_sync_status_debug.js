@@ -52,16 +52,18 @@ window.supabase.auth.getUser().then(({ data: { user }, error }) => {
               const lastSync = syncLogs[0]
               const syncTime = new Date(lastSync.created_at)
               
-              // Oturum bilgisini al
-              window.supabase.auth.getSession().then(({ data: { session } }) => {
-                if (session) {
-                  const sessionStartTime = new Date(session.created_at)
-                  const isRecent = syncTime > sessionStartTime
-                  
-                  console.log('🕐 Oturum Başlangıcı:', sessionStartTime.toLocaleString('tr-TR'))
-                  console.log('🕐 Son Sync:', syncTime.toLocaleString('tr-TR'))
-                  console.log('✅ Oturum sonrası sync mi:', isRecent)
-                  console.log('📊 Sync durumu:', isRecent ? 'GÜNCEL' : 'YENİ SYNC GEREKLİ')
+                             // Oturum bilgisini al
+               window.supabase.auth.getSession().then(({ data: { session } }) => {
+                 if (session) {
+                   console.log('🔍 Session objesi:', session)
+                   
+                   const sessionStartTime = new Date(session.created_at || session.started_at || Date.now())
+                   const isRecent = syncTime > sessionStartTime
+                   
+                   console.log('🕐 Oturum Başlangıcı:', sessionStartTime.toLocaleString('tr-TR'))
+                   console.log('🕐 Son Sync:', syncTime.toLocaleString('tr-TR'))
+                   console.log('✅ Oturum sonrası sync mi:', isRecent)
+                   console.log('📊 Sync durumu:', isRecent ? 'GÜNCEL' : 'YENİ SYNC GEREKLİ')
                   
                   // 4. Spotify ID'li sanatçılar kontrolü
                   window.supabase

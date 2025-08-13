@@ -97,8 +97,11 @@ export const getSyncStatus = async (userId) => {
       return { hasSyncHistory: false, error: 'No active session' }
     }
 
-    // Oturum başlangıç zamanını al
-    const sessionStartTime = new Date(session.created_at)
+    // Supabase session'dan oturum başlangıç zamanını al
+    console.log(`🔍 Session objesi:`, session)
+    
+    // Session'da mevcut alanları kontrol et
+    const sessionStartTime = new Date(session.created_at || session.started_at || Date.now())
     console.log(`🕐 Oturum başlangıcı:`, sessionStartTime.toLocaleString('tr-TR'))
 
     const { data, error } = await supabase
