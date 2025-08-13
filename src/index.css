@@ -225,6 +225,7 @@
 /* Sync Status Data Source Info - Override for better visibility */
 .sync-status .data-source-info {
   background: none;
+  align-items: center;
   border: none;
   padding: 8px 0;
   margin: 8px 0;
