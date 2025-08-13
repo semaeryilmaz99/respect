@@ -1,134 +1,167 @@
 import React, { useState, useEffect } from 'react'
-import { useAppContext } from '../context/AppContext'
-import userService from '../api/userService'
-import LoadingSpinner from './LoadingSpinner'
-import MobileSlider from './common/MobileSlider'
+import { supabase } from '../config/supabase'
+import { Link } from 'react-router-dom'
 
 const UserTopArtists = ({ userId }) => {
-  const { state } = useAppContext()
-  const { user: currentUser } = state
-  
-  // userId prop'u verilmişse onu kullan, yoksa mevcut kullanıcının ID'sini kullan
-  const targetUserId = userId || currentUser?.id
-  
   const [topArtists, setTopArtists] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    const fetchTopArtists = async () => {
-      if (!targetUserId) {
+    if (userId) {
+      fetchTopArtists()
+    }
+  }, [userId])
+
+  const fetchTopArtists = async () => {
+    try {
+      setLoading(true)
+      
+      // Respect transactions'dan en çok respect alan sanatçıları getir
+      const { data: respectData, error: respectError } = await supabase
+        .from('respect_transactions')
+        .select(`
+          to_artist_id,
+          amount
+        `)
+        .not('to_artist_id', 'is', null)
+        .eq('from_user_id', userId)
+
+      if (respectError) throw respectError
+
+      // Artist ID'leri grupla ve toplam respect'leri hesapla
+      const artistRespects = {}
+      respectData?.forEach(transaction => {
+        const artistId = transaction.to_artist_id
+        artistRespects[artistId] = (artistRespects[artistId] || 0) + transaction.amount
+      })
+
+      // En çok respect alan sanatçıları sırala
+      const sortedArtistIds = Object.entries(artistRespects)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 10)
+        .map(([artistId]) => artistId)
+
+      if (sortedArtistIds.length === 0) {
+        setTopArtists([])
         setLoading(false)
         return
       }
 
-      try {
-        setLoading(true)
-        const artists = await userService.getTopRespectedArtists(targetUserId, 6)
-        setTopArtists(artists)
-      } catch (error) {
-        console.error('Error fetching top artists:', error)
-        setError('Sanatçı bilgileri yüklenirken hata oluştu')
-        setTopArtists([])
-      } finally {
-        setLoading(false)
-      }
-    }
+      // Sanatçı detaylarını getir
+      const { data: artistsData, error: artistsError } = await supabase
+        .from('artists')
+        .select(`
+          id,
+          name,
+          image_url,
+          total_respect
+        `)
+        .in('id', sortedArtistIds)
 
-    fetchTopArtists()
-  }, [targetUserId])
+      if (artistsError) throw artistsError
+
+      // Respect miktarlarını ekle ve sırala
+      const artistsWithRespects = artistsData.map(artist => ({
+        ...artist,
+        totalRespectReceived: artistRespects[artist.id] || 0
+      })).sort((a, b) => b.totalRespectReceived - a.totalRespectReceived)
+
+      setTopArtists(artistsWithRespects)
+    } catch (error) {
+      console.error('Error fetching top artists:', error)
+      setError(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   if (loading) {
     return (
-      <div className="user-top-artists">
-        <h3 className="section-title">En Çok Desteklediği Sanatçılar</h3>
-        <LoadingSpinner />
+      <div className="user-section">
+        <h3>En Çok Respect Gönderilen Sanatçılar</h3>
+        <div className="loading-placeholder">Yükleniyor...</div>
       </div>
     )
   }
 
-  if (error && topArtists.length === 0) {
+  if (error) {
     return (
-      <div className="user-top-artists">
-        <h3 className="section-title">En Çok Desteklediği Sanatçılar</h3>
-        <div className="error-message">{error}</div>
+      <div className="user-section">
+        <h3>En Çok Respect Gönderilen Sanatçılar</h3>
+        <div className="error-message">Hata: {error}</div>
       </div>
     )
   }
 
-  // Desktop için normal grid layout
-  const desktopLayout = (
-    <div className="top-artists-grid">
-      {topArtists.map((artist, index) => (
-        <div key={artist.id} className={`top-artist-card ${index === 0 ? 'top-respecter' : ''}`}>
-          {index === 0 && (
-            <div className="top-respecter-badge">TOP RESPECTER</div>
-          )}
-          <div className="top-artist-image">
-            <img 
-              src={artist.avatar_url || "/assets/artist/Image.png"} 
-              alt={artist.name} 
-            />
-          </div>
-          <h4 className="top-artist-name">{artist.name}</h4>
-          <p className="top-artist-respect">{artist.total_respect?.toLocaleString()} Respect</p>
-        </div>
-      ))}
-    </div>
-  )
-
-  // Mobile için slider layout
-  const mobileLayout = (
-    <MobileSlider 
-      autoPlay={true} 
-      interval={4000} 
-      showDots={true}
-      showArrows={false}
-      className="mobile-top-artists-slider"
-    >
-      {topArtists.map((artist, index) => (
-        <div key={artist.id} className={`mobile-top-artist-slide ${index === 0 ? 'top-respecter' : ''}`}>
-          {index === 0 && (
-            <div className="mobile-top-respecter-badge">TOP RESPECTER</div>
-          )}
-          <div className="mobile-top-artist-content">
-            <div className="mobile-top-artist-image">
-              <img 
-                src={artist.avatar_url || "/assets/artist/Image.png"} 
-                alt={artist.name} 
-              />
-            </div>
-            <h4 className="mobile-top-artist-name">{artist.name}</h4>
-            <p className="mobile-top-artist-respect">{artist.total_respect?.toLocaleString()} Respect</p>
-          </div>
-        </div>
-      ))}
-    </MobileSlider>
-  )
+  if (topArtists.length === 0) {
+    return (
+      <div className="user-section">
+        <h3>En Çok Respect Gönderilen Sanatçılar</h3>
+        <div className="no-data-message">Henüz hiçbir sanatçıya respect gönderilmemiş.</div>
+      </div>
+    )
+  }
 
   return (
-    <div className="user-top-artists">
-      <h3 className="section-title">En Çok Desteklediği Sanatçılar</h3>
+    <div className="user-section">
+      <h3>En Çok Respect Gönderilen Sanatçılar</h3>
       
-      {topArtists.length === 0 ? (
-        <div className="empty-state">
-          <p>Henüz hiç sanatçıya respect göndermemiş</p>
+      {/* Desktop View - Normal Grid */}
+      <div className="desktop-view">
+        <div className="artists-grid">
+          {topArtists.map((artist) => (
+            <Link 
+              key={artist.id} 
+              to={`/artist/${artist.id}`}
+              className="artist-card"
+            >
+              <div className="artist-image">
+                <img 
+                  src={artist.image_url || '/src/assets/artist/Image.png'} 
+                  alt={artist.name}
+                  onError={(e) => {
+                    e.target.src = '/src/assets/artist/Image.png'
+                  }}
+                />
+              </div>
+              <div className="artist-info">
+                <h4>{artist.name}</h4>
+                <p className="respect-amount">{artist.totalRespectReceived} Respect</p>
+              </div>
+            </Link>
+          ))}
         </div>
-      ) : (
-        <>
-          {/* Desktop Layout - Sadece desktop'ta görünür */}
-          <div className="desktop-only">
-            {desktopLayout}
-          </div>
-          
-          {/* Mobile Layout - Sadece mobile'da görünür */}
-          <div className="mobile-only">
-            {mobileLayout}
-          </div>
-        </>
-      )}
+      </div>
+
+      {/* Mobile View - Slider */}
+      <div className="mobile-view user-top-respects-slider">
+        <div className="slider-container">
+          {/* Slider items'ları iki kez ekle (sonsuz döngü için) */}
+          {[...topArtists, ...topArtists].map((artist, index) => (
+            <div key={`${artist.id}-${index}`} className="slider-item">
+              <div className="artist-info">
+                <h4>{artist.name}</h4>
+                <p>Toplam Respect: {artist.totalRespectReceived}</p>
+                <div className="respect-amount">{artist.totalRespectReceived} Respect</div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Slider Navigation Dots */}
+        <div className="slider-dots">
+          {topArtists.map((_, index) => (
+            <div 
+              key={index} 
+              className={`slider-dot ${index === 0 ? 'active' : ''}`}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
 
+export default UserTopArtists 
 export default UserTopArtists 
