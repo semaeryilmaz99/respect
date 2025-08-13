@@ -34,7 +34,7 @@ const UserRecentRespects = ({ userId, showCurrentUserOnly = false }) => {
         console.log('📡 API çağrısı yapılıyor...')
         setLoading(true)
         const respects = await userService.getRecentRespectTransactions(targetUserId, 8)
-        console.log('✅ API'den gelen veriler:', respects)
+        console.log('✅ API\'den gelen veriler:', respects)
         setRecentRespects(respects)
       } catch (error) {
         console.error('❌ Error fetching recent respects:', error)

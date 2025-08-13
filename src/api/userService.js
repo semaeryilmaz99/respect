@@ -212,7 +212,9 @@ const userService = {
   // Get user's recent respect transactions
   getRecentRespectTransactions: async (userId, limit = 10) => {
     try {
-      console.log('🔍 getRecentRespectTransactions çağrıldı - userId:', userId, 'limit:', limit)
+      console.log('🔄 getRecentRespectTransactions çağrıldı')
+      console.log('👤 userId:', userId)
+      console.log('📊 limit:', limit)
       
       const { data, error } = await supabase
         .from('respect_transactions')
@@ -238,7 +240,7 @@ const userService = {
         .limit(limit)
       
       if (error) {
-        console.log('❌ Supabase error:', error)
+        console.error('❌ Supabase error:', error)
         throw error
       }
       
