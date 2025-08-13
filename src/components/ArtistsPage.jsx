@@ -263,7 +263,11 @@ const ArtistsPage = () => {
                 </div>
                 
                 <div className="artist-actions">
-                  <FollowButton artistId={artist.id} />
+                  <FollowButton 
+                    artistId={artist.id} 
+                    artistName={artist.name}
+                    initialFollowersCount={artist.followers_count || 0}
+                  />
                 </div>
               </div>
             </div>
