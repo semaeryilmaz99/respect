@@ -12,10 +12,14 @@ const FollowButton = ({ artistId, artistName, initialFollowersCount = 0, size = 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  // Check initial following status
+  // Check initial following status - TEMPORARILY DISABLED
   useEffect(() => {
     const checkFollowingStatus = async () => {
       if (!user || !artistId) return
+      
+      // TEMPORARY: Skip the check to prevent 406 errors
+      console.log('⚠️ Following status check temporarily disabled due to RLS issues')
+      return
       
       try {
         const following = await followService.isFollowingArtist(artistId)
