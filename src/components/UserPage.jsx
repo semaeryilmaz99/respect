@@ -539,22 +539,6 @@ const UserPage = () => {
           <div className="desktop-respect-stats">
             <UserStats userId={displayUserId} userData={displayUserData} />
           </div>
-
-          {/* Şu An Dinliyor - Profile İçinde */}
-          <div className="profile-now-playing">
-            <div className="now-playing-card">
-              <div className="now-playing-avatar">
-                <img src="/assets/user/Image (1).png" alt="İstakoz" />
-              </div>
-              <div className="now-playing-info">
-                <h4 className="now-playing-artist">İstakoz</h4>
-                <p className="now-playing-album">Gaye Su Akyol</p>
-              </div>
-              <button className="now-playing-listen-btn">
-                Birlikte Dinle
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Desktop Unified User Sections Layout */}
