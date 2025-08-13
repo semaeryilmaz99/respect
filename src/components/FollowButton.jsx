@@ -50,10 +50,18 @@ const FollowButton = ({ artistId, artistName, initialFollowersCount = 0, size = 
       return
     }
 
-    // UUID validation
+    // UUID validation for artist ID
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
     if (!uuidRegex.test(artistId)) {
+      console.error('❌ Invalid artist ID format:', artistId)
       setError('Geçersiz sanatçı ID')
+      return
+    }
+
+    // UUID validation for user ID
+    if (!uuidRegex.test(user.id)) {
+      console.error('❌ Invalid user ID format:', user.id)
+      setError('Geçersiz kullanıcı kimliği')
       return
     }
 
