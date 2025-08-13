@@ -102,10 +102,24 @@ export const getSyncStatus = async (userId) => {
       return { hasSyncHistory: false, error: error.message }
     }
 
+    // Sync'in ne kadar süre geçerli olduğunu hesapla
+    const syncAge = new Date() - new Date(data.created_at)
+    const oneWeek = 7 * 24 * 60 * 60 * 1000 // 1 hafta
+    
+    // Spotify verileri genellikle haftalık olarak güncellenir, bu yüzden 1 hafta geçerli
+    const isRecent = syncAge < oneWeek
+    
+    // Sync yaşını gün cinsinden hesapla (debug için)
+    const daysSinceSync = Math.floor(syncAge / (24 * 60 * 60 * 1000))
+    
+    console.log(`📅 Last sync: ${daysSinceSync} days ago, isRecent: ${isRecent}`)
+    
     return { 
       hasSyncHistory: true, 
       lastSync: data,
-      isRecent: new Date() - new Date(data.created_at) < 24 * 60 * 60 * 1000 // Within 24 hours
+      isRecent: isRecent,
+      daysSinceSync: daysSinceSync,
+      syncAge: syncAge
     }
   } catch (error) {
     console.error('Error getting sync status:', error)

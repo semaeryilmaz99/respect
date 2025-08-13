@@ -42,6 +42,15 @@ body {
   color: #495057;
 }
 
+/* Sync Age Info Styles */
+.sync-age-info {
+  display: block;
+  margin: 8px 0;
+  color: #28a745;
+  font-size: 12px;
+  font-weight: 500;
+}
+
 /* Mobile-first CSS (default styles above) */
 
 /* Tablet styles */

@@ -216,6 +216,13 @@ const SongsPage = () => {
                 <div className="sync-status">
                   <p>✅ Spotify verileriniz güncel</p>
                   <small>Son senkronizasyon: {new Date(memoizedSyncStatus.lastSync.created_at).toLocaleString('tr-TR')}</small>
+                  {memoizedSyncStatus.daysSinceSync !== undefined && (
+                    <small className="sync-age-info">
+                      📅 {memoizedSyncStatus.daysSinceSync === 0 ? 'Bugün' : 
+                          memoizedSyncStatus.daysSinceSync === 1 ? '1 gün önce' : 
+                          `${memoizedSyncStatus.daysSinceSync} gün önce`} senkronize edildi
+                    </small>
+                  )}
                   <p className="data-source-info">
                     📋 Şu anda <strong>Spotify playlist'inizdeki şarkılar</strong> gösteriliyor
                   </p>
