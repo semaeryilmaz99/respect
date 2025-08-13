@@ -167,4 +167,4 @@ DROP CONSTRAINT IF EXISTS spotify_sync_logs_sync_type_check;
 
 ALTER TABLE spotify_sync_logs 
 ADD CONSTRAINT spotify_sync_logs_sync_type_check 
-CHECK (sync_type IN ('artist_profile', 'artist_songs', 'artist_albums', 'user_top_tracks', 'user_recently_played', 'user_playlists', 'playlist_tracks'));
+CHECK (sync_type IN ('artist_profile', 'artist_songs', 'artist_albums', 'user_top_tracks', 'user_recently_played', 'user_playlists', 'playlist_tracks', 'user_playlist_data'));
