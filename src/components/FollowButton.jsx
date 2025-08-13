@@ -22,10 +22,9 @@ const FollowButton = ({
   // Prop'tan gelen takip durumunu izle
   useEffect(() => {
     if (propIsFollowing !== null) {
-      console.log(`🎯 FollowButton prop güncellendi: ${artistName} -> ${propIsFollowing ? 'Takip ediliyor' : 'Takip edilmiyor'}`)
       setIsFollowing(propIsFollowing)
     }
-  }, [propIsFollowing, artistName])
+  }, [propIsFollowing])
 
   // Eğer prop olarak takip durumu gelmiyorsa, manuel kontrol yap
   useEffect(() => {
@@ -125,9 +124,6 @@ const FollowButton = ({
   }
 
   const buttonClass = `follow-button ${sizeClasses[size]} ${isFollowing ? 'following' : ''} ${loading ? 'loading' : ''}`
-
-  // Debug için render durumunu logla
-  console.log(`🎨 FollowButton render: ${artistName} -> isFollowing: ${isFollowing}, propIsFollowing: ${propIsFollowing}`)
 
   return (
     <div className="follow-button-container">
