@@ -6134,17 +6134,6 @@ html {
     justify-content: center;
   }
 
-  /* Special layout for bottom sections - UserTopSongs and UserTopArtists */
-  .unified-sections-container .unified-section:nth-last-child(-n+2) {
-    flex: 0 0 auto;
-    width: calc(50% - 12px);
-    max-width: 500px;
-  }
-
-  .unified-sections-container .unified-section:nth-last-child(-n+2) {
-    margin: 0 auto;
-  }
-
   .unified-section {
     flex: 1;
     min-width: 300px;
@@ -6175,13 +6164,12 @@ html {
       min-width: unset;
       max-width: unset;
     }
-
-    /* Center the bottom two sections (UserTopSongs and UserTopArtists) */
-    .unified-sections-container .unified-section:nth-last-child(-n+2) {
-      grid-column: span 2;
+    
+    /* Ensure the last two sections are centered */
+    .unified-section:nth-last-child(1),
+    .unified-section:nth-last-child(2) {
       justify-self: center;
-      width: 100%;
-      max-width: 800px;
+      grid-column: span 1;
     }
   }
 
@@ -6206,13 +6194,12 @@ html {
     .unified-section .top-songs-grid {
       height: 250px;
     }
-
-    /* Center the bottom two sections (UserTopSongs and UserTopArtists) */
-    .unified-sections-container .unified-section:nth-last-child(-n+2) {
-      grid-column: span 2;
+    
+    /* Ensure the last two sections are centered */
+    .unified-section:nth-last-child(1),
+    .unified-section:nth-last-child(2) {
       justify-self: center;
-      width: 100%;
-      max-width: 600px;
+      grid-column: span 1;
     }
   }
 
@@ -6238,13 +6225,53 @@ html {
     .unified-section .top-songs-grid {
       height: 350px;
     }
+  }
 
-    /* Center the bottom two sections (UserTopSongs and UserTopArtists) */
-    .unified-sections-container .unified-section:nth-last-child(-n+2) {
-      grid-column: span 2;
-      justify-self: center;
+  /* Center the last two sections (UserTopArtists and UserTopSongs) on desktop */
+  @media (min-width: 768px) {
+    .unified-sections-container {
+      position: relative;
+    }
+    
+    /* Target the last two unified sections specifically */
+    .unified-section:nth-last-child(1),
+    .unified-section:nth-last-child(2) {
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    /* For medium desktop screens, ensure proper centering */
+    @media (min-width: 768px) and (max-width: 1199px) {
+      .unified-section:nth-last-child(1),
+      .unified-section:nth-last-child(2) {
+        grid-column: span 1;
+        justify-self: center;
+      }
+    }
+    
+    /* For large desktop screens, ensure proper centering */
+    @media (min-width: 1200px) {
+      .unified-section:nth-last-child(1),
+      .unified-section:nth-last-child(2) {
+        grid-column: span 1;
+        justify-self: center;
+      }
+    }
+    
+    /* Additional centering for the last two sections */
+    .unified-section:nth-last-child(1),
+    .unified-section:nth-last-child(2) {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    /* Ensure the content inside these sections is also centered */
+    .unified-section:nth-last-child(1) .top-artists-grid,
+    .unified-section:nth-last-child(2) .top-songs-grid {
       width: 100%;
-      max-width: 900px;
+      max-width: 350px;
+      margin: 0 auto;
     }
   }
 
