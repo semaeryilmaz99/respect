@@ -30,7 +30,7 @@ const ArtistsPage = () => {
       isRecent: syncStatus.isRecent,
       lastSync: syncStatus.lastSync
     }
-  }, [syncStatus?.hasSyncHistory, syncStatus?.isRecent, syncStatus?.lastSync?.created_at])
+  }, [syncStatus]) // Tüm syncStatus objesini dependency olarak kullan
 
   useEffect(() => {
     const initializePage = async () => {
@@ -176,6 +176,14 @@ const ArtistsPage = () => {
           {/* Spotify Sync Section */}
           {user && hasSpotifyConnection && (
             <div className="spotify-sync-section">
+              {/* Debug bilgileri */}
+              <div style={{background: '#f0f0f0', padding: '10px', margin: '10px 0', fontSize: '12px'}}>
+                <strong>🔍 Debug Bilgileri:</strong><br/>
+                hasSyncHistory: {memoizedSyncStatus?.hasSyncHistory ? '✅' : '❌'}<br/>
+                isRecent: {memoizedSyncStatus?.isRecent ? '✅' : '❌'}<br/>
+                Koşul: {(!memoizedSyncStatus?.hasSyncHistory || !memoizedSyncStatus?.isRecent) ? '✅ BUTON GÖSTER' : '❌ GÜNCEL MESAJ'}
+              </div>
+              
               {!memoizedSyncStatus?.hasSyncHistory || !memoizedSyncStatus?.isRecent ? (
                 <div className="sync-prompt">
                   <p>🎵 Spotify çalma listelerinizden sanatçıları senkronize edin</p>
