@@ -8,7 +8,7 @@ import SongRecentSupporters from './SongRecentSupporters'
 import SongRealTimeChat from './SongRealTimeChat'
 import MoreByArtist from './MoreByArtist'
 import FavoriteButton from './FavoriteButton'
-import BackButton from './common/BackButton'
+
 import LoadingSpinner from './LoadingSpinner'
 
 const SongPage = () => {
@@ -108,9 +108,6 @@ const SongPage = () => {
 
   return (
     <div className="song-page">
-      <div className="page-header mobile-only">
-        <BackButton />
-      </div>
       <Header />
       
       {/* Mobile Layout - Orijinal sıra */}

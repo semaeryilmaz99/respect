@@ -5,7 +5,7 @@ import { supabase } from '../config/supabase'
 import cardService from '../api/cardService'
 import userService from '../api/userService'
 import Header from './Header'
-import BackButton from './common/BackButton'
+
 import LoadingSpinner from './LoadingSpinner'
 
 const ProfileSettingsPage = () => {
@@ -334,9 +334,6 @@ const ProfileSettingsPage = () => {
 
   return (
     <div className="profile-settings-page">
-      <div className="page-header mobile-only">
-        <BackButton to="/profile" />
-      </div>
       <Header />
       
       <div className="profile-settings-content">

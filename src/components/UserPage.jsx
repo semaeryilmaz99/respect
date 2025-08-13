@@ -13,7 +13,7 @@ import UserTopSongs from './UserTopSongs'
 import UserFollowedArtists from './UserFollowedArtists'
 import UserFavoritedSongs from './UserFavoritedSongs'
 import UserRecentRespects from './UserRecentRespects'
-import BackButton from './common/BackButton'
+
 import LoadingSpinner from './LoadingSpinner'
 
 const UserPage = () => {
@@ -473,9 +473,6 @@ const UserPage = () => {
   
   return (
     <div className="user-page">
-      <div className="page-header mobile-only">
-        <BackButton />
-      </div>
       <Header />
       
       {/* Mobile Layout - Orijinal sıra */}

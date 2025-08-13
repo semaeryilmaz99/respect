@@ -6,7 +6,7 @@ import { syncUserSpotifyData, checkSpotifyConnection, getSyncStatus } from '../a
 import Header from './Header'
 import FavoriteButton from './FavoriteButton'
 import LoadingSpinner from './LoadingSpinner'
-import BackButton from './common/BackButton'
+
 import Toast from './Toast'
 
 const SongsPage = () => {
@@ -194,9 +194,6 @@ const SongsPage = () => {
 
   return (
     <div className="songs-page">
-      <div className="page-header mobile-only">
-        <BackButton />
-      </div>
       <Header />
       
       <div className="songs-container">
