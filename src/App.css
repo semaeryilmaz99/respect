@@ -5470,8 +5470,8 @@ html {
 /* Artists Page Styles */
 .artists-page {
   min-height: 100vh;
-  background: #fff;
-  color: #333;
+  background: linear-gradient(135deg, #1b262e 0%, #2d3748 100%);
+  color: white;
 }
 
 .artists-container {
@@ -5509,7 +5509,7 @@ html {
 }
 
 .artist-card {
-  background: #fef5e7;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
   padding: 25px;
   backdrop-filter: blur(10px);
