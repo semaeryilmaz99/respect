@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
 import { supabase } from '../config/supabase'
@@ -21,6 +21,16 @@ const SongsPage = () => {
   const [toast, setToast] = useState({ show: false, message: '', type: 'info' })
   const [hasSpotifyConnection, setHasSpotifyConnection] = useState(false)
   const [syncStatus, setSyncStatus] = useState(null)
+
+  // syncStatus'u useMemo ile optimize et - sadece gerekli alanlar değiştiğinde yeniden hesapla
+  const memoizedSyncStatus = useMemo(() => {
+    if (!syncStatus) return null
+    return {
+      hasSyncHistory: syncStatus.hasSyncHistory,
+      isRecent: syncStatus.isRecent,
+      lastSync: syncStatus.lastSync
+    }
+  }, [syncStatus?.hasSyncHistory, syncStatus?.isRecent, syncStatus?.lastSync?.created_at])
 
   useEffect(() => {
     const initializePage = async () => {
@@ -55,7 +65,15 @@ const SongsPage = () => {
     }
 
     initializePage()
-  }, [user]) // Sadece user dependency'si kalsın
+  }, [user]) // Sadece user dependency'si
+
+  // Ayrı bir useEffect ile memoizedSyncStatus değişikliklerini izle
+  useEffect(() => {
+    if (user && hasSpotifyConnection && memoizedSyncStatus) {
+      // Sync status değiştiğinde sadece verileri yenile
+      fetchSongs()
+    }
+  }, [memoizedSyncStatus]) // memoizedSyncStatus'u kullan
 
   const fetchSongs = async () => {
     try {
@@ -69,7 +87,7 @@ const SongsPage = () => {
 
       // Eğer kullanıcının Spotify bağlantısı varsa ve sync yapılmışsa, 
       // sadece Spotify ID'li şarkıları getir (kullanıcının playlist verileri)
-      if (user && hasSpotifyConnection && syncStatus?.hasSyncHistory && syncStatus?.isRecent) {
+      if (user && hasSpotifyConnection && memoizedSyncStatus?.hasSyncHistory && memoizedSyncStatus?.isRecent) {
         console.log('🎵 Kullanıcının Spotify playlist şarkıları getiriliyor...')
         query = query.not('spotify_id', 'is', null)
       } else {
@@ -111,15 +129,11 @@ const SongsPage = () => {
           message: result.message,
           type: 'success'
         })
-        
-        // Update sync status first
+        // Refresh songs after sync
+        await fetchSongs()
+        // Update sync status
         const status = await getSyncStatus(user.id)
         setSyncStatus(status)
-        
-        // Then refresh songs with new sync status
-        setTimeout(() => {
-          fetchSongs()
-        }, 100)
       } else {
         setToast({
           show: true,
@@ -169,7 +183,7 @@ const SongsPage = () => {
           {/* Spotify Sync Section */}
           {user && hasSpotifyConnection && (
             <div className="spotify-sync-section">
-              {!syncStatus?.hasSyncHistory || !syncStatus?.isRecent ? (
+              {!memoizedSyncStatus?.hasSyncHistory || !memoizedSyncStatus?.isRecent ? (
                 <div className="sync-prompt">
                   <p>🎵 Spotify çalma listelerinizden şarkıları senkronize edin</p>
                   <button 
@@ -183,7 +197,7 @@ const SongsPage = () => {
               ) : (
                 <div className="sync-status">
                   <p>✅ Spotify verileriniz güncel</p>
-                  <small>Son senkronizasyon: {new Date(syncStatus.lastSync.created_at).toLocaleString('tr-TR')}</small>
+                  <small>Son senkronizasyon: {new Date(memoizedSyncStatus.lastSync.created_at).toLocaleString('tr-TR')}</small>
                   <p className="data-source-info">
                     📋 Şu anda <strong>Spotify playlist'inizdeki şarkılar</strong> gösteriliyor
                   </p>
@@ -193,7 +207,7 @@ const SongsPage = () => {
           )}
 
           {/* Data Source Info */}
-          {(!user || !hasSpotifyConnection || !syncStatus?.hasSyncHistory || !syncStatus?.isRecent) && (
+          {(!user || !hasSpotifyConnection || !memoizedSyncStatus?.hasSyncHistory || !memoizedSyncStatus?.isRecent) && (
             <div className="data-source-info">
               <p>📋 Şu anda <strong>tüm şarkılar</strong> gösteriliyor</p>
               {user && hasSpotifyConnection && (
