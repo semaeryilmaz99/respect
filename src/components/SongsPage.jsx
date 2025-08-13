@@ -21,6 +21,7 @@ const SongsPage = () => {
   const [toast, setToast] = useState({ show: false, message: '', type: 'info' })
   const [hasSpotifyConnection, setHasSpotifyConnection] = useState(false)
   const [syncStatus, setSyncStatus] = useState(null)
+  const [sessionSyncKey, setSessionSyncKey] = useState(null) // Oturum bazlı sync kontrolü
 
   // syncStatus'u useMemo ile optimize et - sadece gerekli alanlar değiştiğinde yeniden hesapla
   const memoizedSyncStatus = useMemo(() => {
@@ -32,10 +33,24 @@ const SongsPage = () => {
     }
   }, [syncStatus?.hasSyncHistory, syncStatus?.isRecent, syncStatus?.lastSync?.created_at])
 
+  // Oturum bazlı sync kontrolü - kullanıcı her giriş yaptığında yeniden sync yapabilir
+  const canSyncInThisSession = useMemo(() => {
+    if (!user || !hasSpotifyConnection) return false
+    
+    // Eğer bu oturumda henüz sync yapılmamışsa, her zaman sync yapabilir
+    if (!sessionSyncKey) return true
+    
+    // Eğer bu oturumda zaten sync yapılmışsa, sync status'a göre karar ver
+    return !memoizedSyncStatus?.hasSyncHistory || !memoizedSyncStatus?.isRecent
+  }, [user, hasSpotifyConnection, sessionSyncKey, memoizedSyncStatus])
+
   useEffect(() => {
     const initializePage = async () => {
       try {
         setLoading(true)
+        
+        // Kullanıcı değiştiğinde session sync key'i sıfırla
+        setSessionSyncKey(null)
         
         if (user) {
           // Check if user has Spotify connection
@@ -124,6 +139,9 @@ const SongsPage = () => {
       const result = await syncUserSpotifyData(user.id)
       
       if (result.success) {
+        // Bu oturumda sync yapıldığını işaretle
+        setSessionSyncKey(Date.now())
+        
         setToast({
           show: true,
           message: result.message,
@@ -183,7 +201,7 @@ const SongsPage = () => {
           {/* Spotify Sync Section */}
           {user && hasSpotifyConnection && (
             <div className="spotify-sync-section">
-              {!memoizedSyncStatus?.hasSyncHistory || !memoizedSyncStatus?.isRecent ? (
+              {canSyncInThisSession ? (
                 <div className="sync-prompt">
                   <p>🎵 Spotify çalma listelerinizden şarkıları senkronize edin</p>
                   <button 

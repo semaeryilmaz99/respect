@@ -21,6 +21,7 @@ const ArtistsPage = () => {
   const [toast, setToast] = useState({ show: false, message: '', type: 'info' })
   const [hasSpotifyConnection, setHasSpotifyConnection] = useState(false)
   const [syncStatus, setSyncStatus] = useState(null)
+  const [sessionSyncKey, setSessionSyncKey] = useState(null) // Oturum bazlı sync kontrolü
 
   // syncStatus'u useMemo ile optimize et - sadece gerekli alanlar değiştiğinde yeniden hesapla
   const memoizedSyncStatus = useMemo(() => {
@@ -30,12 +31,26 @@ const ArtistsPage = () => {
       isRecent: syncStatus.isRecent,
       lastSync: syncStatus.lastSync
     }
-  }, [syncStatus]) // Tüm syncStatus objesini dependency olarak kullan
+  }, [syncStatus?.hasSyncHistory, syncStatus?.isRecent, syncStatus?.lastSync?.created_at])
+
+  // Oturum bazlı sync kontrolü - kullanıcı her giriş yaptığında yeniden sync yapabilir
+  const canSyncInThisSession = useMemo(() => {
+    if (!user || !hasSpotifyConnection) return false
+    
+    // Eğer bu oturumda henüz sync yapılmamışsa, her zaman sync yapabilir
+    if (!sessionSyncKey) return true
+    
+    // Eğer bu oturumda zaten sync yapılmışsa, sync status'a göre karar ver
+    return !memoizedSyncStatus?.hasSyncHistory || !memoizedSyncStatus?.isRecent
+  }, [user, hasSpotifyConnection, sessionSyncKey, memoizedSyncStatus])
 
   useEffect(() => {
     const initializePage = async () => {
       try {
         setLoading(true)
+        
+        // Kullanıcı değiştiğinde session sync key'i sıfırla
+        setSessionSyncKey(null)
         
         if (user) {
           // Check if user has Spotify connection
@@ -117,6 +132,9 @@ const ArtistsPage = () => {
       const result = await syncUserSpotifyData(user.id)
       
       if (result.success) {
+        // Bu oturumda sync yapıldığını işaretle
+        setSessionSyncKey(Date.now())
+        
         setToast({
           show: true,
           message: result.message,
@@ -176,15 +194,7 @@ const ArtistsPage = () => {
           {/* Spotify Sync Section */}
           {user && hasSpotifyConnection && (
             <div className="spotify-sync-section">
-              {/* Debug bilgileri */}
-              <div style={{background: '#f0f0f0', padding: '10px', margin: '10px 0', fontSize: '12px'}}>
-                <strong>🔍 Debug Bilgileri:</strong><br/>
-                hasSyncHistory: {memoizedSyncStatus?.hasSyncHistory ? '✅' : '❌'}<br/>
-                isRecent: {memoizedSyncStatus?.isRecent ? '✅' : '❌'}<br/>
-                Koşul: {(!memoizedSyncStatus?.hasSyncHistory || !memoizedSyncStatus?.isRecent) ? '✅ BUTON GÖSTER' : '❌ GÜNCEL MESAJ'}
-              </div>
-              
-              {!memoizedSyncStatus?.hasSyncHistory || !memoizedSyncStatus?.isRecent ? (
+              {canSyncInThisSession ? (
                 <div className="sync-prompt">
                   <p>🎵 Spotify çalma listelerinizden sanatçıları senkronize edin</p>
                   <button 
