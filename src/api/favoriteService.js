@@ -4,8 +4,6 @@ export const favoriteService = {
   // Favori şarkı ekle
   addToFavorites: async (songId) => {
     try {
-      console.log('❤️ Adding song to favorites:', songId)
-      
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       if (userError || !user) {
         throw new Error('Kullanıcı giriş yapmamış')
@@ -27,7 +25,6 @@ export const favoriteService = {
         throw error
       }
 
-      console.log('✅ Song added to favorites:', data)
       return { data, error: null }
     } catch (error) {
       console.error('❌ Error adding song to favorites:', error)
@@ -38,8 +35,6 @@ export const favoriteService = {
   // Favori şarkıdan çıkar
   removeFromFavorites: async (songId) => {
     try {
-      console.log('💔 Removing song from favorites:', songId)
-      
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       if (userError || !user) {
         throw new Error('Kullanıcı giriş yapmamış')
@@ -57,7 +52,6 @@ export const favoriteService = {
         throw error
       }
 
-      console.log('✅ Song removed from favorites:', data)
       return { data, error: null }
     } catch (error) {
       console.error('❌ Error removing song from favorites:', error)
@@ -118,7 +112,6 @@ export const favoriteService = {
       if (error) {
         if (error.code === 'PGRST116') {
           // Şarkı bulunamadı, varsayılan değer döndür
-          console.log(`⚠️ Song not found: ${songId}, returning default count`)
           return { data: 0, error: null }
         }
         throw error
@@ -161,8 +154,6 @@ export const favoriteService = {
   // Favori durumunu değiştir (toggle)
   toggleFavorite: async (songId) => {
     try {
-      console.log('🔄 Toggling favorite for song:', songId)
-      
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       if (userError || !user) {
         throw new Error('Kullanıcı giriş yapmamış')
@@ -208,7 +199,6 @@ export const favoriteService = {
           throw error
         }
 
-        console.log('✅ Song removed from favorites')
         return { data: { favorited: false, removed: data }, error: null }
       } else {
         // Favori yoksa ekle
@@ -228,7 +218,6 @@ export const favoriteService = {
           throw error
         }
 
-        console.log('✅ Song added to favorites')
         return { data: { favorited: true, added: data }, error: null }
       }
     } catch (error) {

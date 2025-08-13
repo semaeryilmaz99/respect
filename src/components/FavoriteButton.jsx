@@ -46,7 +46,7 @@ const FavoriteButton = ({
         }
         setFavoritesCount(count)
 
-        console.log(`✅ Favorite status loaded for song ${songId}:`, { isFavorited, count })
+
       } catch (error) {
         console.error('Error in checkFavoriteStatus:', error)
         setError('Favori durumu yüklenirken hata oluştu')
@@ -85,13 +85,12 @@ const FavoriteButton = ({
       if (data.favorited) {
         try {
           await feedService.createSongFavoritedFeedItem(songId)
-          console.log('✅ Feed item created for song favorite')
         } catch (error) {
           console.error('❌ Feed item creation failed:', error)
         }
       }
 
-      console.log(`✅ Favorite toggled for song ${songId}:`, data)
+
     } catch (error) {
       console.error('Error toggling favorite:', error)
       setError('Favori işlemi sırasında hata oluştu')
