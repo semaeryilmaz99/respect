@@ -6134,6 +6134,17 @@ html {
     justify-content: center;
   }
 
+  /* Special layout for bottom sections - UserTopSongs and UserTopArtists */
+  .unified-sections-container .unified-section:nth-last-child(-n+2) {
+    flex: 0 0 auto;
+    width: calc(50% - 12px);
+    max-width: 500px;
+  }
+
+  .unified-sections-container .unified-section:nth-last-child(-n+2) {
+    margin: 0 auto;
+  }
+
   .unified-section {
     flex: 1;
     min-width: 300px;
@@ -6164,6 +6175,14 @@ html {
       min-width: unset;
       max-width: unset;
     }
+
+    /* Center the bottom two sections (UserTopSongs and UserTopArtists) */
+    .unified-sections-container .unified-section:nth-last-child(-n+2) {
+      grid-column: span 2;
+      justify-self: center;
+      width: 100%;
+      max-width: 800px;
+    }
   }
 
   /* Medium desktop screens */
@@ -6186,6 +6205,14 @@ html {
     .unified-section .top-artists-grid,
     .unified-section .top-songs-grid {
       height: 250px;
+    }
+
+    /* Center the bottom two sections (UserTopSongs and UserTopArtists) */
+    .unified-sections-container .unified-section:nth-last-child(-n+2) {
+      grid-column: span 2;
+      justify-self: center;
+      width: 100%;
+      max-width: 600px;
     }
   }
 
@@ -6210,6 +6237,14 @@ html {
     .unified-section .top-artists-grid,
     .unified-section .top-songs-grid {
       height: 350px;
+    }
+
+    /* Center the bottom two sections (UserTopSongs and UserTopArtists) */
+    .unified-sections-container .unified-section:nth-last-child(-n+2) {
+      grid-column: span 2;
+      justify-self: center;
+      width: 100%;
+      max-width: 900px;
     }
   }
 
