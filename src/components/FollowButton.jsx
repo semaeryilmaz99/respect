@@ -22,11 +22,12 @@ const FollowButton = ({ artistId, artistName, initialFollowersCount = 0, size = 
         setIsFollowing(following)
       } catch (error) {
         console.error('Error checking following status:', error)
+        // Don't set state on error to prevent infinite loop
       }
     }
 
     checkFollowingStatus()
-  }, [user, artistId])
+  }, [user?.id, artistId]) // Only depend on user.id, not entire user object
 
   // Get initial followers count
   useEffect(() => {
@@ -38,6 +39,7 @@ const FollowButton = ({ artistId, artistName, initialFollowersCount = 0, size = 
         setFollowersCount(count)
       } catch (error) {
         console.error('Error getting followers count:', error)
+        // Don't set state on error to prevent infinite loop
       }
     }
 
@@ -50,18 +52,10 @@ const FollowButton = ({ artistId, artistName, initialFollowersCount = 0, size = 
       return
     }
 
-    // UUID validation for artist ID
+    // UUID validation
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
     if (!uuidRegex.test(artistId)) {
-      console.error('❌ Invalid artist ID format:', artistId)
       setError('Geçersiz sanatçı ID')
-      return
-    }
-
-    // UUID validation for user ID
-    if (!uuidRegex.test(user.id)) {
-      console.error('❌ Invalid user ID format:', user.id)
-      setError('Geçersiz kullanıcı kimliği')
       return
     }
 

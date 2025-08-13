@@ -12,20 +12,7 @@ export const followService = {
         throw new Error('Kullanıcı giriş yapmamış')
       }
       
-      // Validate user ID format
-      if (!user.id || typeof user.id !== 'string' || user.id.length !== 36) {
-        console.error('❌ Invalid user ID format:', user.id)
-        throw new Error('Geçersiz kullanıcı kimliği')
-      }
-      
-      // Validate artist ID format
-      if (!artistId || typeof artistId !== 'string' || artistId.length !== 36) {
-        console.error('❌ Invalid artist ID format:', artistId)
-        throw new Error('Geçersiz sanatçı kimliği')
-      }
-      
       console.log('👤 Current user ID:', user.id)
-      console.log('🎵 Artist ID:', artistId)
       
       const { data, error } = await supabase
         .from('artist_follows')
@@ -62,21 +49,6 @@ export const followService = {
       if (userError || !user) {
         throw new Error('Kullanıcı giriş yapmamış')
       }
-      
-      // Validate user ID format
-      if (!user.id || typeof user.id !== 'string' || user.id.length !== 36) {
-        console.error('❌ Invalid user ID format:', user.id)
-        throw new Error('Geçersiz kullanıcı kimliği')
-      }
-      
-      // Validate artist ID format
-      if (!artistId || typeof artistId !== 'string' || artistId.length !== 36) {
-        console.error('❌ Invalid artist ID format:', artistId)
-        throw new Error('Geçersiz sanatçı kimliği')
-      }
-      
-      console.log('👤 Current user ID:', user.id)
-      console.log('🎵 Artist ID:', artistId)
       
       const { data, error } = await supabase
         .from('artist_follows')
@@ -161,29 +133,11 @@ export const followService = {
   // Kullanıcının sanatçıyı takip edip etmediğini kontrol et
   isFollowingArtist: async (artistId) => {
     try {
-      console.log('👥 Checking if following artist:', artistId)
-      
       // Get current user
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       if (userError || !user) {
-        console.log('⚠️  No authenticated user found')
         return false
       }
-      
-      // Validate user ID format
-      if (!user.id || typeof user.id !== 'string' || user.id.length !== 36) {
-        console.error('❌ Invalid user ID format:', user.id)
-        return false
-      }
-      
-      // Validate artist ID format
-      if (!artistId || typeof artistId !== 'string' || artistId.length !== 36) {
-        console.error('❌ Invalid artist ID format:', artistId)
-        return false
-      }
-      
-      console.log('🔍 User ID:', user.id)
-      console.log('🔍 Artist ID:', artistId)
       
       const { data, error } = await supabase
         .from('artist_follows')
@@ -193,12 +147,11 @@ export const followService = {
         .single()
 
       if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-        console.error('❌ Database query error:', error)
-        throw error
+        console.error('❌ Check following status error:', error)
+        return false
       }
 
       const isFollowing = !!data
-      console.log('✅ Following status:', isFollowing)
       return isFollowing
     } catch (error) {
       console.error('❌ Check following status error:', error)
@@ -209,17 +162,17 @@ export const followService = {
   // Sanatçının takipçi sayısını getir
   getArtistFollowersCount: async (artistId) => {
     try {
-      console.log('👥 Getting followers count for artist:', artistId)
-      
       const { data, error } = await supabase
         .from('artists')
         .select('followers_count')
         .eq('id', artistId)
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.error('❌ Get followers count error:', error)
+        return 0
+      }
 
-      console.log('✅ Followers count:', data?.followers_count || 0)
       return data?.followers_count || 0
     } catch (error) {
       console.error('❌ Get followers count error:', error)
