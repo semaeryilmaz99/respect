@@ -30,9 +30,11 @@
   
   .desktop-search {
     display: block !important;
-    flex: 1;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
     max-width: 400px;
-    margin: 0 20px;
   }
   
   .mobile-search {
@@ -45,6 +47,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+    position: relative;
   }
   
   /* Hamburger menu button - Desktop'ta sağa kaydır */
