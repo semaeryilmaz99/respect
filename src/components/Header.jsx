@@ -91,6 +91,44 @@ const Header = () => {
           </>
         ) : null}
         
+        {/* Mobile'da feed, song, user ve artist sayfasında arama motoru */}
+        {(isFeedPage || isSongPage || isUserPage || isArtistPage) && (
+          <div className="search-container mobile-search">
+            <div className="search-bar">
+              <span className="search-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+              </span>
+              <input 
+                type="text" 
+                placeholder="sanatçı, şarkı veya kullanıcı ara"
+                className="search-input"
+              />
+            </div>
+          </div>
+        )}
+        
+        {/* Diğer sayfalarda arama motoru */}
+        {!isFeedPage && !isSongPage && !isUserPage && !isArtistPage && !isSendRespectPage && (
+          <div className="search-container">
+            <div className="search-bar">
+              <span className="search-icon">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+              </span>
+              <input 
+                type="text" 
+                placeholder="sanatçı, şarkı veya kullanıcı ara"
+                className="search-input"
+              />
+            </div>
+          </div>
+        )}
+        
         <button className="user-avatar" onClick={() => navigate('/profile')}>
           <img 
             src={userData?.avatar_url || '/assets/user/Image.png'} 
@@ -98,45 +136,6 @@ const Header = () => {
           />
         </button>
       </div>
-      
-      {/* Mobile'da feed, song, user ve artist sayfasında arama motoru alt tarafta kalacak */}
-      {(isFeedPage || isSongPage || isUserPage || isArtistPage) && (
-        <div className="search-container mobile-search">
-          <div className="search-bar">
-            <span className="search-icon">
-              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-              </svg>
-            </span>
-            <input 
-              type="text" 
-              placeholder="sanatçı, şarkı veya kullanıcı ara"
-              className="search-input"
-            />
-          </div>
-        </div>
-      )}
-      
-      {/* Send respect sayfasında arama motoru yok */}
-      {/* Diğer sayfalarda arama motoru alt tarafta */}
-      {!isFeedPage && !isSongPage && !isUserPage && !isArtistPage && !isSendRespectPage && (
-      <div className="search-container">
-        <div className="search-bar">
-          <span className="search-icon">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
-            </svg>
-          </span>
-          <input 
-            type="text" 
-            placeholder="sanatçı, şarkı veya kullanıcı ara"
-            className="search-input"
-          />
-        </div>
-      </div>
-      )}
     </header>
   )
 }
