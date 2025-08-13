@@ -141,7 +141,7 @@ body {
 
 .search-container {
   margin-top: 8px;
-  width: calc(100% + 20px);
+  width: calc(100% + 10px);
 }
 
 .search-bar {
