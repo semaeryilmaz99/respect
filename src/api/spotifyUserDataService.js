@@ -85,10 +85,22 @@ export const checkSpotifyConnection = async (userId) => {
 }
 
 /**
- * Get sync status for user
+ * Get sync status for user - Oturum bazlı kontrol
  */
 export const getSyncStatus = async (userId) => {
   try {
+    // Önce mevcut oturumu al
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    
+    if (sessionError || !session) {
+      console.log('❌ Oturum bulunamadı')
+      return { hasSyncHistory: false, error: 'No active session' }
+    }
+
+    // Oturum başlangıç zamanını al
+    const sessionStartTime = new Date(session.created_at)
+    console.log(`🕐 Oturum başlangıcı:`, sessionStartTime.toLocaleString('tr-TR'))
+
     const { data, error } = await supabase
       .from('spotify_sync_logs')
       .select('*')
@@ -99,13 +111,27 @@ export const getSyncStatus = async (userId) => {
       .single()
 
     if (error) {
+      console.log('❌ Sync logu bulunamadı, ilk sync gerekli')
       return { hasSyncHistory: false, error: error.message }
     }
+
+    // Sync zamanını kontrol et
+    const syncTime = new Date(data.created_at)
+    
+    // Oturum bazlı kontrol: Sync, oturum başladıktan sonra yapılmışsa güncel
+    const isRecent = syncTime > sessionStartTime
+
+    console.log(`🕐 Oturum bazlı sync kontrolü:`, {
+      sessionStart: sessionStartTime.toLocaleString('tr-TR'),
+      lastSync: syncTime.toLocaleString('tr-TR'),
+      isRecent: isRecent,
+      syncAfterSession: isRecent ? '✅ Evet' : '❌ Hayır'
+    })
 
     return { 
       hasSyncHistory: true, 
       lastSync: data,
-      isRecent: new Date() - new Date(data.created_at) < 24 * 60 * 60 * 1000 // Within 24 hours
+      isRecent: isRecent
     }
   } catch (error) {
     console.error('Error getting sync status:', error)
