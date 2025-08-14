@@ -284,8 +284,8 @@ const FeedPage = () => {
       {/* Desktop Layout: Sol respect akışı + Sağ ana feed */}
       <div className="feed-layout">
         {/* Sol Panel - Respect Akışı (sadece desktop'ta görünür) */}
+        <h2 className="respect-flow-title desktop-only">Respect Akışı</h2>
         <div className="respect-flow-panel desktop-only">
-          <h2 className="respect-flow-title">Respect Akışı</h2>
           <div className="respect-flow-items">
             {formattedRespectFlowData && Array.isArray(formattedRespectFlowData) ? formattedRespectFlowData.map((item) => (
               <div key={item.id} className="respect-flow-item">
