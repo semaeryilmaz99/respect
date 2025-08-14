@@ -253,8 +253,8 @@ const FeedPage = () => {
         </button>
       </div>
       
-      {/* Tab Navigation - Mobile Only */}
-      <div className="feed-tabs mobile-only">
+      {/* Tab Navigation */}
+      <div className="feed-tabs">
         <button 
           className={`tab-button ${activeTab === 'community' ? 'active' : ''}`}
           onClick={() => setActiveTab('community')}
@@ -323,26 +323,6 @@ const FeedPage = () => {
         
                 {/* Orta Panel - Ana Feed */}
         <div className="main-feed-panel">
-          {/* Feed Tabs - Desktop Only */}
-          <div className="feed-tabs desktop-only">
-            <button 
-              className={`tab-button ${activeTab === 'community' ? 'active' : ''}`}
-              onClick={() => setActiveTab('community')}
-            >
-              Topluluk
-            </button>
-            <button 
-              className={`tab-button ${activeTab === 'personal' ? 'active' : ''}`}
-              onClick={() => setActiveTab('personal')}
-            >
-              Sana Özel
-            </button>
-          </div>
-          
-          {/* Feed Header - Desktop Only */}
-          <div className="feed-header">
-            <h2 className="feed-header-title">Respect topluluğunda neler oluyor?</h2>
-          </div>
           
           <div className="feed">
             {currentData && Array.isArray(currentData) ? currentData.map((item, index) => (
