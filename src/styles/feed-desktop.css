@@ -368,20 +368,6 @@
     transition: opacity 0.3s ease !important;
   }
 
-  /* Keep toggle button visible when chat is closed */
-  .chat-panel .real-time-chat.closed .section-title.chat-toggle {
-    opacity: 1 !important;
-    visibility: visible !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    height: 60px !important;
-    padding: 16px !important;
-    background: rgba(255, 255, 255, 0.98) !important;
-    border-radius: 16px !important;
-    margin: 16px !important;
-  }
-
   /* Desktop Feed Page Chat Input Container - Hide when chat is closed */
   .chat-panel .real-time-chat.closed .chat-input-container {
     opacity: 0 !important;
