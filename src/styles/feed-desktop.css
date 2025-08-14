@@ -192,7 +192,11 @@
     text-align: center;
     box-shadow: 0 4px 15px rgba(246, 159, 23, 0.2), 0 0 20px rgba(51, 51, 51, 0.3);
     transition: all 0.3s ease;
-    position: relative;
+    position: fixed;
+    top: 130px;
+    left: 20px;
+    width: 280px;
+    z-index: 1000;
     overflow: hidden;
   }
 
@@ -228,6 +232,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-top: 80px;
   }
   
   .respect-flow-item {
