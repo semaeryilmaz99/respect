@@ -131,7 +131,7 @@
   .respect-flow-panel {
     display: block !important;
     position: fixed;
-    left: 40px;
+    left: 100px;
     top: 220px; /* Header'ın altında daha fazla boşluk */
     width: 320px;
     height: calc(100vh - 240px); /* Yüksekliği de ayarla */
@@ -145,7 +145,7 @@
     color: #1b262e;
     position: fixed;
     top: 140px; /* Header'ın altında daha fazla boşluk */
-    left: 80px;
+    left: 140px;
     width: 320px;
     z-index: 1000;
     margin: 0 0 16px 0;
@@ -461,7 +461,7 @@
     color: #1b262e !important;
     font-weight: 600 !important;
     font-size: 16px !important;
-    border-radius: 40px 40px 0 0 !important;
+    border-radius: 38px 38px 0 0 !important;
     cursor: pointer !important;
     text-align: center !important;
   }
