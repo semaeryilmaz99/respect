@@ -348,7 +348,7 @@
   }
   
   .chat-panel .real-time-chat.closed {
-    height: 60px !important;
+    height: calc(100vh - 80px) !important; /* Keep full height to maintain border */
     overflow: hidden !important;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
@@ -364,11 +364,29 @@
   .chat-panel .real-time-chat.closed .chat-content {
     height: 0 !important;
     overflow: hidden !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+  }
+
+  /* Keep toggle button visible when chat is closed */
+  .chat-panel .real-time-chat.closed .section-title.chat-toggle {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 60px !important;
+    padding: 16px !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    border-radius: 16px !important;
+    margin: 16px !important;
   }
 
   /* Desktop Feed Page Chat Input Container - Hide when chat is closed */
   .chat-panel .real-time-chat.closed .chat-input-container {
-    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.3s ease, visibility 0.3s ease !important;
   }
 
   /* Desktop Feed Page Chat Messages - Fill available space */
@@ -384,8 +402,8 @@
   }
   
   .chat-panel .real-time-chat.closed .chat-messages {
-    opacity: 0;
-    transition: opacity 0.2s ease;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
     height: 0 !important;
     overflow: hidden !important;
   }
