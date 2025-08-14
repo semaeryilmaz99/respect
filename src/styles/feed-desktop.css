@@ -364,7 +364,7 @@
     left: auto !important;
     width: 400px !important;
     height: calc(100vh - 80px) !important;
-    border-radius: 40px !important;
+    border-radius: 0 40px !important;
     border: 2px solid #fbdb3a !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
     z-index: 1000 !important;
@@ -461,7 +461,7 @@
     color: #1b262e !important;
     font-weight: 600 !important;
     font-size: 16px !important;
-    border-radius: 40px !important;
+    border-radius: 40px 40px 0 0 !important;
     cursor: pointer !important;
     text-align: center !important;
   }
