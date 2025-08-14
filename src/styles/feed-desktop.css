@@ -71,7 +71,7 @@
   .feed-header {
     display: block !important;
     background: #f4f4f4;
-    border-radius: 12px;
+    border-radius: 40px;
     padding: 16px 20px;
     margin-bottom: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -456,7 +456,7 @@
     padding: 0 20px !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
+    justify-content: center !important;
     background: #f9dc38 !important;
     color: #1b262e !important;
     font-weight: 600 !important;
