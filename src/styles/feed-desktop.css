@@ -84,6 +84,9 @@
     margin-right: auto;
     margin-top: 20px; /* Header'ın altında boşluk */
     margin-bottom: 20px; /* Feed cardların üstünde boşluk */
+    position: fixed;
+    top: 120px;
+    z-index: 999;
   }
   
   .tab-button {
@@ -191,7 +194,7 @@
     color: #1b262e;
     position: fixed;
     top: 120px;
-    left: 40px;
+    left: 80px;
     width: 320px;
     z-index: 1000;
     margin: 0 0 16px 0;
