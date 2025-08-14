@@ -5640,7 +5640,7 @@ html {
 
 .songs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
   margin-top: 30px;
 }
@@ -5765,51 +5765,11 @@ html {
 /* Mobile Responsive Styles for SongsPage */
 @media (max-width: 768px) {
   .songs-container {
-    padding: 15px;
-  }
-  
-  .songs-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-  }
-  
-  .song-card {
-    padding: 15px;
-    border-radius: 15px;
-  }
-  
-  .song-image {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .song-title {
-    font-size: 1.3rem;
-  }
-  
-  .song-artist {
-    font-size: 1rem;
-  }
-  
-  .song-album {
-    font-size: 0.95rem;
-  }
-  
-  .song-stats {
-    font-size: 0.9rem;
-    gap: 4px;
-    margin-bottom: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .songs-container {
     padding: 10px;
   }
   
   .songs-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 12px;
     margin-top: 15px;
   }
@@ -5825,7 +5785,7 @@ html {
   }
   
   .song-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
   
   .song-artist {
@@ -5833,13 +5793,92 @@ html {
   }
   
   .song-album {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
   
   .song-stats {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     gap: 3px;
     margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .songs-container {
+    padding: 8px;
+  }
+  
+  .songs-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  
+  .song-card {
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .song-image {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .song-title {
+    font-size: 1rem;
+  }
+  
+  .song-artist {
+    font-size: 0.8rem;
+  }
+  
+  .song-album {
+    font-size: 0.8rem;
+  }
+  
+  .song-stats {
+    font-size: 0.75rem;
+    gap: 2px;
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .songs-container {
+    padding: 5px;
+  }
+  
+  .songs-grid {
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  .song-card {
+    padding: 8px;
+    border-radius: 8px;
+  }
+  
+  .song-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .song-title {
+    font-size: 0.9rem;
+  }
+  
+  .song-artist {
+    font-size: 0.75rem;
+  }
+  
+  .song-album {
+    font-size: 0.75rem;
+  }
+  
+  .song-stats {
+    font-size: 0.7rem;
+    gap: 1px;
+    margin-bottom: 6px;
   }
 }
 
