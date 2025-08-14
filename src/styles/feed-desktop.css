@@ -84,9 +84,6 @@
     margin-right: auto;
     margin-top: 20px; /* Header'ın altında boşluk */
     margin-bottom: 20px; /* Feed cardların üstünde boşluk */
-    position: fixed;
-    top: 120px;
-    z-index: 999;
   }
   
   .tab-button {
@@ -127,7 +124,6 @@
     max-width: 500px;
     margin-left: 40px;
     margin-right: auto;
-    margin-top: 20px; /* Feed tabs'ın altında boşluk */
   }
   
   .feed-header-title {
@@ -175,7 +171,6 @@
     margin: 0 auto;
     padding: 0 20px;
     margin-left: 340px; /* Respect flow için alan bırak - sola kaydırıldı */
-    margin-top: 100px; /* Feed tabs'ın altında kalması için */
   }
   
   /* Sol Panel - Respect Akışı */
