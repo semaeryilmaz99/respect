@@ -1207,7 +1207,7 @@ html {
   .artist-page .unified-section .songs-list::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
   }
-}
+
 
 /* Mobile/Desktop Section Visibility */
 .artist-page .desktop-unified-sections {
@@ -4235,9 +4235,6 @@ html {
 
 .next-button:hover {
   background-color: #f5d428;
-}
-
-.next-button:active {
 }
 
 /* Mobile Responsive */
