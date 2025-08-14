@@ -17,15 +17,6 @@ const FeedPage = () => {
     console.log('🎵 FeedPage loaded - Spotify API rate limiting is active');
     console.log('⏳ API calls are rate limited to prevent 429 errors');
   }, []);
-
-  // Respect flow verilerini periyodik olarak güncelle
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      refreshRespectFlow();
-    }, 30000); // Her 30 saniyede bir güncelle
-
-    return () => clearInterval(interval);
-  }, [refreshRespectFlow]);
   
   // API hook'ları kullanarak veri yükleme (optimized)
   const { 
@@ -51,6 +42,15 @@ const FeedPage = () => {
     [],
     true // Component mount olduğunda otomatik çalışsın
   )
+
+  // Respect flow verilerini periyodik olarak güncelle
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      refreshRespectFlow();
+    }, 30000); // Her 30 saniyede bir güncelle
+
+    return () => clearInterval(interval);
+  }, [refreshRespectFlow]);
   
   const handleRespectSend = () => {
     navigate('/send-respect')
