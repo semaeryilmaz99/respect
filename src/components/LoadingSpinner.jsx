@@ -24,7 +24,7 @@ const LoadingSpinner = ({ size = 'medium', text = 'Yükleniyor...', fullPage = f
           display: flex;
           align-items: center;
           justify-content: center;
-          min-height: 200px;
+          min-height: 100vh;
           width: 100%;
           position: relative;
         }
@@ -130,6 +130,9 @@ const LoadingSpinner = ({ size = 'medium', text = 'Yükleniyor...', fullPage = f
           backdrop-filter: blur(10px);
           z-index: 9999;
           min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         
         .loading-spinner.full-page .spinner-container {
