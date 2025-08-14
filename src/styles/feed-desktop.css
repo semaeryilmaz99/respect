@@ -79,6 +79,11 @@
   .feed-tabs {
     justify-content: flex-start;
     padding: 16px 40px; /* Sol margin ile hizalama */
+    margin-left: 340px; /* Feed layout ile aynı hizalama */
+    max-width: 1200px;
+    margin-right: auto;
+    margin-top: 20px; /* Header'ın altında boşluk */
+    margin-bottom: 20px; /* Feed cardların üstünde boşluk */
   }
   
   .tab-button {
