@@ -464,6 +464,7 @@
     border-radius: 40px 40px 0 0 !important;
     cursor: pointer !important;
     text-align: center !important;
+    top: 140px !important;
   }
   
   .chat-panel .toggle-icon {
