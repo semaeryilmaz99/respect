@@ -17,7 +17,10 @@
   display: none;
 }
 
-
+/* Desktop Respect Button - Mobile'da gizli */
+.desktop-respect-button-container {
+  display: none;
+}
 
 /* Feed Header - Mobile'da gizli */
 .feed-header {
@@ -26,19 +29,62 @@
 
 /* Desktop styles - 768px ve üzeri */
 @media (min-width: 768px) {
-
+  /* Desktop Respect Button */
+  .desktop-respect-button-container {
+    display: block !important;
+    position: fixed;
+    top: 120px;
+    right: 20px;
+    z-index: 500;
+  }
+  
+  .desktop-respect-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 20px;
+    background: #ffffff;
+    color: #1b262e;
+    border: 2px solid #fde0a1;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(253, 224, 161, 0.3);
+    transition: all 0.3s ease;
+    min-width: 160px;
+    justify-content: center;
+  }
+  
+  .desktop-respect-button:hover {
+    background: #fde0a1;
+    border-color: #fcce7a;
+    box-shadow: 0 6px 20px rgba(253, 224, 161, 0.4);
+    transform: translateY(-2px);
+  }
+  
+  .desktop-respect-button:active {
+    transform: translateY(0);
+    background: #fcce7a;
+    box-shadow: 0 2px 8px rgba(253, 224, 161, 0.3);
+  }
+  
+  .respect-icon {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+  }
 
   /* Feed Tabs için desktop stilleri */
   .feed-tabs {
     justify-content: flex-start;
     padding: 16px 40px; /* Sol margin ile hizalama */
-    margin-left: 340px; /* Feed layout ile aynı hizalama */
     max-width: 1200px;
-    margin-right: auto;
-    margin-top: 100px; /* Header'ın altında daha fazla boşluk */
+    margin: 0 auto;
+    margin-top: 20px; /* Header'ın altında boşluk */
     margin-bottom: 20px; /* Feed cardların üstünde boşluk */
     position: relative;
-    z-index: 10; /* Header'ın üzerinde görünmesi için */
+    z-index: 10;
   }
   
   .tab-button {
@@ -77,8 +123,7 @@
     margin-bottom: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     max-width: 500px;
-    margin-left: 40px;
-    margin-right: auto;
+    margin: 0 auto 16px auto;
   }
   
   .feed-header-title {
@@ -126,6 +171,7 @@
     margin: 0 auto;
     padding: 0 20px;
     margin-left: 340px; /* Respect flow için alan bırak - sola kaydırıldı */
+    position: relative;
   }
   
   /* Sol Panel - Respect Akışı */
@@ -333,13 +379,13 @@
   .main-feed-panel {
     flex: 1;
     min-width: 0; /* Flexbox overflow fix */
+    position: relative;
   }
   
-  /* Feed kartlarının genişliğini sınırla ve sola kaydır */
+  /* Feed kartlarının genişliğini sınırla ve ortala */
   .main-feed-panel .feed {
     max-width: 500px;
-    margin-left: 40px;
-    margin-right: auto;
+    margin: 0 auto;
     gap: 24px !important;
   }
   
@@ -505,9 +551,11 @@
   /* Feed Tabs için büyük desktop stilleri */
   .feed-tabs {
     padding: 16px 50px;
-    margin-top: 100px; /* Header'ın altında daha fazla boşluk */
+    margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
     position: relative;
-    z-index: 10; /* Header'ın üzerinde görünmesi için */
+    z-index: 10;
   }
   
   .tab-button {
@@ -540,7 +588,7 @@
   .feed-header {
     padding: 18px 24px;
     max-width: 580px;
-    margin-left: 50px;
+    margin: 0 auto 16px auto;
   }
   
   .feed-header-title {
@@ -576,7 +624,16 @@
     border-color: #feb822 !important;
   }
   
-
+  /* Desktop Respect Button - Large Desktop */
+  .desktop-respect-button {
+    padding: 16px 24px;
+    font-size: 16px;
+    min-width: 180px;
+  }
+  
+  .respect-icon {
+    font-size: 18px;
+  }
   
   .feed-layout {
     max-width: 1800px;
@@ -618,8 +675,7 @@
   
   .main-feed-panel .feed {
     max-width: 580px;
-    margin-left: 50px;
-    margin-right: auto;
+    margin: 0 auto;
     gap: 28px !important;
   }
   
@@ -635,9 +691,11 @@
     padding: 16px 60px;
     align-items: center;
     justify-content: center;
-    margin-top: 100px; /* Header'ın altında daha fazla boşluk */
+    margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
     position: relative;
-    z-index: 10; /* Header'ın üzerinde görünmesi için */
+    z-index: 10;
   }
   
   .tab-button {
@@ -670,7 +728,7 @@
   .feed-header {
     padding: 20px 28px;
     max-width: 650px;
-    margin-left: 200px;
+    margin: 0 auto 16px auto;
   }
   
   .feed-header-title {
@@ -711,7 +769,18 @@
     display: none !important;
   }
   
-
+  /* Desktop Respect Button - Extra Large Desktop */
+  .desktop-respect-button {
+    padding: 18px 28px;
+    font-size: 17px;
+    min-width: 200px;
+    top: 130px;
+    right: 30px;
+  }
+  
+  .respect-icon {
+    font-size: 20px;
+  }
   
   .feed-layout {
     max-width: 2000px;
@@ -726,8 +795,7 @@
   
   .main-feed-panel .feed {
     max-width: 650px;
-    margin-left: 200px;
-    margin-right: auto;
+    margin: 0 auto;
     gap: 32px !important;
   }
   
