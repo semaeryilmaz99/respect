@@ -201,7 +201,7 @@ const FeedPage = () => {
       return item.songs.cover_url
     }
     // Fallback image
-          return '/assets/artist/Image.png'
+    return '/assets/artist/Image.png'
   }
 
   // Loading durumu
