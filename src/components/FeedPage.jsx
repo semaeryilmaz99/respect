@@ -10,6 +10,7 @@ import { debugArray, debugRender, debugWarn } from '../utils/debug.js'
 const FeedPage = () => {
   const [activeTab, setActiveTab] = useState('community')
   const [showRespectFlowPopup, setShowRespectFlowPopup] = useState(false)
+  const [isClosingRespectFlow, setIsClosingRespectFlow] = useState(false)
   const navigate = useNavigate()
   
   // Rate limiting uyarısı
@@ -51,7 +52,11 @@ const FeedPage = () => {
   }
 
   const handleCloseRespectFlow = () => {
-    setShowRespectFlowPopup(false)
+    setIsClosingRespectFlow(true)
+    setTimeout(() => {
+      setShowRespectFlowPopup(false)
+      setIsClosingRespectFlow(false)
+    }, 300) // Animasyon süresi kadar bekle
   }
 
   // Respect flow verilerini formatla
@@ -343,8 +348,14 @@ const FeedPage = () => {
 
       {/* Mobile Respect Flow Popup */}
       {showRespectFlowPopup && (
-        <div className="mobile-respect-flow-popup-overlay" onClick={handleCloseRespectFlow}>
-          <div className="mobile-respect-flow-popup" onClick={(e) => e.stopPropagation()}>
+        <div 
+          className={`mobile-respect-flow-popup-overlay ${isClosingRespectFlow ? 'closing' : ''}`} 
+          onClick={handleCloseRespectFlow}
+        >
+          <div 
+            className={`mobile-respect-flow-popup ${isClosingRespectFlow ? 'closing' : ''}`} 
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="mobile-popup-header">
               <h2>Respect Akışı</h2>
               <button className="mobile-popup-close-btn" onClick={handleCloseRespectFlow}>

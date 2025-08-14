@@ -8142,6 +8142,47 @@ html {
   backdrop-filter: blur(4px);
 }
 
+/* Mobile Respect Flow Popup Animations */
+@keyframes mobileRespectFlowOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mobileRespectFlowOverlayFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes mobileRespectFlowPopupSlideIn {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes mobileRespectFlowPopupSlideOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
 /* Mobile Respect Flow Popup */
 .mobile-respect-flow-popup-overlay {
   position: fixed;
@@ -8155,6 +8196,11 @@ html {
   justify-content: center;
   z-index: 2000;
   backdrop-filter: blur(4px);
+  animation: mobileRespectFlowOverlayFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-respect-flow-popup-overlay.closing {
+  animation: mobileRespectFlowOverlayFadeOut 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .mobile-respect-flow-popup {
@@ -8163,7 +8209,12 @@ html {
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  animation: mobilePopupSlideUp 0.3s ease;
+  animation: mobileRespectFlowPopupSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: bottom center;
+}
+
+.mobile-respect-flow-popup.closing {
+  animation: mobileRespectFlowPopupSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .mobile-respect-flow-items {
