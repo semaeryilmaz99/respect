@@ -17,10 +17,7 @@
   display: none;
 }
 
-/* Desktop Respect Button - Mobile'da gizli */
-.desktop-respect-button-container {
-  display: none;
-}
+
 
 /* Feed Header - Mobile'da gizli */
 .feed-header {
@@ -29,51 +26,7 @@
 
 /* Desktop styles - 768px ve üzeri */
 @media (min-width: 768px) {
-  /* Desktop Respect Button */
-  .desktop-respect-button-container {
-    display: block !important;
-    position: fixed;
-    top: 140px; /* Header'ın altında daha fazla boşluk */
-    right: 20px;
-    z-index: 500;
-  }
-  
-  .desktop-respect-button {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 20px;
-    background: #ffffff;
-    color: #1b262e;
-    border: 2px solid #fde0a1;
-    border-radius: 30px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(253, 224, 161, 0.3);
-    transition: all 0.3s ease;
-    min-width: 160px;
-    justify-content: center;
-  }
-  
-  .desktop-respect-button:hover {
-    background: #fde0a1;
-    border-color: #fcce7a;
-    box-shadow: 0 6px 20px rgba(253, 224, 161, 0.4);
-    transform: translateY(-2px);
-  }
-  
-  .desktop-respect-button:active {
-    transform: translateY(0);
-    background: #fcce7a;
-    box-shadow: 0 2px 8px rgba(253, 224, 161, 0.3);
-  }
-  
-  .respect-icon {
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-  }
+
 
   /* Feed Tabs için desktop stilleri */
   .feed-tabs {
@@ -624,16 +577,7 @@
     border-color: #feb822 !important;
   }
   
-  /* Desktop Respect Button - Large Desktop */
-  .desktop-respect-button {
-    padding: 16px 24px;
-    font-size: 16px;
-    min-width: 180px;
-  }
-  
-  .respect-icon {
-    font-size: 18px;
-  }
+
   
   .feed-layout {
     max-width: 1800px;
@@ -769,18 +713,7 @@
     display: none !important;
   }
   
-  /* Desktop Respect Button - Extra Large Desktop */
-  .desktop-respect-button {
-    padding: 18px 28px;
-    font-size: 17px;
-    min-width: 200px;
-    top: 130px;
-    right: 30px;
-  }
-  
-  .respect-icon {
-    font-size: 20px;
-  }
+
   
   .feed-layout {
     max-width: 2000px;

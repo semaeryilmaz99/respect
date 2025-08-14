@@ -215,7 +215,6 @@ body {
 .feed-tabs {
   display: flex;
   padding: 16px;
-  margin-top: 80px; /* Header'ın altında boşluk - mobile için */
   margin-bottom: 16px;
   gap: 8px;
 }
@@ -8022,7 +8021,6 @@ html {
 /* Mobile Respect Flow Section - Header ile Feed Tabs arasında */
 .mobile-respect-flow-section {
   padding: 16px;
-  margin-top: 80px; /* Header'ın altında boşluk - mobile için */
   margin-bottom: 8px;
 }
 
