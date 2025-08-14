@@ -5650,6 +5650,11 @@ html {
   border: 1px solid #f9dc38;
   transition: all 0.3s ease;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .song-card:hover {
@@ -5683,6 +5688,10 @@ html {
 
 .song-info {
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .song-title {
@@ -5691,6 +5700,8 @@ html {
   margin-bottom: 8px;
   color: #f9dc38;
   cursor: pointer;
+  text-align: center;
+  width: 100%;
 }
 
 .song-artist {
@@ -5701,6 +5712,8 @@ html {
   transition: color 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
+  text-align: center;
+  width: 100%;
 }
 
 .song-artist:hover {
@@ -5712,12 +5725,16 @@ html {
   color: #e2e8f0;
   margin-bottom: 10px;
   line-height: 1.5;
+  text-align: center;
+  width: 100%;
 }
 
 .song-duration {
   font-size: 0.9rem;
   color: #a0aec0;
   margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
 }
 
 .song-stats {
@@ -5727,6 +5744,7 @@ html {
   gap: 8px;
   margin-bottom: 20px;
   font-size: 0.9rem;
+  width: 100%;
 }
 
 .song-respect,
@@ -5738,6 +5756,7 @@ html {
 .song-actions {
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 /* Updated SongsList Styles */
