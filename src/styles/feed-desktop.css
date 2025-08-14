@@ -150,14 +150,15 @@
     z-index: 1000;
     margin: 0 0 16px 0;
     padding: 14px 20px;
-    background: linear-gradient(135deg, #fef5e7 0%, #ffe8a0 100%);
-    border: 1px solid #f69f17;
+    background: linear-gradient(135deg, #ffe8a0 0%, #f9dc38 100%);
+    border: 1px solid #f9dc38;
     border-radius: 40px;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(246, 159, 23, 0.2), 0 0 20px rgba(51, 51, 51, 0.3);
+    box-shadow: 0 6px 20px rgba(246, 159, 23, 0.3), 0 0 25px rgba(51, 51, 51, 0.4);
     transition: all 0.3s ease;
     overflow: hidden;
     box-sizing: border-box;
+    transform: translateY(-2px);
   }
 
   .respect-flow-title::before {
@@ -172,10 +173,10 @@
   }
 
   .respect-flow-title:hover {
-    background: linear-gradient(135deg, #ffe8a0 0%, #f9dc38 100%);
-    border-color: #f9dc38;
-    box-shadow: 0 6px 20px rgba(246, 159, 23, 0.3), 0 0 25px rgba(51, 51, 51, 0.4);
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #f9dc38 0%, #feb822 100%);
+    border-color: #feb822;
+    box-shadow: 0 8px 25px rgba(246, 159, 23, 0.4), 0 0 30px rgba(51, 51, 51, 0.5);
+    transform: translateY(-4px);
   }
 
   /* Respect Flow Title Shine Animation */
@@ -386,7 +387,6 @@
     height: 100% !important; /* Use full height */
     display: flex !important;
     flex-direction: column !important;
-    padding-bottom: 80px !important; /* Add padding to make space for input container */
     position: relative !important;
   }
 
@@ -410,7 +410,7 @@
     overflow-y: auto !important;
     min-height: 0 !important;
     padding: 16px !important;
-    padding-bottom: 16px !important; /* Reduced padding since we have bottom padding on content */
+    padding-bottom: 100px !important; /* Add extra padding to ensure input container is visible */
     max-height: none !important; /* Ensure no height restrictions */
     opacity: 1;
     transition: opacity 0.3s ease;
