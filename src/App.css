@@ -254,7 +254,7 @@ body {
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px; /* Feed cardlar arasındaki mesafe artırıldı */
   padding-bottom: 32px;
 }
 
@@ -262,7 +262,7 @@ body {
 .feed-card {
   background-color: #ffffff;
   border-radius: 40px;
-  box-shadow: 0 2px 12px rgba(27, 38, 46, 0.08);
+  box-shadow: 0 1px 12px rgba(27, 38, 46, 0.08);
 }
 
 
@@ -345,7 +345,7 @@ body {
   
   .feed {
     padding: 12px;
-    gap: 12px;
+    gap: 20px; /* Küçük ekranlarda da feed cardlar arasındaki mesafe artırıldı */
   }
   
   .card-content {
