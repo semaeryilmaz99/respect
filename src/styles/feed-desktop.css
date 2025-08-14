@@ -82,8 +82,10 @@
     margin-left: 340px; /* Feed layout ile aynı hizalama */
     max-width: 1200px;
     margin-right: auto;
-    margin-top: 20px; /* Header'ın altında boşluk */
+    margin-top: 100px; /* Header'ın altında daha fazla boşluk */
     margin-bottom: 20px; /* Feed cardların üstünde boşluk */
+    position: relative;
+    z-index: 10; /* Header'ın üzerinde görünmesi için */
   }
   
   .tab-button {
@@ -550,6 +552,9 @@
   /* Feed Tabs için büyük desktop stilleri */
   .feed-tabs {
     padding: 16px 50px;
+    margin-top: 100px; /* Header'ın altında daha fazla boşluk */
+    position: relative;
+    z-index: 10; /* Header'ın üzerinde görünmesi için */
   }
   
   .tab-button {
@@ -686,6 +691,9 @@
     padding: 16px 60px;
     align-items: center;
     justify-content: center;
+    margin-top: 100px; /* Header'ın altında daha fazla boşluk */
+    position: relative;
+    z-index: 10; /* Header'ın üzerinde görünmesi için */
   }
   
   .tab-button {
