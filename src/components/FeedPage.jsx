@@ -224,7 +224,7 @@ const FeedPage = () => {
         <div className="error-container">
           <h3>Bir hata oluştu</h3>
           <p>{feedError.message}</p>
-          <button type="button" onClick={refreshFeed}>Tekrar Dene</button>
+          <button onClick={refreshFeed}>Tekrar Dene</button>
         </div>
       </div>
     )
@@ -239,42 +239,37 @@ const FeedPage = () => {
     <div className="feed-page">
       <Header />
       
-      {/* Desktop Respect Gönder Button */}
-      <div className="desktop-respect-button-container">
-        <button type="button" className="desktop-respect-button" onClick={handleRespectSend}>
-          Respect Gönder
-        </button>
-      </div>
-      
       {/* Mobile Respect Flow Button - Header ile Feed Tabs arasında */}
       <div className="mobile-respect-flow-section">
-        <button type="button" className="mobile-respect-flow-btn" onClick={handleOpenRespectFlow}>
+        <button className="mobile-respect-flow-btn" onClick={handleOpenRespectFlow}>
           Respect Akışı
         </button>
       </div>
       
-      {/* Tab Navigation */}
+      {/* Tab Navigation with Respect Button */}
       <div className="feed-tabs">
-        <button 
-          type="button"
-          className={`tab-button ${activeTab === 'community' ? 'active' : ''}`}
-          onClick={(e) => {
-            e.preventDefault();
-            setActiveTab('community');
-          }}
-        >
-          Topluluk
-        </button>
-        <button 
-          type="button"
-          className={`tab-button ${activeTab === 'personal' ? 'active' : ''}`}
-          onClick={(e) => {
-            e.preventDefault();
-            setActiveTab('personal');
-          }}
-        >
-          Sana Özel
-        </button>
+        {/* Desktop Respect Gönder Button - Sol tarafta */}
+        <div className="desktop-respect-button-container">
+          <button className="desktop-respect-button" onClick={handleRespectSend}>
+            Respect Gönder
+          </button>
+        </div>
+        
+        {/* Tab Buttons */}
+        <div className="tab-buttons-container">
+          <button 
+            className={`tab-button ${activeTab === 'community' ? 'active' : ''}`}
+            onClick={() => setActiveTab('community')}
+          >
+            Topluluk
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'personal' ? 'active' : ''}`}
+            onClick={() => setActiveTab('personal')}
+          >
+            Sana Özel
+          </button>
+        </div>
       </div>
       
       {/* Fixed Chat Panel - sadece desktop'ta görünür */}
@@ -369,7 +364,7 @@ const FeedPage = () => {
           >
             <div className="mobile-popup-header">
               <h2>Respect Akışı</h2>
-              <button type="button" className="mobile-popup-close-btn" onClick={handleCloseRespectFlow}>
+              <button className="mobile-popup-close-btn" onClick={handleCloseRespectFlow}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>

@@ -5,6 +5,24 @@
   display: block;
 }
 
+/* Mobile styles - hide desktop respect button and tab buttons container */
+.desktop-respect-button-container {
+  display: none;
+}
+
+.tab-buttons-container {
+  display: flex;
+  gap: 8px;
+}
+
+/* Mobile feed-tabs - reset to original layout */
+.feed-tabs {
+  display: flex;
+  padding: 16px;
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
 .respect-flow-panel {
   display: none;
 }
@@ -32,10 +50,9 @@
   /* Desktop Respect Button */
   .desktop-respect-button-container {
     display: block !important;
-    position: fixed;
-    top: 120px;
-    right: 20px;
+    position: relative;
     z-index: 500;
+    margin-right: 20px;
   }
   
   .desktop-respect-button {
@@ -77,6 +94,8 @@
 
   /* Feed Tabs için desktop stilleri */
   .feed-tabs {
+    display: flex;
+    align-items: center;
     justify-content: flex-start;
     padding: 16px 40px; /* Sol margin ile hizalama */
     margin-left: 340px; /* Feed layout ile aynı hizalama */
@@ -88,6 +107,12 @@
     z-index: 10; /* Header'ın üzerinde görünmesi için */
   }
   
+  /* Tab Buttons Container */
+  .tab-buttons-container {
+    display: flex;
+    gap: 8px;
+  }
+  
   .tab-button {
     flex: none !important; /* Flex: 1'i iptal et */
     width: 140px; /* Sabit genişlik */
@@ -95,13 +120,6 @@
     padding: 16px 20px !important; /* Yüksekliği artır */
     min-height: 48px;
     font-size: 15px !important;
-    border: none !important;
-    background: none !important;
-    cursor: pointer !important;
-    outline: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
   }
   
   .tab-button.active {
@@ -558,10 +576,19 @@
 @media (min-width: 1400px) {
   /* Feed Tabs için büyük desktop stilleri */
   .feed-tabs {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     padding: 16px 50px;
     margin-top: 100px; /* Header'ın altında daha fazla boşluk */
     position: relative;
     z-index: 10; /* Header'ın üzerinde görünmesi için */
+  }
+  
+  /* Tab Buttons Container - Large Desktop */
+  .tab-buttons-container {
+    display: flex;
+    gap: 10px;
   }
   
   .tab-button {
@@ -570,13 +597,6 @@
     padding: 18px 24px !important; /* Yüksekliği artır */
     min-height: 52px;
     font-size: 16px !important;
-    border: none !important;
-    background: none !important;
-    cursor: pointer !important;
-    outline: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
   }
   
   .tab-button.active {
@@ -644,6 +664,10 @@
     min-width: 180px;
   }
   
+  .desktop-respect-button-container {
+    margin-right: 24px;
+  }
+  
   .respect-icon {
     font-size: 18px;
   }
@@ -702,12 +726,19 @@
 @media (min-width: 1600px) {
   /* Feed Tabs için extra büyük desktop stilleri */
   .feed-tabs {
-    padding: 16px 60px;
+    display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    padding: 16px 60px;
     margin-top: 100px; /* Header'ın altında daha fazla boşluk */
     position: relative;
     z-index: 10; /* Header'ın üzerinde görünmesi için */
+  }
+  
+  /* Tab Buttons Container - Extra Large Desktop */
+  .tab-buttons-container {
+    display: flex;
+    gap: 12px;
   }
   
   .tab-button {
@@ -716,13 +747,6 @@
     padding: 20px 28px !important; /* Yüksekliği artır */
     min-height: 56px;
     font-size: 17px !important;
-    border: none !important;
-    background: none !important;
-    cursor: pointer !important;
-    outline: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
   }
   
   .tab-button.active {
@@ -793,8 +817,10 @@
     padding: 18px 28px;
     font-size: 17px;
     min-width: 200px;
-    top: 130px;
-    right: 30px;
+  }
+  
+  .desktop-respect-button-container {
+    margin-right: 30px;
   }
   
   .respect-icon {
