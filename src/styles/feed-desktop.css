@@ -27,8 +27,8 @@
   display: none;
 }
 
-/* Desktop styles - 1024px ve üzeri */
-@media (min-width: 1024px) {
+/* Desktop styles - 768px ve üzeri */
+@media (min-width: 768px) {
   /* Desktop Respect Button */
   .desktop-respect-button-container {
     display: block !important;
