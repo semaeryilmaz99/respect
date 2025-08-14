@@ -33,7 +33,7 @@
   .desktop-respect-button-container {
     display: block !important;
     position: fixed;
-    top: 120px;
+    top: 140px; /* Header'ın altında daha fazla boşluk */
     right: 20px;
     z-index: 500;
   }
@@ -81,7 +81,7 @@
     padding: 16px 40px; /* Sol margin ile hizalama */
     max-width: 1200px;
     margin: 0 auto;
-    margin-top: 20px; /* Header'ın altında boşluk */
+    margin-top: 100px; /* Header'ın altında daha fazla boşluk - fixed header için */
     margin-bottom: 20px; /* Feed cardların üstünde boşluk */
     position: relative;
     z-index: 10;
@@ -179,9 +179,9 @@
     display: block !important;
     position: fixed;
     left: 40px;
-    top: 200px;
+    top: 220px; /* Header'ın altında daha fazla boşluk */
     width: 320px;
-    height: calc(100vh - 220px);
+    height: calc(100vh - 240px); /* Yüksekliği de ayarla */
     z-index: 100;
     box-sizing: border-box;
   }
@@ -191,7 +191,7 @@
     font-weight: 600;
     color: #1b262e;
     position: fixed;
-    top: 120px;
+    top: 140px; /* Header'ın altında daha fazla boşluk */
     left: 80px;
     width: 320px;
     z-index: 1000;
@@ -552,7 +552,7 @@
   .feed-tabs {
     padding: 16px 50px;
     margin: 0 auto;
-    margin-top: 20px;
+    margin-top: 100px; /* Header'ın altında daha fazla boşluk - fixed header için */
     margin-bottom: 20px;
     position: relative;
     z-index: 10;
@@ -692,7 +692,7 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto;
-    margin-top: 20px;
+    margin-top: 100px; /* Header'ın altında daha fazla boşluk - fixed header için */
     margin-bottom: 20px;
     position: relative;
     z-index: 10;
