@@ -5363,7 +5363,7 @@ html {
   padding: 10px 20px;
   border: 2px solid #f9dc38;
   border-radius: 25px;
-  background: transparent;
+  background: white;
   color: #1b262e;
   font-weight: 600;
   cursor: pointer;
@@ -5707,7 +5707,7 @@ html {
 
 .song-artist {
   font-size: 0.9rem;
-  color: #a0aec0;
+  color: #f9dc38;
   margin-bottom: 10px;
   cursor: pointer;
   transition: color 0.3s ease;
@@ -5718,12 +5718,12 @@ html {
 }
 
 .song-artist:hover {
-  color: #f9dc38;
+  color: #f4d430;
 }
 
 .song-album {
   font-size: 0.95rem;
-  color: #e2e8f0;
+  color: #f9dc38;
   margin-bottom: 10px;
   line-height: 1.5;
   text-align: center;
@@ -5732,7 +5732,7 @@ html {
 
 .song-duration {
   font-size: 0.9rem;
-  color: #a0aec0;
+  color: #f9dc38;
   margin-bottom: 20px;
   text-align: center;
   width: 100%;
