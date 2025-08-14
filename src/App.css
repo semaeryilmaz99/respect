@@ -673,8 +673,7 @@ html {
   .artist-page .real-time-chat .chat-content {
     height: calc(100vh - 80px - 60px - 80px) !important; /* Total height minus header, toggle, and input container */
     display: flex !important;
-    flex-direction: column !important;
-    padding-bottom: 80px !important; /* Space for fixed input container */
+    flex-direction: column !important;pace for fixed input container */
   }
 
   .artist-page .real-time-chat.closed .chat-content {

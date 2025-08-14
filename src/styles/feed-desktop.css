@@ -353,9 +353,9 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
   
-  /* Desktop Feed Page Chat Content Height - Match Artist Page */
+  /* Desktop Feed Page Chat Content Height - Fill entire chat container */
   .chat-panel .real-time-chat .chat-content {
-    height: calc(100vh - 80px - 60px - 80px) !important; /* Total height minus header, toggle, and input container */
+    height: 100% !important; /* Fill entire chat container */
     display: flex !important;
     flex-direction: column !important;
     padding-bottom: 80px !important; /* Space for fixed input container */
@@ -371,13 +371,13 @@
     display: none !important;
   }
 
-  /* Desktop Feed Page Chat Messages - Flexible Height */
+  /* Desktop Feed Page Chat Messages - Fill available space */
   .chat-panel .real-time-chat .chat-messages {
     flex: 1 !important;
     overflow-y: auto !important;
     min-height: 0 !important;
     padding: 16px !important;
-    padding-bottom: 20px !important; /* Extra padding for better scroll experience */
+    padding-bottom: 80px !important; /* Space for fixed input container */
     max-height: none !important; /* Ensure no height restrictions */
     opacity: 1;
     transition: opacity 0.3s ease;
