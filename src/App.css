@@ -262,7 +262,7 @@ body {
 .feed-card {
   background-color: #ffffff;
   border-radius: 40px;
-  box-shadow: 0 2px 12px rgba(27, 38, 46, 0.08);
+  box-shadow: 0 2px 10px rgba(27, 38, 46, 0.08);
 }
 
 
@@ -271,7 +271,7 @@ body {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   min-height: 110px;
   position: relative;
   background-color: #ffffff;
@@ -279,11 +279,11 @@ body {
   border-bottom: 2px solid #ffe8a0;
   border-radius: 40px;
   box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.1),
-    0 -4px 8px rgba(0, 0, 0, 0.1),
-    4px 0 8px rgba(0, 0, 0, 0.1),
-    -4px 0 8px rgba(0, 0, 0, 0.1),
-    0 0 12px rgba(0, 0, 0, 0.15);
+    0 8px 16px rgba(0, 0, 0, 0.1),
+    0 -8px 16px rgba(0, 0, 0, 0.1),
+    8px 0 16px rgba(0, 0, 0, 0.1),
+    -8px 0 16px rgba(0, 0, 0, 0.1),
+    0 0 24px rgba(0, 0, 0, 0.15);
 }
 
 .card-top {
@@ -7942,6 +7942,70 @@ html {
   padding: 0 16px;
 }
 
+/* Mobile Respect Flow Button */
+.mobile-respect-flow-button-container {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  z-index: 1000;
+  touch-action: none;
+}
+
+/* Hide on desktop */
+@media (min-width: 768px) {
+  .mobile-respect-flow-button-container {
+    display: none;
+  }
+}
+
+.mobile-respect-flow-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #fef5e7 0%, #ffe8a0 100%);
+  border: 2px solid #f69f17;
+  border-radius: 25px;
+  color: #1b262e;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(246, 159, 23, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.mobile-respect-flow-button:hover {
+  background: linear-gradient(135deg, #ffe8a0 0%, #f9dc38 100%);
+  border-color: #f9dc38;
+  box-shadow: 0 6px 20px rgba(246, 159, 23, 0.4), 0 3px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.mobile-respect-flow-button:active {
+  transform: translateY(0);
+  background: linear-gradient(135deg, #f9dc38 0%, #f69f17 100%);
+  box-shadow: 0 2px 8px rgba(246, 159, 23, 0.3);
+}
+
+.respect-flow-icon {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.respect-flow-text {
+  white-space: nowrap;
+}
+
+.mobile-respect-flow-button.dragging {
+  opacity: 0.8;
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(246, 159, 23, 0.5), 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
 .mobile-respect-btn {
   width: 100%;
   padding: 14px 20px;
@@ -7993,6 +8057,128 @@ html {
   justify-content: center;
   z-index: 2000;
   backdrop-filter: blur(4px);
+}
+
+/* Mobile Respect Flow Popup */
+.mobile-respect-flow-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
+}
+
+.mobile-respect-flow-popup {
+  background: white;
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: mobilePopupSlideUp 0.3s ease;
+}
+
+.mobile-respect-flow-items {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mobile-respect-flow-item {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #e9ecef;
+}
+
+.mobile-respect-flow-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.mobile-user-avatar-small {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.mobile-respect-flow-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mobile-user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1b262e;
+}
+
+.mobile-respect-time {
+  font-size: 12px;
+  color: #666;
+}
+
+.mobile-respect-amount {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f69f17;
+}
+
+.mobile-respect-flow-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobile-song-cover-small {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.mobile-song-info {
+  flex: 1;
+}
+
+.mobile-song-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1b262e;
+  margin: 0 0 4px 0;
+}
+
+.mobile-artist-name {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.mobile-respect-message {
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+  margin: 8px 0 0 0;
+  padding: 8px;
+  background: #f1f3f4;
+  border-radius: 8px;
+}
+
+.mobile-no-respect-flow {
+  text-align: center;
+  padding: 32px 16px;
+  color: #666;
 }
 
 .mobile-send-respect-popup {

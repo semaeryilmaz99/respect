@@ -9,6 +9,7 @@ import { debugArray, debugRender, debugWarn } from '../utils/debug.js'
 
 const FeedPage = () => {
   const [activeTab, setActiveTab] = useState('community')
+  const [showRespectFlowPopup, setShowRespectFlowPopup] = useState(false)
   const navigate = useNavigate()
   
   // Rate limiting uyarısı
@@ -43,6 +44,44 @@ const FeedPage = () => {
   
   const handleRespectSend = () => {
     navigate('/send-respect')
+  }
+
+  const handleOpenRespectFlow = () => {
+    setShowRespectFlowPopup(true)
+  }
+
+  const handleCloseRespectFlow = () => {
+    setShowRespectFlowPopup(false)
+  }
+
+  // Touch event handlers for draggable button
+  const [buttonPosition, setButtonPosition] = useState({ x: 20, y: 100 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0]
+    const rect = e.currentTarget.getBoundingClientRect()
+    setDragOffset({
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top
+    })
+    setIsDragging(true)
+  }
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return
+    
+    e.preventDefault()
+    const touch = e.touches[0]
+    const newX = Math.max(0, Math.min(window.innerWidth - 120, touch.clientX - dragOffset.x))
+    const newY = Math.max(0, Math.min(window.innerHeight - 60, touch.clientY - dragOffset.y))
+    
+    setButtonPosition({ x: newX, y: newY })
+  }
+
+  const handleTouchEnd = () => {
+    setIsDragging(false)
   }
 
   // Loading durumlarını birleştir
@@ -209,6 +248,28 @@ const FeedPage = () => {
         <RealTimeChat />
       </div>
       
+      {/* Mobile Respect Flow Button - sadece mobile'da görünür */}
+      <div 
+        className="mobile-respect-flow-button-container"
+        style={{
+          position: 'fixed',
+          left: `${buttonPosition.x}px`,
+          top: `${buttonPosition.y}px`,
+          zIndex: 1000
+        }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <button 
+          className={`mobile-respect-flow-button ${isDragging ? 'dragging' : ''}`}
+          onClick={isDragging ? undefined : handleOpenRespectFlow}
+        >
+          <span className="respect-flow-icon">💰</span>
+          <span className="respect-flow-text">Respect Akışı</span>
+        </button>
+      </div>
+      
       {/* Desktop Layout: Sol respect akışı + Sağ ana feed */}
       <div className="feed-layout">
         {/* Sol Panel - Respect Akışı (sadece desktop'ta görünür) */}
@@ -273,6 +334,55 @@ const FeedPage = () => {
         
 
       </div>
+
+      {/* Mobile Respect Flow Popup */}
+      {showRespectFlowPopup && (
+        <div className="mobile-respect-flow-popup-overlay" onClick={handleCloseRespectFlow}>
+          <div className="mobile-respect-flow-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-popup-header">
+              <h2>Respect Akışı</h2>
+              <button className="mobile-popup-close-btn" onClick={handleCloseRespectFlow}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div className="mobile-popup-content">
+              <div className="mobile-respect-flow-items">
+                {respectFlowData && Array.isArray(respectFlowData) ? respectFlowData.map((item) => (
+                  <div key={item.id} className="mobile-respect-flow-item">
+                    <div className="mobile-respect-flow-header">
+                      <img src={item.user.avatar} alt={item.user.name} className="mobile-user-avatar-small" />
+                      <div className="mobile-respect-flow-info">
+                        <span className="mobile-user-name">{item.user.name}</span>
+                        <span className="mobile-respect-time">{item.time}</span>
+                      </div>
+                      <span className="mobile-respect-amount">+{item.amount}</span>
+                    </div>
+                    
+                    <div className="mobile-respect-flow-content">
+                      <img src={item.song.cover} alt={item.song.title} className="mobile-song-cover-small" />
+                      <div className="mobile-song-info">
+                        <p className="mobile-song-title">{item.song.title}</p>
+                        <p className="mobile-artist-name">{item.artist.name}</p>
+                      </div>
+                    </div>
+                    
+                    {item.message && (
+                      <p className="mobile-respect-message">"{item.message}"</p>
+                    )}
+                  </div>
+                )) : (
+                  <div className="mobile-no-respect-flow">
+                    <p>Henüz respect akışı yok</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
