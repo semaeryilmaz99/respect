@@ -5648,7 +5648,7 @@ html {
 .song-card {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
-  padding: 25px;
+  padding: 20px;
   backdrop-filter: blur(10px);
   border: 1px solid #f9dc38;
   transition: all 0.3s ease;
@@ -5671,7 +5671,7 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   width: 100%;
 }
 
@@ -5698,9 +5698,9 @@ html {
 }
 
 .song-title {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: #f9dc38;
   cursor: pointer;
   text-align: center;
@@ -5710,7 +5710,7 @@ html {
 .song-artist {
   font-size: 0.9rem;
   color: #f9dc38;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   cursor: pointer;
   transition: color 0.3s ease;
   text-transform: uppercase;
@@ -5726,8 +5726,8 @@ html {
 .song-album {
   font-size: 0.95rem;
   color: #f9dc38;
-  margin-bottom: 10px;
-  line-height: 1.5;
+  margin-bottom: 8px;
+  line-height: 1.4;
   text-align: center;
   width: 100%;
 }
@@ -5744,8 +5744,8 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 6px;
+  margin-bottom: 15px;
   font-size: 0.9rem;
   width: 100%;
 }
