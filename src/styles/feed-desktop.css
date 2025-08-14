@@ -277,7 +277,7 @@
   .song-title {
     font-size: 12px;
     font-weight: 600;
-    color: #1b262e;
+    color: #f9dc38 !important;
     margin: 0 0 2px 0;
     line-height: 1.2;
   }
@@ -537,6 +537,7 @@
   
   .song-title {
     font-size: 13px;
+    color: #f9dc38 !important;
   }
   
   .artist-name {
