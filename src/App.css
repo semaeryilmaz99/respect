@@ -106,6 +106,8 @@ body {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .menu-button {
@@ -422,13 +424,6 @@ html {
     padding-bottom: 320px;
   }
   
-  /* Mobile Artist Content - Add bottom padding for real-time chat */
-  @media (max-width: 767px) {
-    .artist-content {
-      padding-bottom: 350px; /* Real-time chat için daha fazla alan */
-    }
-  }
-  
   /* Mobile Artist Stats - Stylish Layout */
   .artist-page .artist-stats-container {
     display: flex;
@@ -492,6 +487,13 @@ html {
     margin: 0 auto;
     padding-left: 20px;
     padding-right: 20px; /* Reduced padding to allow content to scroll behind chat */
+  }
+  
+  /* Mobile Artist Content - Add bottom padding for fixed chat */
+  @media (max-width: 767px) {
+    .artist-page .artist-content {
+      padding-bottom: 320px !important; /* Space for fixed chat at bottom */
+    }
   }
   
   /* Hide page header on desktop artist pages */
@@ -693,9 +695,6 @@ html {
       border-radius: 40px 40px 0 0 !important;
       box-sizing: border-box !important;
       z-index: 1000 !important;
-      border: 2px solid #fbdb3a !important;
-      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
-      background: white !important;
     }
   }
 
@@ -718,6 +717,11 @@ html {
       display: flex !important;
       flex-direction: column !important;
       padding-bottom: 0 !important;
+    }
+    
+    .artist-page .real-time-chat.closed {
+      height: 60px !important;
+      max-height: 60px !important;
     }
   }
 
@@ -747,10 +751,9 @@ html {
       flex: 1 !important;
       overflow-y: auto !important;
       min-height: 0 !important;
-      padding: 12px 16px !important;
+      padding: 12px !important;
       padding-bottom: 12px !important;
       max-height: 200px !important;
-      background: rgba(255, 255, 255, 0.95) !important;
     }
   }
 
@@ -776,15 +779,15 @@ html {
       position: relative !important;
       bottom: auto !important;
       width: 100% !important;
-      padding: 12px 16px !important;
+      padding: 12px !important;
       border-top: 1px solid rgba(251, 219, 58, 0.3) !important;
       background: rgba(255, 255, 255, 0.98) !important;
       display: flex !important;
       align-items: center !important;
       gap: 8px !important;
-      border-radius: 0 0 40px 40px !important;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1) !important;
-      z-index: 1001 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      z-index: auto !important;
       box-sizing: border-box !important;
     }
   }
@@ -973,18 +976,6 @@ html {
 
   .artist-page .real-time-chat .toggle-icon.open {
     transform: rotate(180deg) !important;
-  }
-  
-  /* Mobile Artist Page Chat Toggle Header */
-  @media (max-width: 767px) {
-    .artist-page .real-time-chat .section-title.chat-toggle {
-      height: 50px !important;
-      padding: 0 16px !important;
-      background: linear-gradient(135deg, #fbdb3a 0%, #f8a61d 100%) !important;
-      border-radius: 40px 40px 0 0 !important;
-      font-size: 14px !important;
-      border-bottom: 1px solid rgba(251, 219, 58, 0.3) !important;
-    }
   }
 
   /* Desktop Artist Page Chat Messages - Override Global Max-Height */
@@ -1234,6 +1225,28 @@ html {
 }
 
 /* Artist Header removed - using main Header component instead */
+
+/* Mobile Artist Page Header Overflow Fix */
+@media (max-width: 767px) {
+  .artist-page .header-content {
+    gap: 4px !important;
+    padding: 0 8px !important;
+  }
+  
+  .artist-page .mobile-search {
+    width: 180px !important;
+    max-width: calc(100vw - 100px) !important;
+  }
+  
+  .artist-page .menu-button {
+    padding: 6px !important;
+  }
+  
+  .artist-page .user-avatar {
+    width: 40px !important;
+    height: 40px !important;
+  }
+}
 
 /* Artist Profile Styles */
 .artist-profile {
