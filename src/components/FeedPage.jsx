@@ -295,7 +295,10 @@ const FeedPage = () => {
                     <span className="user-name">{item.user.name}</span>
                     <span className="respect-time">{item.time}</span>
                   </div>
-                  <span className="respect-amount">+{item.amount}</span>
+                  <div className="respect-amount">
+                    <span>+{item.amount}</span>
+                    <span className="respect-arrow">→</span>
+                  </div>
                 </div>
                 
                 <div className="respect-flow-content">
