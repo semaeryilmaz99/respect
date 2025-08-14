@@ -262,7 +262,7 @@ body {
 .feed-card {
   background-color: #ffffff;
   border-radius: 40px;
-  box-shadow: 0 1px 8px rgba(27, 38, 46, 0.08);
+  box-shadow: 0 2px 12px rgba(27, 38, 46, 0.08);
 }
 
 
@@ -271,7 +271,7 @@ body {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
   min-height: 110px;
   position: relative;
   background-color: #ffffff;
@@ -279,11 +279,11 @@ body {
   border-bottom: 2px solid #ffe8a0;
   border-radius: 40px;
   box-shadow: 
-    0 8px 16px rgba(0, 0, 0, 0.1),
-    0 -8px 16px rgba(0, 0, 0, 0.1),
-    8px 0 16px rgba(0, 0, 0, 0.1),
-    -8px 0 16px rgba(0, 0, 0, 0.1),
-    0 0 24px rgba(0, 0, 0, 0.15);
+    0 4px 8px rgba(0, 0, 0, 0.1),
+    0 -4px 8px rgba(0, 0, 0, 0.1),
+    4px 0 8px rgba(0, 0, 0, 0.1),
+    -4px 0 8px rgba(0, 0, 0, 0.1),
+    0 0 12px rgba(0, 0, 0, 0.15);
 }
 
 .card-top {
