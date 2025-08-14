@@ -4732,7 +4732,7 @@ html {
   /* Feed sayfasında mobile chat için alan bırak */
   .feed-page {
     padding-bottom: 300px;
-    padding-top: 80px; /* Header height compensation */
+    padding-top: 120px; /* Header height compensation */
   }
 }
 
@@ -5488,7 +5488,7 @@ html {
   min-height: 100vh;
   background: linear-gradient(135deg, #1b262e 0%, #2d3748 100%);
   color: white;
-  padding-top: 80px; /* Header height compensation */
+  padding-top: 120px; /* Header height compensation */
 }
 
 .artists-container {
@@ -5616,7 +5616,7 @@ html {
   min-height: 100vh;
   background: linear-gradient(135deg, #1b262e 0%, #2d3748 100%);
   color: white;
-  padding-top: 80px; /* Header height compensation */
+  padding-top: 120px; /* Header height compensation */
 }
 
 .songs-container {
@@ -5773,7 +5773,11 @@ html {
 /* Mobile Responsive Styles for SongsPage */
 @media (max-width: 768px) {
   .songs-page {
-    padding-top: 70px; /* Smaller header height for mobile */
+    padding-top: 100px; /* Smaller header height for mobile */
+  }
+  
+  .artists-page {
+    padding-top: 100px; /* Smaller header height for mobile */
   }
   
   .songs-container {
@@ -5817,11 +5821,11 @@ html {
 
 @media (max-width: 480px) {
   .songs-page {
-    padding-top: 65px; /* Even smaller header height for small mobile */
+    padding-top: 90px; /* Even smaller header height for small mobile */
   }
   
   .artists-page {
-    padding-top: 65px; /* Even smaller header height for small mobile */
+    padding-top: 90px; /* Even smaller header height for small mobile */
   }
   
   .songs-container {
