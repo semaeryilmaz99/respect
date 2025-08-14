@@ -95,6 +95,13 @@
     padding: 16px 20px !important; /* Yüksekliği artır */
     min-height: 48px;
     font-size: 15px !important;
+    border: none !important;
+    background: none !important;
+    cursor: pointer !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
   }
   
   .tab-button.active {
@@ -563,6 +570,13 @@
     padding: 18px 24px !important; /* Yüksekliği artır */
     min-height: 52px;
     font-size: 16px !important;
+    border: none !important;
+    background: none !important;
+    cursor: pointer !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
   }
   
   .tab-button.active {
@@ -702,6 +716,13 @@
     padding: 20px 28px !important; /* Yüksekliği artır */
     min-height: 56px;
     font-size: 17px !important;
+    border: none !important;
+    background: none !important;
+    cursor: pointer !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
   }
   
   .tab-button.active {
