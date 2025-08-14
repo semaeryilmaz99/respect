@@ -239,6 +239,13 @@ const FeedPage = () => {
     <div className="feed-page">
       <Header />
       
+      {/* Desktop Respect Gönder Button */}
+      <div className="desktop-respect-button-container">
+        <button className="desktop-respect-button" onClick={handleRespectSend}>
+          Respect Gönder
+        </button>
+      </div>
+      
       {/* Mobile Respect Flow Button - Header ile Feed Tabs arasında */}
       <div className="mobile-respect-flow-section">
         <button className="mobile-respect-flow-btn" onClick={handleOpenRespectFlow}>
