@@ -479,10 +479,11 @@ html {
   }
   
   .artist-content {
+    padding-top: 120px; /* Desktop header'ın altında kalmak için padding-top eklendi */
     padding-bottom: 40px;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding-left: 20px;
     padding-right: 20px; /* Reduced padding to allow content to scroll behind chat */
   }
   
@@ -2626,6 +2627,7 @@ html {
 /* Desktop Song Content - Alt boşluğu kaldır */
 @media (min-width: 768px) {
   .song-content {
+    padding-top: 120px; /* Desktop header'ın altında kalmak için padding-top eklendi */
     padding-bottom: 40px;
   }
 
@@ -7944,31 +7946,34 @@ html {
   padding: 0 16px;
 }
 
-/* Mobile Respect Flow Button - Fixed on Feed Tabs */
-.mobile-respect-flow-button-fixed {
-  flex: none;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, #fef5e7 0%, #ffe8a0 100%);
-  border: 2px solid #f69f17;
-  border-radius: 25px;
-  color: #1b262e;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 4px 15px rgba(246, 159, 23, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  margin-left: auto;
+/* Mobile Respect Flow Section - Header ile Feed Tabs arasında */
+.mobile-respect-flow-section {
+  padding: 16px;
+  margin-bottom: 8px;
 }
 
-.mobile-respect-flow-button-fixed:hover {
+.mobile-respect-flow-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #fef5e7 0%, #ffe8a0 100%);
+  border: 2px solid #f69f17;
+  border-radius: 20px;
+  color: #1b262e;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(246, 159, 23, 0.2);
+  transition: all 0.3s ease;
+}
+
+.mobile-respect-flow-btn:hover {
   background: linear-gradient(135deg, #ffe8a0 0%, #f9dc38 100%);
   border-color: #f9dc38;
-  box-shadow: 0 6px 20px rgba(246, 159, 23, 0.4), 0 3px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 20px rgba(246, 159, 23, 0.3);
   transform: translateY(-2px);
 }
 
-.mobile-respect-flow-button-fixed:active {
+.mobile-respect-flow-btn:active {
   transform: translateY(0);
   background: linear-gradient(135deg, #f9dc38 0%, #f69f17 100%);
   box-shadow: 0 2px 8px rgba(246, 159, 23, 0.3);
@@ -7976,7 +7981,7 @@ html {
 
 /* Hide on desktop */
 @media (min-width: 768px) {
-  .mobile-respect-flow-button-fixed {
+  .mobile-respect-flow-section {
     display: none;
   }
 }

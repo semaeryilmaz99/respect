@@ -194,7 +194,14 @@ const FeedPage = () => {
         </button>
       </div>
       
-      {/* Tab Navigation with Respect Flow Button */}
+      {/* Mobile Respect Flow Button - Header ile Feed Tabs arasında */}
+      <div className="mobile-respect-flow-section">
+        <button className="mobile-respect-flow-btn" onClick={handleOpenRespectFlow}>
+          Respect Akışı
+        </button>
+      </div>
+      
+      {/* Tab Navigation */}
       <div className="feed-tabs">
         <button 
           className={`tab-button ${activeTab === 'community' ? 'active' : ''}`}
@@ -207,14 +214,6 @@ const FeedPage = () => {
           onClick={() => setActiveTab('personal')}
         >
           Sana Özel
-        </button>
-        
-        {/* Mobile Respect Flow Button - feed tabs üzerinde sabit */}
-        <button 
-          className="mobile-respect-flow-button-fixed"
-          onClick={handleOpenRespectFlow}
-        >
-          Respect Akışı
         </button>
       </div>
       
