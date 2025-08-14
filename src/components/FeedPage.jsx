@@ -17,6 +17,15 @@ const FeedPage = () => {
     console.log('🎵 FeedPage loaded - Spotify API rate limiting is active');
     console.log('⏳ API calls are rate limited to prevent 429 errors');
   }, []);
+
+  // Respect flow verilerini periyodik olarak güncelle
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      refreshRespectFlow();
+    }, 30000); // Her 30 saniyede bir güncelle
+
+    return () => clearInterval(interval);
+  }, [refreshRespectFlow]);
   
   // API hook'ları kullanarak veri yükleme (optimized)
   const { 
@@ -32,14 +41,15 @@ const FeedPage = () => {
     true // component mount olduğunda otomatik çalışsın
   )
 
-  // Sadece gerekli olan API çağrılarını yap
+  // Respect flow verilerini getir
   const { 
     data: respectFlowData, 
-    loading: respectFlowLoading 
+    loading: respectFlowLoading,
+    execute: refreshRespectFlow
   } = useApi(
-    () => feedService.getRespectFlow(),
+    () => feedService.getRespectFlow(10), // Son 10 respect işlemini getir
     [],
-    false // Otomatik çalışmasın, sadece gerektiğinde çağır
+    true // Component mount olduğunda otomatik çalışsın
   )
   
   const handleRespectSend = () => {
@@ -54,7 +64,51 @@ const FeedPage = () => {
     setShowRespectFlowPopup(false)
   }
 
+  // Respect flow verilerini formatla
+  const formatRespectFlowData = (data) => {
+    if (!data || !Array.isArray(data)) {
+      return []
+    }
 
+    return data.map(item => {
+      // Zaman formatını hesapla
+      const createdAt = new Date(item.created_at)
+      const now = new Date()
+      const diffInMinutes = Math.floor((now - createdAt) / (1000 * 60))
+      
+      let timeText = ''
+      if (diffInMinutes < 1) {
+        timeText = 'Az önce'
+      } else if (diffInMinutes < 60) {
+        timeText = `${diffInMinutes} dakika önce`
+      } else if (diffInMinutes < 1440) {
+        const hours = Math.floor(diffInMinutes / 60)
+        timeText = `${hours} saat önce`
+      } else {
+        const days = Math.floor(diffInMinutes / 1440)
+        timeText = `${days} gün önce`
+      }
+
+      return {
+        id: item.id,
+        user: {
+          name: item.profiles?.full_name || item.profiles?.username || 'Bilinmeyen Kullanıcı',
+          avatar: item.profiles?.avatar_url || '/assets/user/Image.png'
+        },
+        amount: item.amount || 0,
+        message: item.message || null,
+        time: timeText,
+        song: {
+          title: item.songs?.title || 'Bilinmeyen Şarkı',
+          cover: item.songs?.cover_url || '/assets/song/Image.png'
+        },
+        artist: {
+          name: item.artists?.name || item.songs?.artists?.name || 'Bilinmeyen Sanatçı',
+          avatar: item.artists?.avatar_url || '/assets/artist/Image.png'
+        }
+      }
+    })
+  }
 
   // Loading durumlarını birleştir
   const isLoading = feedLoading || respectFlowLoading
@@ -182,6 +236,7 @@ const FeedPage = () => {
   // Database'den gelen verileri kullan
   debugRender('FeedPage', { activeTab, feedDataLength: feedData?.length });
   const currentData = formatFeedData(feedData)
+  const formattedRespectFlowData = formatRespectFlowData(respectFlowData)
 
   return (
     <div className="feed-page">
@@ -235,7 +290,7 @@ const FeedPage = () => {
         <div className="respect-flow-panel desktop-only">
           <h2 className="respect-flow-title">Respect Akışı</h2>
           <div className="respect-flow-items">
-            {respectFlowData && Array.isArray(respectFlowData) ? respectFlowData.map((item) => (
+            {formattedRespectFlowData && Array.isArray(formattedRespectFlowData) ? formattedRespectFlowData.map((item) => (
               <div key={item.id} className="respect-flow-item">
                 <div className="respect-flow-header">
                   <img src={item.user.avatar} alt={item.user.name} className="user-avatar-small" />
@@ -309,7 +364,7 @@ const FeedPage = () => {
             </div>
             <div className="mobile-popup-content">
               <div className="mobile-respect-flow-items">
-                {respectFlowData && Array.isArray(respectFlowData) ? respectFlowData.map((item) => (
+                {formattedRespectFlowData && Array.isArray(formattedRespectFlowData) ? formattedRespectFlowData.map((item) => (
                   <div key={item.id} className="mobile-respect-flow-item">
                     <div className="mobile-respect-flow-header">
                       <img src={item.user.avatar} alt={item.user.name} className="mobile-user-avatar-small" />
