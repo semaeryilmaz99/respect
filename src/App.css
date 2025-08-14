@@ -1738,6 +1738,7 @@ html {
   .desktop-user-profile {
     max-width: 1000px;
     margin: 20px auto;
+    margin-top: 120px; /* Desktop header'ın altında kalmak için margin-top eklendi */
     background-color: #f8f9f1;
     border: 1px solid #f69f17;
     border-radius: 40px;
