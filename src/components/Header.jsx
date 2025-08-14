@@ -93,26 +93,37 @@ const Header = () => {
   // Handle search result item click
   const handleSearchItemClick = (item, type) => {
     console.log('🔍 Search item clicked:', { item, type })
+    console.log('📍 Current location:', location.pathname)
+    console.log('🎯 Navigation function:', typeof navigate)
     
     setSearchQuery('')
     setShowSearchResults(false)
     
-    switch (type) {
-      case 'artist':
-        console.log('🎨 Navigating to artist:', `/artist/${item.id}`)
-        navigate(`/artist/${item.id}`)
-        break
-      case 'song':
-        console.log('🎵 Navigating to song:', `/song/${item.id}`)
-        navigate(`/song/${item.id}`)
-        break
-      case 'user':
-        console.log('👤 Navigating to user:', `/user/${item.id}`)
-        navigate(`/user/${item.id}`)
-        break
-      default:
-        console.log('❓ Unknown type:', type)
-        break
+    const targetPath = (() => {
+      switch (type) {
+        case 'artist':
+          return `/artist/${item.id}`
+        case 'song':
+          return `/song/${item.id}`
+        case 'user':
+          return `/user/${item.id}`
+        default:
+          return null
+      }
+    })()
+    
+    console.log('🛣️ Target path:', targetPath)
+    
+    if (targetPath) {
+      console.log('🚀 Attempting navigation to:', targetPath)
+      try {
+        navigate(targetPath)
+        console.log('✅ Navigation successful')
+      } catch (error) {
+        console.error('❌ Navigation failed:', error)
+      }
+    } else {
+      console.log('❓ Unknown type:', type)
     }
   }
 
@@ -123,21 +134,38 @@ const Header = () => {
     }
   }
 
-  // Handle search input blur
-  const handleSearchBlur = () => {
-    // Delay hiding results to allow for clicks
-    setTimeout(() => {
-      // Check if the related target is within any of the search results
-      const isClickingOnResults = 
-        (desktopSearchResultsRef.current && desktopSearchResultsRef.current.contains(document.activeElement)) ||
-        (mobileSearchResultsRef.current && mobileSearchResultsRef.current.contains(document.activeElement)) ||
-        (otherSearchResultsRef.current && otherSearchResultsRef.current.contains(document.activeElement))
+  // Handle click outside search results
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Check if click is outside all search containers
+      const searchContainers = [
+        desktopSearchResultsRef.current,
+        mobileSearchResultsRef.current,
+        otherSearchResultsRef.current
+      ]
       
-      if (!isClickingOnResults) {
+      const isClickInsideSearch = searchContainers.some(container => 
+        container && container.contains(event.target)
+      )
+      
+      // Also check if click is on the search input itself
+      const searchInputs = document.querySelectorAll('.search-input, .mobile-search-input')
+      const isClickOnSearchInput = Array.from(searchInputs).some(input => 
+        input && input.contains(event.target)
+      )
+      
+      if (!isClickInsideSearch && !isClickOnSearchInput) {
         setShowSearchResults(false)
       }
-    }, 150)
-  }
+    }
+
+    if (showSearchResults) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
+    }
+  }, [showSearchResults])
 
   // Handle search input keydown
   const handleSearchKeyDown = (e) => {
@@ -179,7 +207,6 @@ const Header = () => {
                   value={searchQuery}
                   onChange={handleSearchChange}
                   onFocus={handleSearchFocus}
-                  onBlur={handleSearchBlur}
                   onKeyDown={handleSearchKeyDown}
                 />
                 {isSearching && (
@@ -195,9 +222,11 @@ const Header = () => {
                       key={`artist-${artist.id}`} 
                       className="search-result-item"
                       onClick={(e) => {
+                        console.log('🎯 Artist item clicked!', artist)
                         e.stopPropagation()
                         handleSearchItemClick(artist, 'artist')
                       }}
+                      style={{ cursor: 'pointer' }}
                     >
                       <div className="result-avatar">
                         <img src={artist.avatar_url || '/assets/artist/Image.png'} alt={artist.name} />
@@ -213,9 +242,11 @@ const Header = () => {
                       key={`song-${song.id}`} 
                       className="search-result-item"
                       onClick={(e) => {
+                        console.log('🎵 Song item clicked!', song)
                         e.stopPropagation()
                         handleSearchItemClick(song, 'song')
                       }}
+                      style={{ cursor: 'pointer' }}
                     >
                       <div className="result-avatar">
                         <img src={song.cover_url || '/assets/song/Image.png'} alt={song.title} />
@@ -231,9 +262,11 @@ const Header = () => {
                       key={`user-${user.id}`} 
                       className="search-result-item"
                       onClick={(e) => {
+                        console.log('👤 User item clicked!', user)
                         e.stopPropagation()
                         handleSearchItemClick(user, 'user')
                       }}
+                      style={{ cursor: 'pointer' }}
                     >
                       <div className="result-avatar">
                         <img src={user.avatar_url || '/assets/user/Image.png'} alt={user.full_name || user.username} />
@@ -272,7 +305,6 @@ const Header = () => {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onFocus={handleSearchFocus}
-                onBlur={handleSearchBlur}
                 onKeyDown={handleSearchKeyDown}
               />
               {isSearching && (
@@ -288,9 +320,11 @@ const Header = () => {
                     key={`artist-${artist.id}`} 
                     className="mobile-search-result-item"
                     onClick={(e) => {
+                      console.log('🎯 Mobile artist item clicked!', artist)
                       e.stopPropagation()
                       handleSearchItemClick(artist, 'artist')
                     }}
+                    style={{ cursor: 'pointer' }}
                   >
                     <div className="mobile-result-avatar">
                       <img src={artist.avatar_url || '/assets/artist/Image.png'} alt={artist.name} />
@@ -306,9 +340,11 @@ const Header = () => {
                     key={`song-${song.id}`} 
                     className="mobile-search-result-item"
                     onClick={(e) => {
+                      console.log('🎵 Mobile song item clicked!', song)
                       e.stopPropagation()
                       handleSearchItemClick(song, 'song')
                     }}
+                    style={{ cursor: 'pointer' }}
                   >
                     <div className="mobile-result-avatar">
                       <img src={song.cover_url || '/assets/song/Image.png'} alt={song.title} />
@@ -324,9 +360,11 @@ const Header = () => {
                     key={`user-${user.id}`} 
                     className="mobile-search-result-item"
                     onClick={(e) => {
+                      console.log('👤 Mobile user item clicked!', user)
                       e.stopPropagation()
                       handleSearchItemClick(user, 'user')
                     }}
+                    style={{ cursor: 'pointer' }}
                   >
                     <div className="mobile-result-avatar">
                       <img src={user.avatar_url || '/assets/user/Image.png'} alt={user.full_name || user.username} />
@@ -359,7 +397,6 @@ const Header = () => {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onFocus={handleSearchFocus}
-                onBlur={handleSearchBlur}
                 onKeyDown={handleSearchKeyDown}
               />
               {isSearching && (
@@ -375,9 +412,11 @@ const Header = () => {
                     key={`artist-${artist.id}`} 
                     className="search-result-item"
                     onClick={(e) => {
+                      console.log('🎯 Other artist item clicked!', artist)
                       e.stopPropagation()
                       handleSearchItemClick(artist, 'artist')
                     }}
+                    style={{ cursor: 'pointer' }}
                   >
                     <div className="result-avatar">
                       <img src={artist.avatar_url || '/assets/artist/Image.png'} alt={artist.name} />
@@ -393,9 +432,11 @@ const Header = () => {
                     key={`song-${song.id}`} 
                     className="search-result-item"
                     onClick={(e) => {
+                      console.log('🎵 Other song item clicked!', song)
                       e.stopPropagation()
                       handleSearchItemClick(song, 'song')
                     }}
+                    style={{ cursor: 'pointer' }}
                   >
                     <div className="result-avatar">
                       <img src={song.cover_url || '/assets/song/Image.png'} alt={song.title} />
@@ -411,9 +452,11 @@ const Header = () => {
                     key={`user-${user.id}`} 
                     className="search-result-item"
                     onClick={(e) => {
+                      console.log('👤 Other user item clicked!', user)
                       e.stopPropagation()
                       handleSearchItemClick(user, 'user')
                     }}
+                    style={{ cursor: 'pointer' }}
                   >
                     <div className="result-avatar">
                       <img src={user.avatar_url || '/assets/user/Image.png'} alt={user.full_name || user.username} />
