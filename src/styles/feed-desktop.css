@@ -182,6 +182,7 @@
     width: 320px;
     height: calc(100vh - 220px);
     z-index: 100;
+    box-sizing: border-box;
   }
   
   .respect-flow-title {
@@ -202,6 +203,7 @@
     box-shadow: 0 4px 15px rgba(246, 159, 23, 0.2), 0 0 20px rgba(51, 51, 51, 0.3);
     transition: all 0.3s ease;
     overflow: hidden;
+    box-sizing: border-box;
   }
 
   .respect-flow-title::before {
@@ -239,6 +241,7 @@
     max-height: calc(100vh - 220px);
     overflow-y: auto;
     padding-right: 8px;
+    box-sizing: border-box;
   }
   
   .respect-flow-item {
