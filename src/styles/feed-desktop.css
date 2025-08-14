@@ -364,7 +364,7 @@
     left: auto !important;
     width: 400px !important;
     height: calc(100vh - 80px) !important;
-    border-radius: 16px !important;
+    border-radius: 40px !important;
     border: 2px solid #fbdb3a !important;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
     z-index: 1000 !important;
@@ -457,23 +457,18 @@
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    background: linear-gradient(135deg, #fbdb3a 0%, #f8a61d 100%) !important;
+    background: #f9dc38 !important;
     color: #1b262e !important;
     font-weight: 600 !important;
     font-size: 16px !important;
-    border-radius: 16px !important;
+    border-radius: 40px !important;
     cursor: pointer !important;
     text-align: center !important;
   }
   
-  .chat-panel .chat-toggle:hover {
-    transform: scale(1.05);
-    background: linear-gradient(135deg, #f8a61d 0%, #fbdb3a 100%) !important;
-  }
-  
   .chat-panel .toggle-icon {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
-    font-size: 18px !important;
+    font-size: 30px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
