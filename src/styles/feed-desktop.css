@@ -383,10 +383,11 @@
   
   /* Desktop Feed Page Chat Content Height - Fill available space */
   .chat-panel .real-time-chat .chat-content {
-    height: calc(100% - 80px) !important; /* Fill available space minus input container height */
+    height: 100% !important; /* Use full height */
     display: flex !important;
     flex-direction: column !important;
-    padding-bottom: 0 !important; /* No padding needed since input is outside */
+    padding-bottom: 80px !important; /* Add padding to make space for input container */
+    position: relative !important;
   }
 
   .chat-panel .real-time-chat.closed .chat-content {
@@ -409,7 +410,7 @@
     overflow-y: auto !important;
     min-height: 0 !important;
     padding: 16px !important;
-    padding-bottom: 20px !important; /* Normal padding since input is outside */
+    padding-bottom: 16px !important; /* Reduced padding since we have bottom padding on content */
     max-height: none !important; /* Ensure no height restrictions */
     opacity: 1;
     transition: opacity 0.3s ease;
@@ -441,6 +442,7 @@
     z-index: 1001 !important;
     opacity: 1;
     transition: opacity 0.3s ease;
+    box-sizing: border-box !important;
   }
   
   .chat-panel .real-time-chat.closed .chat-input-container {
