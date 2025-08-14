@@ -131,7 +131,7 @@
   .respect-flow-panel {
     display: block !important;
     position: fixed;
-    left: 100px;
+    left: 100px !important;
     top: 220px; /* Header'ın altında daha fazla boşluk */
     width: 320px;
     height: calc(100vh - 240px); /* Yüksekliği de ayarla */
