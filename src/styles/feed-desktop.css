@@ -145,7 +145,7 @@
     color: #1b262e;
     position: fixed;
     top: 140px; /* Header'ın altında daha fazla boşluk */
-    left: 130px;
+    left: 130px !important;
     width: 320px;
     z-index: 1000;
     margin: 0 0 16px 0;
