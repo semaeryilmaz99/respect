@@ -250,7 +250,8 @@ const SongsPage = () => {
             <div key={song.id} className="song-card">
               <div className="song-image-container" onClick={() => handleSongClick(song.id)}>
                 <img 
-                  src={song.cover_url || '/assets/song/Image.png'}
+                  src={song.cover_url || '/assets/song/Image.png'} 
+                  alt={song.title}
                   className="song-image"
                 />
               </div>
@@ -263,7 +264,6 @@ const SongsPage = () => {
                   {song.artists?.name || 'Bilinmeyen Sanatçı'}
                 </p>
                 <p className="song-album">{song.album}</p>
-                <p className="song-duration">{song.duration}</p>
                 
                 <div className="song-stats">
                   <span className="song-respect">
