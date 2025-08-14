@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useUI, useAppContext } from '../context/AppContext'
 import userService from '../api/userService'
@@ -18,6 +18,11 @@ const Header = () => {
   const [searchResults, setSearchResults] = useState({ artists: [], songs: [], users: [] })
   const [showSearchResults, setShowSearchResults] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
+  
+  // Ref to track if we're clicking on search results
+  const desktopSearchResultsRef = useRef(null)
+  const mobileSearchResultsRef = useRef(null)
+  const otherSearchResultsRef = useRef(null)
   
   const isFeedPage = location.pathname === '/feed'
   const isSongPage = location.pathname.startsWith('/song')
@@ -87,20 +92,26 @@ const Header = () => {
 
   // Handle search result item click
   const handleSearchItemClick = (item, type) => {
+    console.log('🔍 Search item clicked:', { item, type })
+    
     setSearchQuery('')
     setShowSearchResults(false)
     
     switch (type) {
       case 'artist':
+        console.log('🎨 Navigating to artist:', `/artist/${item.id}`)
         navigate(`/artist/${item.id}`)
         break
       case 'song':
+        console.log('🎵 Navigating to song:', `/song/${item.id}`)
         navigate(`/song/${item.id}`)
         break
       case 'user':
+        console.log('👤 Navigating to user:', `/user/${item.id}`)
         navigate(`/user/${item.id}`)
         break
       default:
+        console.log('❓ Unknown type:', type)
         break
     }
   }
@@ -116,8 +127,16 @@ const Header = () => {
   const handleSearchBlur = () => {
     // Delay hiding results to allow for clicks
     setTimeout(() => {
-      setShowSearchResults(false)
-    }, 200)
+      // Check if the related target is within any of the search results
+      const isClickingOnResults = 
+        (desktopSearchResultsRef.current && desktopSearchResultsRef.current.contains(document.activeElement)) ||
+        (mobileSearchResultsRef.current && mobileSearchResultsRef.current.contains(document.activeElement)) ||
+        (otherSearchResultsRef.current && otherSearchResultsRef.current.contains(document.activeElement))
+      
+      if (!isClickingOnResults) {
+        setShowSearchResults(false)
+      }
+    }, 150)
   }
 
   // Handle search input keydown
@@ -170,12 +189,15 @@ const Header = () => {
                 )}
               </div>
               {showSearchResults && (searchResults.artists.length > 0 || searchResults.songs.length > 0 || searchResults.users.length > 0) && (
-                <div className="search-results">
+                <div className="search-results" ref={desktopSearchResultsRef}>
                   {searchResults.artists.map((artist) => (
                     <div 
                       key={`artist-${artist.id}`} 
                       className="search-result-item"
-                      onClick={() => handleSearchItemClick(artist, 'artist')}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleSearchItemClick(artist, 'artist')
+                      }}
                     >
                       <div className="result-avatar">
                         <img src={artist.avatar_url || '/assets/artist/Image.png'} alt={artist.name} />
@@ -190,7 +212,10 @@ const Header = () => {
                     <div 
                       key={`song-${song.id}`} 
                       className="search-result-item"
-                      onClick={() => handleSearchItemClick(song, 'song')}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleSearchItemClick(song, 'song')
+                      }}
                     >
                       <div className="result-avatar">
                         <img src={song.cover_url || '/assets/song/Image.png'} alt={song.title} />
@@ -205,7 +230,10 @@ const Header = () => {
                     <div 
                       key={`user-${user.id}`} 
                       className="search-result-item"
-                      onClick={() => handleSearchItemClick(user, 'user')}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleSearchItemClick(user, 'user')
+                      }}
                     >
                       <div className="result-avatar">
                         <img src={user.avatar_url || '/assets/user/Image.png'} alt={user.full_name || user.username} />
@@ -254,12 +282,15 @@ const Header = () => {
               )}
             </div>
             {showSearchResults && (searchResults.artists.length > 0 || searchResults.songs.length > 0 || searchResults.users.length > 0) && (
-              <div className="mobile-search-results">
+              <div className="mobile-search-results" ref={mobileSearchResultsRef}>
                 {searchResults.artists.map((artist) => (
                   <div 
                     key={`artist-${artist.id}`} 
                     className="mobile-search-result-item"
-                    onClick={() => handleSearchItemClick(artist, 'artist')}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleSearchItemClick(artist, 'artist')
+                    }}
                   >
                     <div className="mobile-result-avatar">
                       <img src={artist.avatar_url || '/assets/artist/Image.png'} alt={artist.name} />
@@ -274,7 +305,10 @@ const Header = () => {
                   <div 
                     key={`song-${song.id}`} 
                     className="mobile-search-result-item"
-                    onClick={() => handleSearchItemClick(song, 'song')}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleSearchItemClick(song, 'song')
+                    }}
                   >
                     <div className="mobile-result-avatar">
                       <img src={song.cover_url || '/assets/song/Image.png'} alt={song.title} />
@@ -289,7 +323,10 @@ const Header = () => {
                   <div 
                     key={`user-${user.id}`} 
                     className="mobile-search-result-item"
-                    onClick={() => handleSearchItemClick(user, 'user')}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleSearchItemClick(user, 'user')
+                    }}
                   >
                     <div className="mobile-result-avatar">
                       <img src={user.avatar_url || '/assets/user/Image.png'} alt={user.full_name || user.username} />
@@ -332,12 +369,15 @@ const Header = () => {
               )}
             </div>
             {showSearchResults && (searchResults.artists.length > 0 || searchResults.songs.length > 0 || searchResults.users.length > 0) && (
-              <div className="search-results">
+              <div className="search-results" ref={otherSearchResultsRef}>
                 {searchResults.artists.map((artist) => (
                   <div 
                     key={`artist-${artist.id}`} 
                     className="search-result-item"
-                    onClick={() => handleSearchItemClick(artist, 'artist')}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleSearchItemClick(artist, 'artist')
+                    }}
                   >
                     <div className="result-avatar">
                       <img src={artist.avatar_url || '/assets/artist/Image.png'} alt={artist.name} />
@@ -352,7 +392,10 @@ const Header = () => {
                   <div 
                     key={`song-${song.id}`} 
                     className="search-result-item"
-                    onClick={() => handleSearchItemClick(song, 'song')}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleSearchItemClick(song, 'song')
+                    }}
                   >
                     <div className="result-avatar">
                       <img src={song.cover_url || '/assets/song/Image.png'} alt={song.title} />
@@ -367,7 +410,10 @@ const Header = () => {
                   <div 
                     key={`user-${user.id}`} 
                     className="search-result-item"
-                    onClick={() => handleSearchItemClick(user, 'user')}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleSearchItemClick(user, 'user')
+                    }}
                   >
                     <div className="result-avatar">
                       <img src={user.avatar_url || '/assets/user/Image.png'} alt={user.full_name || user.username} />
