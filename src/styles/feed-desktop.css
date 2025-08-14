@@ -345,6 +345,7 @@
     padding: 0 !important;
     overflow: hidden !important;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important; /* For absolute positioning of toggle button */
   }
   
   .chat-panel .real-time-chat.closed {
@@ -379,7 +380,12 @@
     padding: 16px !important;
     background: rgba(255, 255, 255, 0.98) !important;
     border-radius: 16px !important;
-    margin: 16px !important;
+    margin: 0 !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: calc(100% - 32px) !important;
   }
 
   /* Desktop Feed Page Chat Input Container - Hide when chat is closed */
