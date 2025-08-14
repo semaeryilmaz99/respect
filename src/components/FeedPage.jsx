@@ -323,6 +323,10 @@ const FeedPage = () => {
         
                 {/* Orta Panel - Ana Feed */}
         <div className="main-feed-panel">
+          {/* Feed Header - Desktop Only */}
+          <div className="feed-header">
+            <h2 className="feed-header-title">Respect topluluğunda neler oluyor?</h2>
+          </div>
           
           <div className="feed">
             {currentData && Array.isArray(currentData) ? currentData.map((item, index) => (
