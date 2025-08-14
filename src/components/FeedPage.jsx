@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import Header from './Header'
 import FeedCard from './FeedCard'
 import RealTimeChat from './RealTimeChat'
@@ -11,7 +10,6 @@ const FeedPage = () => {
   const [activeTab, setActiveTab] = useState('community')
   const [showRespectFlowPopup, setShowRespectFlowPopup] = useState(false)
   const [isClosingRespectFlow, setIsClosingRespectFlow] = useState(false)
-  const navigate = useNavigate()
   
   // Rate limiting uyarısı
   React.useEffect(() => {
@@ -43,10 +41,6 @@ const FeedPage = () => {
     true // Component mount olduğunda otomatik çalışsın
   )
   
-  const handleRespectSend = () => {
-    navigate('/send-respect')
-  }
-
   const handleOpenRespectFlow = () => {
     setShowRespectFlowPopup(true)
   }
@@ -246,30 +240,20 @@ const FeedPage = () => {
         </button>
       </div>
       
-      {/* Tab Navigation with Respect Button */}
+      {/* Tab Navigation */}
       <div className="feed-tabs">
-        {/* Desktop Respect Gönder Button - Sol tarafta */}
-        <div className="desktop-respect-button-container">
-          <button className="desktop-respect-button" onClick={handleRespectSend}>
-            Respect Gönder
-          </button>
-        </div>
-        
-        {/* Tab Buttons */}
-        <div className="tab-buttons-container">
-          <button 
-            className={`tab-button ${activeTab === 'community' ? 'active' : ''}`}
-            onClick={() => setActiveTab('community')}
-          >
-            Topluluk
-          </button>
-          <button 
-            className={`tab-button ${activeTab === 'personal' ? 'active' : ''}`}
-            onClick={() => setActiveTab('personal')}
-          >
-            Sana Özel
-          </button>
-        </div>
+        <button 
+          className={`tab-button ${activeTab === 'community' ? 'active' : ''}`}
+          onClick={() => setActiveTab('community')}
+        >
+          Topluluk
+        </button>
+        <button 
+          className={`tab-button ${activeTab === 'personal' ? 'active' : ''}`}
+          onClick={() => setActiveTab('personal')}
+        >
+          Sana Özel
+        </button>
       </div>
       
       {/* Fixed Chat Panel - sadece desktop'ta görünür */}

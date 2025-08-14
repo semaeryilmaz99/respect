@@ -5,24 +5,6 @@
   display: block;
 }
 
-/* Mobile styles - hide desktop respect button and tab buttons container */
-.desktop-respect-button-container {
-  display: none;
-}
-
-.tab-buttons-container {
-  display: flex;
-  gap: 8px;
-}
-
-/* Mobile feed-tabs - reset to original layout */
-.feed-tabs {
-  display: flex;
-  padding: 16px;
-  margin-bottom: 16px;
-  gap: 8px;
-}
-
 .respect-flow-panel {
   display: none;
 }
@@ -35,10 +17,7 @@
   display: none;
 }
 
-/* Desktop Respect Button - Mobile'da gizli */
-.desktop-respect-button-container {
-  display: none;
-}
+
 
 /* Feed Header - Mobile'da gizli */
 .feed-header {
@@ -47,55 +26,10 @@
 
 /* Desktop styles - 768px ve üzeri */
 @media (min-width: 768px) {
-  /* Desktop Respect Button */
-  .desktop-respect-button-container {
-    display: block !important;
-    position: relative;
-    z-index: 500;
-    margin-right: 20px;
-  }
-  
-  .desktop-respect-button {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 20px;
-    background: #ffffff;
-    color: #1b262e;
-    border: 2px solid #fde0a1;
-    border-radius: 30px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(253, 224, 161, 0.3);
-    transition: all 0.3s ease;
-    min-width: 160px;
-    justify-content: center;
-  }
-  
-  .desktop-respect-button:hover {
-    background: #fde0a1;
-    border-color: #fcce7a;
-    box-shadow: 0 6px 20px rgba(253, 224, 161, 0.4);
-    transform: translateY(-2px);
-  }
-  
-  .desktop-respect-button:active {
-    transform: translateY(0);
-    background: #fcce7a;
-    box-shadow: 0 2px 8px rgba(253, 224, 161, 0.3);
-  }
-  
-  .respect-icon {
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-  }
+
 
   /* Feed Tabs için desktop stilleri */
   .feed-tabs {
-    display: flex;
-    align-items: center;
     justify-content: flex-start;
     padding: 16px 40px; /* Sol margin ile hizalama */
     margin-left: 340px; /* Feed layout ile aynı hizalama */
@@ -105,12 +39,6 @@
     margin-bottom: 20px; /* Feed cardların üstünde boşluk */
     position: relative;
     z-index: 10; /* Header'ın üzerinde görünmesi için */
-  }
-  
-  /* Tab Buttons Container */
-  .tab-buttons-container {
-    display: flex;
-    gap: 8px;
   }
   
   .tab-button {
@@ -576,19 +504,10 @@
 @media (min-width: 1400px) {
   /* Feed Tabs için büyük desktop stilleri */
   .feed-tabs {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
     padding: 16px 50px;
     margin-top: 100px; /* Header'ın altında daha fazla boşluk */
     position: relative;
     z-index: 10; /* Header'ın üzerinde görünmesi için */
-  }
-  
-  /* Tab Buttons Container - Large Desktop */
-  .tab-buttons-container {
-    display: flex;
-    gap: 10px;
   }
   
   .tab-button {
@@ -657,20 +576,7 @@
     border-color: #feb822 !important;
   }
   
-  /* Desktop Respect Button - Large Desktop */
-  .desktop-respect-button {
-    padding: 16px 24px;
-    font-size: 16px;
-    min-width: 180px;
-  }
-  
-  .desktop-respect-button-container {
-    margin-right: 24px;
-  }
-  
-  .respect-icon {
-    font-size: 18px;
-  }
+
   
   .feed-layout {
     max-width: 1800px;
@@ -726,19 +632,12 @@
 @media (min-width: 1600px) {
   /* Feed Tabs için extra büyük desktop stilleri */
   .feed-tabs {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
     padding: 16px 60px;
+    align-items: center;
+    justify-content: center;
     margin-top: 100px; /* Header'ın altında daha fazla boşluk */
     position: relative;
     z-index: 10; /* Header'ın üzerinde görünmesi için */
-  }
-  
-  /* Tab Buttons Container - Extra Large Desktop */
-  .tab-buttons-container {
-    display: flex;
-    gap: 12px;
   }
   
   .tab-button {
@@ -812,20 +711,7 @@
     display: none !important;
   }
   
-  /* Desktop Respect Button - Extra Large Desktop */
-  .desktop-respect-button {
-    padding: 18px 28px;
-    font-size: 17px;
-    min-width: 200px;
-  }
-  
-  .desktop-respect-button-container {
-    margin-right: 30px;
-  }
-  
-  .respect-icon {
-    font-size: 20px;
-  }
+
   
   .feed-layout {
     max-width: 2000px;
