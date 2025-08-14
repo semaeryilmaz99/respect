@@ -671,9 +671,10 @@ html {
 
   /* Desktop Artist Page Chat Content Height - Match RealTime Chat Open Height */
   .artist-page .real-time-chat .chat-content {
-    height: calc(100vh - 80px - 60px - 80px) !important; /* Total height minus header, toggle, and input container */
+    height: calc(100vh - 80px - 60px - 80px) !important; 
     display: flex !important;
-    flex-direction: column !important;pace for fixed input container */
+    flex-direction: column !important;
+    padding-bottom: 80px !important; 
   }
 
   .artist-page .real-time-chat.closed .chat-content {
