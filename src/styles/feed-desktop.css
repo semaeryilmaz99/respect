@@ -123,8 +123,8 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
-    margin-left: 340px; /* Respect flow için alan bırak - sola kaydırıldı */
     position: relative;
+    justify-content: center;
   }
   
   /* Sol Panel - Respect Akışı */
@@ -582,7 +582,7 @@
   .feed-layout {
     max-width: 1800px;
     gap: 24px;
-    margin-left: 380px; /* Daha geniş respect flow için alan - sola kaydırıldı */
+    justify-content: center;
   }
   
   .respect-flow-panel {
@@ -718,7 +718,7 @@
   .feed-layout {
     max-width: 2000px;
     gap: 28px;
-    margin-left: 420px; /* En geniş respect flow için alan - sola kaydırıldı */
+    justify-content: center;
   }
   
   .respect-flow-panel {
