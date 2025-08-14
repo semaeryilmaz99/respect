@@ -54,35 +54,7 @@ const FeedPage = () => {
     setShowRespectFlowPopup(false)
   }
 
-  // Touch event handlers for draggable button
-  const [buttonPosition, setButtonPosition] = useState({ x: 20, y: 100 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
 
-  const handleTouchStart = (e) => {
-    const touch = e.touches[0]
-    const rect = e.currentTarget.getBoundingClientRect()
-    setDragOffset({
-      x: touch.clientX - rect.left,
-      y: touch.clientY - rect.top
-    })
-    setIsDragging(true)
-  }
-
-  const handleTouchMove = (e) => {
-    if (!isDragging) return
-    
-    e.preventDefault()
-    const touch = e.touches[0]
-    const newX = Math.max(0, Math.min(window.innerWidth - 120, touch.clientX - dragOffset.x))
-    const newY = Math.max(0, Math.min(window.innerHeight - 60, touch.clientY - dragOffset.y))
-    
-    setButtonPosition({ x: newX, y: newY })
-  }
-
-  const handleTouchEnd = () => {
-    setIsDragging(false)
-  }
 
   // Loading durumlarını birleştir
   const isLoading = feedLoading || respectFlowLoading
@@ -222,7 +194,7 @@ const FeedPage = () => {
         </button>
       </div>
       
-      {/* Tab Navigation */}
+      {/* Tab Navigation with Respect Flow Button */}
       <div className="feed-tabs">
         <button 
           className={`tab-button ${activeTab === 'community' ? 'active' : ''}`}
@@ -236,6 +208,14 @@ const FeedPage = () => {
         >
           Sana Özel
         </button>
+        
+        {/* Mobile Respect Flow Button - feed tabs üzerinde sabit */}
+        <button 
+          className="mobile-respect-flow-button-fixed"
+          onClick={handleOpenRespectFlow}
+        >
+          Respect Akışı
+        </button>
       </div>
       
       {/* Fixed Chat Panel - sadece desktop'ta görünür */}
@@ -248,27 +228,7 @@ const FeedPage = () => {
         <RealTimeChat />
       </div>
       
-      {/* Mobile Respect Flow Button - sadece mobile'da görünür */}
-      <div 
-        className="mobile-respect-flow-button-container"
-        style={{
-          position: 'fixed',
-          left: `${buttonPosition.x}px`,
-          top: `${buttonPosition.y}px`,
-          zIndex: 1000
-        }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        <button 
-          className={`mobile-respect-flow-button ${isDragging ? 'dragging' : ''}`}
-          onClick={isDragging ? undefined : handleOpenRespectFlow}
-        >
-          <span className="respect-flow-icon">💰</span>
-          <span className="respect-flow-text">Respect Akışı</span>
-        </button>
-      </div>
+
       
       {/* Desktop Layout: Sol respect akışı + Sağ ana feed */}
       <div className="feed-layout">
