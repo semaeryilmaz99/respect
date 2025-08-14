@@ -2543,7 +2543,7 @@ html {
   }
   
   .song-stats {
-    gap: 20px;
+    gap: 6px;
   }
   
   .song-duration {
@@ -2596,7 +2596,7 @@ html {
   }
   
   .song-stats {
-    gap: 24px;
+    gap: 6px;
   }
   
   .song-duration {
