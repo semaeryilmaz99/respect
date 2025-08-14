@@ -250,8 +250,7 @@ const SongsPage = () => {
             <div key={song.id} className="song-card">
               <div className="song-image-container" onClick={() => handleSongClick(song.id)}>
                 <img 
-                  src={song.cover_url || '/assets/song/Image.png'} 
-                  alt={song.title}
+                  src={song.cover_url || '/assets/song/Image.png'}
                   className="song-image"
                 />
               </div>
