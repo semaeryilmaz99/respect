@@ -63,10 +63,8 @@ const FeedPage = () => {
       const formattedItem = {
         type: item.type,
         title: activeTab === 'personal' ? getPersonalFeedItemTitle(item) : getFeedItemTitle(item),
-        buttonText: getFeedItemButtonText(item),
         profileImage: getFeedItemImage(item),
         artistId: item.artist_id,
-        songId: item.song_id,
         userId: item.user_id
       }
       
@@ -91,14 +89,14 @@ const FeedPage = () => {
       const message = item.content?.message || ''
       const songTitle = item.songs?.title || 'Bilinmeyen Şarkı'
       const artistName = item.songs?.artists?.name || 'Bilinmeyen Sanatçı'
-      return `💰 ${userName} ${songTitle} - ${artistName} şarkısına ${amount} respect gönderdi${message ? `: "${message}"` : ''}`
+      return `${userName} ${songTitle} - ${artistName} şarkısına ${amount} respect gönderdi${message ? `: "${message}"` : ''}`
     } else if (item.type === 'song_favorited') {
       const songTitle = item.songs?.title || 'Bilinmeyen Şarkı'
       const artistName = item.songs?.artists?.name || 'Bilinmeyen Sanatçı'
-      return `❤️ ${userName} ${songTitle} - ${artistName} şarkısını favorilere ekledi`
+      return `${userName} ${songTitle} - ${artistName} şarkısını favorilere ekledi`
     } else if (item.type === 'artist_followed') {
       const artistName = item.artists?.name || 'Bilinmeyen Sanatçı'
-      return `👥 ${userName} ${artistName} sanatçısını takip etmeye başladı`
+      return `${userName} ${artistName} sanatçısını takip etmeye başladı`
     }
     return `${userName} aktivite gerçekleştirdi`
   }
@@ -112,24 +110,19 @@ const FeedPage = () => {
       const message = item.content?.message || ''
       const songTitle = item.songs?.title || 'Bilinmeyen Şarkı'
       const artistName = item.songs?.artists?.name || 'Bilinmeyen Sanatçı'
-      return `🎵 ${userName} favori şarkınıza ${amount} respect gönderdi: ${songTitle} - ${artistName}${message ? `: "${message}"` : ''}`
+      return `${userName} favori şarkınıza ${amount} respect gönderdi: ${songTitle} - ${artistName}${message ? `: "${message}"` : ''}`
     } else if (item.type === 'song_favorited') {
       const songTitle = item.songs?.title || 'Bilinmeyen Şarkı'
       const artistName = item.songs?.artists?.name || 'Bilinmeyen Sanatçı'
-      return `🎵 ${userName} favori şarkınızı favorilere ekledi: ${songTitle} - ${artistName}`
+      return `${userName} favori şarkınızı favorilere ekledi: ${songTitle} - ${artistName}`
     } else if (item.type === 'artist_followed') {
       const artistName = item.artists?.name || 'Bilinmeyen Sanatçı'
-      return `🎨 ${userName} takip ettiğiniz sanatçıyı takip etmeye başladı: ${artistName}`
+      return `${userName} takip ettiğiniz sanatçıyı takip etmeye başladı: ${artistName}`
     }
     return `${userName} aktivite gerçekleştirdi`
   }
 
-  const getFeedItemButtonText = (item) => {
-    if (item.type === 'respect_sent') {
-      return 'Detayları Gör'
-    }
-    return 'Görüntüle'
-  }
+
 
   const getFeedItemImage = (item) => {
     // Her iki feed'de de kullanıcının profil resmini göster
@@ -266,10 +259,8 @@ const FeedPage = () => {
                 key={index}
                 type={item.type}
                 title={item.title}
-                buttonText={item.buttonText}
                 profileImage={item.profileImage}
                 artistId={item.artistId}
-                songId={item.songId}
                 userId={item.userId}
               />
             )) : (

@@ -265,13 +265,7 @@ body {
   box-shadow: 0 2px 12px rgba(27, 38, 46, 0.08);
 }
 
-.card-label {
-  padding: 8px 16px;
-  font-size: 12px;
-  color: #666;
-  background-color: #ffffff;
-  text-align: center;
-}
+
 
 .card-content {
   padding: 20px;
@@ -2887,6 +2881,7 @@ html {
 
 .user-content {
   flex: 1;
+  padding-top: 120px; /* Header'ın altında kalmak için padding-top eklendi */
   padding-bottom: 32px;
 }
 
