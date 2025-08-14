@@ -339,51 +339,7 @@ body {
   object-fit: cover;
 }
 
-.card-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-top: 16px;
-  flex-wrap: wrap;
-}
 
-.card-button {
-  flex: 1;
-  min-width: 120px;
-  padding: 12px 16px;
-  border: none;
-  background-color: #fbdb3a;
-  color: #1b262e;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  border-top: 1px solid #f0f0f0;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-  border-radius: 40px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.card-button:hover {
-  background-color: #ffecc7;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), 0 3px 6px rgba(0, 0, 0, 0.15);
-}
-
-.card-button:active {
-  background-color: #ffe487;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Mobile optimization for card actions */
-@media (max-width: 768px) {
-  .card-actions {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .card-button {
-    width: 100%;
-  }
-}
 
 /* Color variations removed - all cards now have white background with border */
 
