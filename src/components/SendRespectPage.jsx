@@ -338,19 +338,7 @@ const SendRespectPage = () => {
             </button>
           </div>
 
-          {/* Sanatçı Teşekkür Mesajı */}
-          <div className="artist-thanks-section">
-            <h3 className="panel-title">Sanatçı Mesajı</h3>
-            <div className="thanks-message">
-              <div className="artist-avatar">
-                <img src="/assets/user/Image.png" alt="Sanatçı" />
-              </div>
-              <div className="thanks-text">
-                <p>"Desteğiniz için çok teşekkür ederim! Müziğimi sevdiğiniz için mutluyum."</p>
-                <span className="artist-signature">- {respectData.artistName || 'Sanatçı'}</span>
-              </div>
-            </div>
-          </div>
+
 
           {/* İstatistik Bildirimleri */}
           <div className="stats-section">
