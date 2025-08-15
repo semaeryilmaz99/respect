@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { respectService } from '../api'
 import searchService from '../api/searchService'
+import artistService from '../api/artistService'
+import songService from '../api/songService'
 import Header from './Header'
 import BackButton from './common/BackButton'
 import LoadingSpinner from './LoadingSpinner'
@@ -26,12 +28,32 @@ const SendRespectPage = () => {
   const [isSearching, setIsSearching] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   
+  // Recent supporters state
+  const [recentSupporters, setRecentSupporters] = useState([])
+  const [supportersLoading, setSupportersLoading] = useState(false)
+  
   // Ref for search results
   const searchResultsRef = useRef(null)
 
 
 
   const respectAmounts = [20, 50, 100, 200, 500, 1000]
+
+  // Utility function to format time ago
+  const formatTimeAgo = (timestamp) => {
+    if (!timestamp) return 'Az önce'
+    
+    const now = new Date()
+    const time = new Date(timestamp)
+    const diffInSeconds = Math.floor((now - time) / 1000)
+    
+    if (diffInSeconds < 60) return 'Az önce'
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} dk önce`
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} saat önce`
+    if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)} gün önce`
+    if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)} ay önce`
+    return `${Math.floor(diffInSeconds / 31536000)} yıl önce`
+  }
 
   // Initialize respect data from navigation state or URL params
   useEffect(() => {
@@ -88,6 +110,52 @@ const SendRespectPage = () => {
       setCustomAmount('')
     }
   }, [location.state?.preselectedAmount])
+
+  // Fetch recent supporters when selectedItem changes
+  useEffect(() => {
+    const fetchRecentSupporters = async () => {
+      if (!selectedItem) {
+        setRecentSupporters([])
+        return
+      }
+
+      try {
+        setSupportersLoading(true)
+        let supporters = []
+
+        if (selectedItem.type === 'artist') {
+          const response = await artistService.getArtistRecentSupporters(selectedItem.id, 5)
+          if (response?.data) {
+            supporters = response.data.map(supporter => ({
+              name: supporter.profiles?.full_name || supporter.profiles?.username || 'Bilinmeyen Kullanıcı',
+              amount: supporter.amount,
+              time: supporter.created_at,
+              avatar: supporter.profiles?.avatar_url || '/assets/user/Image.png'
+            }))
+          }
+        } else if (selectedItem.type === 'song') {
+          const response = await songService.getSongRecentSupporters(selectedItem.id, 5)
+          if (response?.data) {
+            supporters = response.data.map(supporter => ({
+              name: supporter.profiles?.full_name || supporter.profiles?.username || 'Bilinmeyen Kullanıcı',
+              amount: supporter.amount,
+              time: supporter.created_at,
+              avatar: supporter.profiles?.avatar_url || '/assets/user/Image.png'
+            }))
+          }
+        }
+
+        setRecentSupporters(supporters)
+      } catch (error) {
+        console.error('Error fetching recent supporters:', error)
+        setRecentSupporters([])
+      } finally {
+        setSupportersLoading(false)
+      }
+    }
+
+    fetchRecentSupporters()
+  }, [selectedItem])
 
   // Balance güncelleme kontrolü
   useEffect(() => {
@@ -280,26 +348,42 @@ const SendRespectPage = () => {
 
           {/* Son Respect Göndericiler */}
           <div className="recent-supporters-section">
-            <h3 className="panel-title">Son Respect Gönderen 5 Kişi</h3>
+            <h3 className="panel-title">
+              {selectedItem ? 
+                `Bu ${selectedItem.type === 'artist' ? 'sanatçıya' : 'şarkıya'} Son Respect Gönderenler` : 
+                'Genel Son Respect Gönderenler'
+              }
+            </h3>
             <div className="recent-supporters-list">
-              {[
-                { name: 'Ahmet K.', amount: 200, time: '2 dk önce' },
-                { name: 'Ayşe M.', amount: 150, time: '5 dk önce' },
-                { name: 'Mehmet Y.', amount: 100, time: '8 dk önce' },
-                { name: 'Fatma S.', amount: 50, time: '12 dk önce' },
-                { name: 'Ali R.', amount: 300, time: '15 dk önce' }
-              ].map((supporter, index) => (
-                <div key={index} className="supporter-item">
-                  <div className="supporter-avatar">
-                    <img src={`/assets/user/Image (${index + 1}).png`} alt={supporter.name} />
-                  </div>
-                  <div className="supporter-info">
-                    <span className="supporter-name">{supporter.name}</span>
-                    <span className="supporter-amount">{supporter.amount} Respect</span>
-                  </div>
-                  <span className="supporter-time">{supporter.time}</span>
+              {supportersLoading ? (
+                <div className="supporters-loading">
+                  <LoadingSpinner />
                 </div>
-              ))}
+              ) : recentSupporters.length > 0 ? (
+                recentSupporters.map((supporter, index) => (
+                  <div key={index} className="supporter-item">
+                    <div className="supporter-avatar">
+                      <img src={supporter.avatar} alt={supporter.name} />
+                    </div>
+                    <div className="supporter-info">
+                      <span className="supporter-name">{supporter.name}</span>
+                      <span className="supporter-amount">{supporter.amount} Respect</span>
+                    </div>
+                    <span className="supporter-time">
+                      {supporter.time ? formatTimeAgo(supporter.time) : 'Az önce'}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="no-supporters">
+                  <p>
+                    {selectedItem ? 
+                      'Henüz respect gönderilmemiş' : 
+                      'Bir sanatçı veya şarkı seçin'
+                    }
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -4216,6 +4216,24 @@ html {
     color: #999;
     font-weight: 400;
   }
+
+  .supporters-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .no-supporters {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+  }
+
+  .no-supporters p {
+    margin: 0;
+    font-size: 14px;
+  }
 }
 
 /* Mobile Responsive */
