@@ -26,7 +26,6 @@ const SuccessPopup = ({
     <div className="success-popup-overlay" onClick={onClose}>
       <div className="success-popup" onClick={(e) => e.stopPropagation()}>
         <div className="success-popup-header">
-          <div className="success-icon">{icon}</div>
           <button className="close-button" onClick={onClose}>
             ×
           </button>
