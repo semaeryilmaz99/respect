@@ -8,6 +8,7 @@ import SongRecentSupporters from './SongRecentSupporters'
 import SongRealTimeChat from './SongRealTimeChat'
 import MoreByArtist from './MoreByArtist'
 import FavoriteButton from './FavoriteButton'
+import respectService from '../api/respectService'
 
 import LoadingSpinner from './LoadingSpinner'
 
@@ -16,6 +17,10 @@ const SongPage = () => {
   const { id: songId } = useParams()
   const [song, setSong] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [selectedAmount, setSelectedAmount] = useState(null)
+  const [sendingRespect, setSendingRespect] = useState(false)
+  const [respectMessage, setRespectMessage] = useState('')
+  const [showRespectModal, setShowRespectModal] = useState(false)
 
   // Şarkı verilerini Supabase'den fetch et
   useEffect(() => {
@@ -75,35 +80,72 @@ const SongPage = () => {
 
   const handleQuickRespect = (amount) => {
     if (!song) return
-    
-    navigate('/send-respect', {
-      state: {
-        songId: song.id,
-        songTitle: song.title,
-        artistName: song.artist?.name || song.artist_name,
-        songCover: song.cover_url,
-        currentRespect: song.total_respect?.toString() || '0',
-        artistId: song.artist?.id,
-        isArtist: false,
-        preselectedAmount: amount
-      }
-    })
+    setSelectedAmount(amount)
+    setShowRespectModal(true)
   }
 
   const handleFullRespect = () => {
     if (!song) return
+    setShowRespectModal(true)
+  }
+
+  const handleSendRespect = async () => {
+    if (!song || !selectedAmount) return
     
-    navigate('/send-respect', {
-      state: {
-        songId: song.id,
-        songTitle: song.title,
-        artistName: song.artist?.name || song.artist_name,
-        songCover: song.cover_url,
-        currentRespect: song.total_respect?.toString() || '0',
-        artistId: song.artist?.id,
-        isArtist: false
+    try {
+      setSendingRespect(true)
+      
+      const { data, error } = await respectService.sendRespectToSong(
+        song.id, 
+        selectedAmount, 
+        respectMessage || null
+      )
+
+      if (error) {
+        console.error('❌ Respect gönderme hatası:', error)
+        alert('Respect gönderilirken hata oluştu: ' + error.message)
+        return
       }
-    })
+
+      console.log('✅ Respect başarıyla gönderildi:', data)
+      
+      // Şarkı verilerini yenile
+      const { data: updatedSong, error: songError } = await supabase
+        .from('songs')
+        .select(`
+          *,
+          artists (
+            id,
+            name,
+            avatar_url
+          )
+        `)
+        .eq('id', song.id)
+        .single()
+
+      if (!songError && updatedSong) {
+        setSong(updatedSong)
+      }
+
+      // Modal'ı kapat ve state'leri temizle
+      setShowRespectModal(false)
+      setSelectedAmount(null)
+      setRespectMessage('')
+      
+      alert('Respect başarıyla gönderildi! 🎉')
+      
+    } catch (error) {
+      console.error('❌ Respect gönderme hatası:', error)
+      alert('Respect gönderilirken hata oluştu: ' + error.message)
+    } finally {
+      setSendingRespect(false)
+    }
+  }
+
+  const handleCloseModal = () => {
+    setShowRespectModal(false)
+    setSelectedAmount(null)
+    setRespectMessage('')
   }
 
   const handleSpotifyClick = () => {
@@ -217,12 +259,109 @@ const SongPage = () => {
             >
               1000 Respect
             </button>
+            <button 
+              className="quick-respect-btn" 
+              onClick={() => handleQuickRespect(2000)}
+            >
+              2000 Respect
+            </button>
+            <button 
+              className="quick-respect-btn" 
+              onClick={() => handleQuickRespect(3000)}
+            >
+              3000 Respect
+            </button>
+            <button 
+              className="quick-respect-btn" 
+              onClick={() => handleQuickRespect(4000)}
+            >
+              4000 Respect
+            </button>
+            <button 
+              className="quick-respect-btn" 
+              onClick={() => handleQuickRespect(5000)}
+            >
+              5000 Respect
+            </button>
+            <button 
+              className="quick-respect-btn" 
+              onClick={() => handleQuickRespect(10000)}
+            >
+              10000 Respect
+            </button>
           </div>
           
           <button className="full-respect-button" onClick={handleFullRespect}>
             Respect Gönder
           </button>
         </div>
+
+        {/* Respect Modal */}
+        {showRespectModal && (
+          <div className="respect-modal-overlay" onClick={handleCloseModal}>
+            <div className="respect-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="respect-modal-header">
+                <h3>Respect Gönder</h3>
+                <button className="modal-close-btn" onClick={handleCloseModal}>×</button>
+              </div>
+              
+              <div className="respect-modal-content">
+                <div className="song-info-modal">
+                  <img src={song?.cover_url || '/assets/song/Image.png'} alt="Şarkı Kapağı" />
+                  <div>
+                    <h4>{song?.title || 'Bilinmeyen Şarkı'}</h4>
+                    <p>{song?.artist?.name || song?.artist_name || 'Bilinmeyen Sanatçı'}</p>
+                  </div>
+                </div>
+                
+                {!selectedAmount && (
+                  <div className="amount-selection">
+                    <h4>Tutar Seçin</h4>
+                    <div className="amount-buttons">
+                      <button onClick={() => setSelectedAmount(50)}>50 Respect</button>
+                      <button onClick={() => setSelectedAmount(100)}>100 Respect</button>
+                      <button onClick={() => setSelectedAmount(250)}>250 Respect</button>
+                      <button onClick={() => setSelectedAmount(500)}>500 Respect</button>
+                      <button onClick={() => setSelectedAmount(1000)}>1000 Respect</button>
+                      <button onClick={() => setSelectedAmount(2000)}>2000 Respect</button>
+                      <button onClick={() => setSelectedAmount(3000)}>3000 Respect</button>
+                      <button onClick={() => setSelectedAmount(4000)}>4000 Respect</button>
+                      <button onClick={() => setSelectedAmount(5000)}>5000 Respect</button>
+                      <button onClick={() => setSelectedAmount(10000)}>10000 Respect</button>
+                    </div>
+                  </div>
+                )}
+                
+                {selectedAmount && (
+                  <div className="respect-confirmation">
+                    <h4>Seçilen Tutar: {selectedAmount} Respect</h4>
+                    <textarea
+                      placeholder="Mesajınızı yazın (opsiyonel)"
+                      value={respectMessage}
+                      onChange={(e) => setRespectMessage(e.target.value)}
+                      maxLength={200}
+                    />
+                    <div className="modal-buttons">
+                      <button 
+                        className="send-respect-btn" 
+                        onClick={handleSendRespect}
+                        disabled={sendingRespect}
+                      >
+                        {sendingRespect ? 'Gönderiliyor...' : 'Respect Gönder'}
+                      </button>
+                      <button 
+                        className="change-amount-btn" 
+                        onClick={() => setSelectedAmount(null)}
+                      >
+                        Tutarı Değiştir
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
