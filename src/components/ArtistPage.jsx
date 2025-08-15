@@ -21,9 +21,11 @@ const ArtistPage = () => {
         <Header />
       </div>
       
-      {/* Mobile Header - Same as Feed Page */}
-      <div className="mobile-header">
-        <Header />
+      {/* Mobile Header - Fixed Position */}
+      <div className="mobile-header-fixed">
+        <div className="mobile-header-container">
+          <Header />
+        </div>
       </div>
       
       <div className="artist-content">
