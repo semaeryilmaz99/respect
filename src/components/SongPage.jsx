@@ -81,10 +81,56 @@ const SongPage = () => {
     fetchSong()
   }, [songId])
 
-  const handleQuickRespect = (amount) => {
+  const handleQuickRespect = async (amount) => {
     if (!song) return
-    setSelectedAmount(amount)
-    setShowRespectModal(true)
+    
+    try {
+      setSendingRespect(true)
+      
+      const { data, error } = await respectService.sendRespectToSong(
+        song.id, 
+        amount, 
+        null // Mesaj yok
+      )
+
+      if (error) {
+        console.error('❌ Respect gönderme hatası:', error)
+        setSuccessMessage('Respect gönderilirken hata oluştu: ' + error.message)
+        setShowSuccessPopup(true)
+        return
+      }
+
+      console.log('✅ Respect başarıyla gönderildi:', data)
+      
+      // Şarkı verilerini yenile
+      const { data: updatedSong, error: songError } = await supabase
+        .from('songs')
+        .select(`
+          *,
+          artists (
+            id,
+            name,
+            avatar_url
+          )
+        `)
+        .eq('id', song.id)
+        .single()
+
+      if (!songError && updatedSong) {
+        setSong(updatedSong)
+      }
+
+      // Success popup göster
+      setSuccessMessage(`${amount} Respect başarıyla gönderildi! 🎉`)
+      setShowSuccessPopup(true)
+      
+    } catch (error) {
+      console.error('❌ Respect gönderme hatası:', error)
+      setSuccessMessage('Respect gönderilirken hata oluştu: ' + error.message)
+      setShowSuccessPopup(true)
+    } finally {
+      setSendingRespect(false)
+    }
   }
 
   const handleFullRespect = () => {
@@ -238,62 +284,72 @@ const SongPage = () => {
             <button 
               className="quick-respect-btn" 
               onClick={() => handleQuickRespect(50)}
+              disabled={sendingRespect}
             >
-              50 Respect
+              {sendingRespect ? 'Gönderiliyor...' : '50 Respect'}
             </button>
             <button 
               className="quick-respect-btn" 
               onClick={() => handleQuickRespect(100)}
+              disabled={sendingRespect}
             >
-              100 Respect
+              {sendingRespect ? 'Gönderiliyor...' : '100 Respect'}
             </button>
             <button 
               className="quick-respect-btn" 
               onClick={() => handleQuickRespect(250)}
+              disabled={sendingRespect}
             >
-              250 Respect
+              {sendingRespect ? 'Gönderiliyor...' : '250 Respect'}
             </button>
             <button 
               className="quick-respect-btn" 
               onClick={() => handleQuickRespect(500)}
+              disabled={sendingRespect}
             >
-              500 Respect
+              {sendingRespect ? 'Gönderiliyor...' : '500 Respect'}
             </button>
             <button 
               className="quick-respect-btn" 
               onClick={() => handleQuickRespect(1000)}
+              disabled={sendingRespect}
             >
-              1000 Respect
+              {sendingRespect ? 'Gönderiliyor...' : '1000 Respect'}
             </button>
             <button 
               className="quick-respect-btn" 
               onClick={() => handleQuickRespect(2000)}
+              disabled={sendingRespect}
             >
-              2000 Respect
+              {sendingRespect ? 'Gönderiliyor...' : '2000 Respect'}
             </button>
             <button 
               className="quick-respect-btn" 
               onClick={() => handleQuickRespect(3000)}
+              disabled={sendingRespect}
             >
-              3000 Respect
+              {sendingRespect ? 'Gönderiliyor...' : '3000 Respect'}
             </button>
             <button 
               className="quick-respect-btn" 
               onClick={() => handleQuickRespect(4000)}
+              disabled={sendingRespect}
             >
-              4000 Respect
+              {sendingRespect ? 'Gönderiliyor...' : '4000 Respect'}
             </button>
             <button 
               className="quick-respect-btn" 
               onClick={() => handleQuickRespect(5000)}
+              disabled={sendingRespect}
             >
-              5000 Respect
+              {sendingRespect ? 'Gönderiliyor...' : '5000 Respect'}
             </button>
             <button 
               className="quick-respect-btn" 
               onClick={() => handleQuickRespect(10000)}
+              disabled={sendingRespect}
             >
-              10000 Respect
+              {sendingRespect ? 'Gönderiliyor...' : '10000 Respect'}
             </button>
           </div>
           

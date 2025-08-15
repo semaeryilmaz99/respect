@@ -2278,6 +2278,17 @@ html {
     transform: translateY(-1px);
   }
 
+  .desktop-fixed-respect-send .quick-respect-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .desktop-fixed-respect-send .quick-respect-btn:disabled:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: none;
+  }
+
   .desktop-fixed-respect-send .full-respect-button {
     width: 100%;
     background: #1b262e;
