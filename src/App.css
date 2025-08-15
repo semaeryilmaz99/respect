@@ -743,21 +743,6 @@ html {
 
 /* Mobile Artist Page Real-Time Chat Styles */
 @media (max-width: 767px) {
-  /* Mobile Artist Page Layout - Feed page ile aynı */
-  .artist-page {
-    padding-bottom: 300px;
-    padding-top: 120px; /* Header height compensation */
-  }
-  
-  .artist-page .artist-content.mobile-only {
-    padding: 20px;
-    max-width: 100%;
-  }
-  
-  .artist-page .page-header {
-    margin-bottom: 20px;
-  }
-  
   .artist-page .real-time-chat {
     position: fixed !important;
     bottom: 0 !important;
@@ -4801,12 +4786,6 @@ html {
   
   /* Feed sayfasında mobile chat için alan bırak */
   .feed-page {
-    padding-bottom: 300px;
-    padding-top: 120px; /* Header height compensation */
-  }
-  
-  /* Artist sayfasında mobile chat için alan bırak */
-  .artist-page {
     padding-bottom: 300px;
     padding-top: 120px; /* Header height compensation */
   }
