@@ -190,7 +190,7 @@ const SongPage = () => {
       setRespectMessage('')
       
       // Success popup göster
-      setSuccessMessage(`${selectedAmount} Respect başarıyla gönderildi! 🎉`)
+      setSuccessMessage(`${selectedAmount} Respect başarıyla gönderildi!`)
       setShowSuccessPopup(true)
       
     } catch (error) {
