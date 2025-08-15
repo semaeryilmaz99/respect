@@ -43,8 +43,6 @@ const SendRespectPage = () => {
   // Ref for search results
   const searchResultsRef = useRef(null)
 
-
-
   const respectAmounts = [20, 50, 100, 200, 500, 1000]
 
   // Utility function to format time ago
@@ -175,8 +173,6 @@ const SendRespectPage = () => {
     fetchRecentSupporters()
   }, [selectedItem])
 
-
-
   // Genel son respect gönderenleri getiren fonksiyon
   const fetchGeneralRecentSupporters = async (limit = 5) => {
     try {
@@ -206,7 +202,7 @@ const SendRespectPage = () => {
       if (error) throw error
       return { data, error: null }
     } catch (error) {
-      console.error('❌ Get general recent supporters error:', error)
+      console.error('Get general recent supporters error:', error)
       return { data: null, error }
     }
   }
@@ -364,8 +360,6 @@ const SendRespectPage = () => {
     setSelectedItem(newItem)
     setSearchQuery(type === 'artist' ? item.name : item.title)
     setShowSearchResults(false)
-    
-
   }
 
   // Handle search input focus
@@ -511,10 +505,6 @@ const SendRespectPage = () => {
               2000 Respect Gönder
             </button>
           </div>
-
-
-
-
 
           {/* Son Respect Göndericiler */}
           <div className="recent-supporters-section">
@@ -755,11 +745,10 @@ const SendRespectPage = () => {
                       <div className="spinner"></div>
                     </div>
                   )}
-
+                </div>
                 
-                                  {popupSearchResults.artists.length > 0 || popupSearchResults.songs.length > 0 ? (
+                {popupSearchResults.artists.length > 0 || popupSearchResults.songs.length > 0 ? (
                   <div className="search-results">
-                    
                     {popupSearchResults.artists.map((artist) => (
                       <div 
                         key={`popup-artist-${artist.id}`} 
@@ -861,4 +850,4 @@ const SendRespectPage = () => {
   )
 }
 
-export default SendRespectPage 
+export default SendRespectPage
