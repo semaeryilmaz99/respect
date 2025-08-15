@@ -298,33 +298,6 @@ body {
   margin: 0;
 }
 
-/* Highlighted song and artist names in feed cards */
-.highlighted-song {
-  color: #1b262e;
-  font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: #f9dc38;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 2px;
-  transition: all 0.3s ease;
-}
-
-.highlighted-artist {
-  color: #1b262e;
-  font-weight: 600;
-  text-decoration: underline;
-  text-decoration-color: #f9dc38;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 2px;
-  transition: all 0.3s ease;
-}
-
-.highlighted-song:hover,
-.highlighted-artist:hover {
-  text-decoration-color: #feb822;
-  text-decoration-thickness: 3px;
-}
-
 /* Profile image container styles */
 .profile-image-container {
   width: 90px;
@@ -384,12 +357,6 @@ body {
     font-size: 14px;
   }
   
-  .highlighted-song,
-  .highlighted-artist {
-    text-decoration-thickness: 1.5px;
-    text-underline-offset: 1px;
-  }
-  
   .profile-image-container {
     width: 75px;
     height: 75px;
@@ -400,12 +367,6 @@ body {
     width: 60px;
     height: 60px;
     border-radius: 10px;
-  }
-  
-  .highlighted-song,
-  .highlighted-artist {
-    text-decoration-thickness: 1px;
-    text-underline-offset: 1px;
   }
 }
 
@@ -7536,6 +7497,53 @@ html {
   .scroll-to-top-btn {
     display: none;
   }
+}
+
+/* Feed Respect Button - Mobile */
+.feed-respect-button {
+  background: linear-gradient(135deg, #f9dc38 0%, #feb822 100%);
+  color: #1b262e;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(51, 51, 51, 0.3);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  margin-top: 12px;
+}
+
+.feed-respect-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: respectButtonShine 2s infinite;
+}
+
+.feed-respect-button:hover {
+  background: linear-gradient(135deg, #feb822 0%, #e6a41f 100%);
+  box-shadow: 0 6px 16px rgba(51, 51, 51, 0.4);
+  transform: translateY(-2px);
+}
+
+.feed-respect-button:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(51, 51, 51, 0.3);
+}
+
+/* Card Bottom Container - Mobile */
+.card-bottom {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(249, 220, 56, 0.3);
 }
 
 /* Desktop Edit Profile Popup */

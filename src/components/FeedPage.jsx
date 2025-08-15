@@ -121,7 +121,10 @@ const FeedPage = () => {
         title: activeTab === 'personal' ? getPersonalFeedItemTitle(item) : getFeedItemTitle(item),
         profileImage: getFeedItemImage(item),
         artistId: item.artist_id,
-        userId: item.user_id
+        userId: item.user_id,
+        songId: item.song_id,
+        songTitle: item.songs?.title,
+        artistName: item.artists?.name
       }
       
       // Debug: Feed item detayları
@@ -324,6 +327,9 @@ const FeedPage = () => {
                 profileImage={item.profileImage}
                 artistId={item.artistId}
                 userId={item.userId}
+                songId={item.songId}
+                songTitle={item.songTitle}
+                artistName={item.artistName}
               />
             )) : (
               <div className="no-feed-data">
