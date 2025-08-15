@@ -1775,10 +1775,35 @@ html {
 /* Desktop Recent Supporters Grid */
 @media (min-width: 768px) {
   .recent-supporters-grid {
-    max-width: 500px;
+    max-width: 800px;
     margin: 0 auto;
-    justify-content: center;
     gap: 24px;
+    overflow: hidden; /* Grid sabit kalır */
+    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    animation: none; /* Desktop'ta grid animasyonu yok */
+    width: auto; /* Desktop'ta width auto */
+  }
+  
+  /* Desktop'ta ögelerin akışı */
+  .recent-supporters-grid .recent-supporter-item {
+    flex-shrink: 0;
+    animation: slideSupporterDesktop 30s linear infinite;
+  }
+  
+  @keyframes slideSupporterDesktop {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  
+  /* Desktop'ta hover'da durma */
+  .recent-supporters:hover .recent-supporters-grid .recent-supporter-item {
+    animation-play-state: paused;
   }
 }
 
@@ -1837,6 +1862,14 @@ html {
 
 .recent-supporter-item:hover {
   transform: scale(1.05);
+}
+
+/* Desktop Recent Supporter Item */
+@media (min-width: 768px) {
+  .recent-supporter-item {
+    width: 120px;
+    margin-right: 24px;
+  }
 }
 
 .recent-supporter-image {
