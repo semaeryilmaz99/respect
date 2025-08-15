@@ -3871,7 +3871,7 @@ html {
   color: #1b262e;
   opacity: 0.4;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  width: 60%;
+  width: 40%;
   align-self: center;
 }
 
@@ -3881,7 +3881,7 @@ html {
   font-size: 11px;
   opacity: 0.6;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-  width: 70%;
+  width: 50%;
   align-self: center;
 }
 
@@ -3891,7 +3891,7 @@ html {
   font-size: 12px;
   opacity: 0.7;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14);
-  width: 80%;
+  width: 60%;
   align-self: center;
 }
 
@@ -3901,7 +3901,7 @@ html {
   font-size: 12px;
   opacity: 0.8;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
-  width: 90%;
+  width: 70%;
   align-self: center;
 }
 
@@ -3911,7 +3911,7 @@ html {
   font-size: 13px;
   opacity: 0.9;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.18);
-  width: 95%;
+  width: 80%;
   align-self: center;
 }
 
@@ -3924,7 +3924,7 @@ html {
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.15);
-  width: 100%;
+  width: 90%;
   align-self: center;
 }
 
@@ -4016,11 +4016,11 @@ html {
 
   /* Sol panel */
   .respect-left-panel {
-    flex: 1;
-    width: 700px;
+    flex: 0 0 400px;
+    width: 400px;
     background: #ffffff;
     border-radius: 16px;
-    padding: 24px;
+    padding: 20px;
     height: fit-content;
     border: 1px solid #e0e0e0;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
@@ -4029,7 +4029,7 @@ html {
   /* Sağ panel (mevcut respect content) */
   .respect-content {
     flex: 1;
-    width: 700px;
+    width: auto;
     margin: 0;
   }
 
@@ -7571,12 +7571,14 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 15px;
+  gap: 8px;
+  padding: 10px;
   background: rgba(249, 220, 56, 0.1);
   border: 2px solid #f9dc38;
-  border-radius: 15px;
-  margin-bottom: 20px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  width: 60%;
+  align-self: center;
 }
 
 .balance-label {
