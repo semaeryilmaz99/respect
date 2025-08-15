@@ -293,7 +293,7 @@
   }
   
   .artist-page .mobile-header .header {
-    position: relative !important;
+    position: fixed !important;
     padding: 12px 16px;
     box-sizing: border-box;
     width: 100%;
