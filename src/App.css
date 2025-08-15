@@ -4158,6 +4158,7 @@ html {
     width: 100%;
     order: 2; /* Respect content'in altında göster */
     margin-top: 20px;
+    display: block !important; /* Mobilde de göster */
   }
 
   .respect-content {
@@ -4169,6 +4170,42 @@ html {
 
   .desktop-only {
     display: block !important; /* Mobilde de göster */
+  }
+
+  /* Mobilde quick send section'ı daha kompakt yap */
+  .quick-send-section {
+    margin-bottom: 16px;
+  }
+
+  .quick-send-button {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  /* Mobilde recent supporters'ı daha kompakt yap */
+  .recent-supporters-section {
+    margin-top: 16px;
+  }
+
+  .supporter-item {
+    padding: 8px 0;
+  }
+
+  .supporter-avatar img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .supporter-name {
+    font-size: 13px;
+  }
+
+  .supporter-amount {
+    font-size: 12px;
+  }
+
+  .supporter-time {
+    font-size: 11px;
   }
 }
 

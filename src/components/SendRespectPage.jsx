@@ -492,8 +492,8 @@ const SendRespectPage = () => {
       </div>
 
       <div className="respect-main-container">
-        {/* Sol Bölüm - Sadece Masaüstünde Görünür */}
-        <div className="respect-left-panel desktop-only">
+        {/* Sol Bölüm - Hem Masaüstünde Hem Mobilde Görünür */}
+        <div className="respect-left-panel">
           {/* Hızlı Gönderim Butonu */}
           <div className="quick-send-section">
             <h3 className="panel-title">Çoklu Respect Gönderimi</h3>
@@ -797,7 +797,7 @@ const SendRespectPage = () => {
                 <div className="selected-items-section">
                   <h3>Seçilen Item'lar ({selectedItems.length})</h3>
                   <div className="selected-items-list">
-                    {selectedItems.map((item, index) => (
+                    {selectedItems.map((item) => (
                       <div key={`${item.type}-${item.id}`} className="selected-item">
                         <div className="selected-item-avatar">
                           <img src={item.avatar || '/assets/artist/Image.png'} alt={item.name} />
