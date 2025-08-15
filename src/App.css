@@ -2929,7 +2929,7 @@ html {
   /* Desktop Song Layout - 2 Bölümlü */
   .song-desktop-layout {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 32px;
     max-width: 800px;
     margin: 0 auto;
@@ -2939,7 +2939,7 @@ html {
 
   /* Sol Panel Card - En Çok Respect Gönderelenler */
   .song-left-panel {
-    width: 100%;
+    width: 400px;
     flex-shrink: 0;
     background-color: #f8f9f1;
     border: 1px solid #f69f17;
@@ -2956,7 +2956,8 @@ html {
 
   /* Sağ Panel Card - Tüm Diğer İçerikler */
   .song-right-content {
-    flex: 1;
+    width: 400px;
+    flex-shrink: 0;
     background-color: #f8f9f1;
     border: 1px solid #f69f17;
     border-radius: 40px;
