@@ -159,6 +159,11 @@ const SongPage = () => {
           </div>
         </div>
 
+        {/* Son Destekleyenler - Üst Bölüm */}
+        <div className="song-recent-supporters-section">
+          <SongRecentSupporters />
+        </div>
+
         {/* 2 Bölümlü Layout */}
         <div className="song-desktop-layout">
           {/* Sol: En Çok Respect Gönderelenler */}
@@ -171,11 +176,6 @@ const SongPage = () => {
             {/* Sanatçıdan Diğer Şarkılar */}
             <MoreByArtist />
           </div>
-        </div>
-
-        {/* Son Destekleyenler - Alt Bölüm */}
-        <div className="song-recent-supporters-section">
-          <SongRecentSupporters />
         </div>
 
         {/* Chat (Fixed Positioned - diğerlerinin üstünde) */}

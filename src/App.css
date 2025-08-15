@@ -1775,7 +1775,7 @@ html {
 /* Desktop Recent Supporters Grid */
 @media (min-width: 768px) {
   .recent-supporters-grid {
-    max-width: 800px;
+    max-width: 500px;
     margin: 0 auto;
     justify-content: center;
     gap: 24px;
@@ -3074,20 +3074,48 @@ html {
 }
 
 .play-spotify-button {
-  background-color: #f9dc38;
-  color: #1b262e;
+  background-color: #1DB954; /* Spotify yeşili */
+  color: #ffffff;
   border: none;
   padding: 8px 16px;
-  border-radius: 16px;
+  border-radius: 40px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(51, 51, 51, 0.3); /* #333 gölge */
+  position: relative;
+  overflow: hidden;
+}
+
+.play-spotify-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: spotifyLightShine 3s infinite;
+}
+
+@keyframes spotifyLightShine {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
 }
 
 .play-spotify-button:hover {
-  background-color: #f5d428;
+  background-color: #1ed760; /* Daha açık Spotify yeşili */
+  box-shadow: 0 6px 16px rgba(51, 51, 51, 0.4);
+  transform: translateY(-1px);
 }
 
 .song-info .send-respect-button {
