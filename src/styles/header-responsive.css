@@ -418,5 +418,6 @@
     transform: none !important;
     will-change: auto !important;
     backface-visibility: visible !important;
+    display: block !important;
   }
 } 

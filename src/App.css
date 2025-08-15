@@ -1267,6 +1267,11 @@ html {
   display: none;
 }
 
+/* Ensure main header is visible on mobile artist page */
+.artist-page > .header {
+  display: block !important;
+}
+
 /* Mobile header will be shown by default, desktop header will be hidden on mobile */
 
 .artist-page .desktop-realtime-chat {

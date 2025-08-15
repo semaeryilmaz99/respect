@@ -16,6 +16,9 @@ const ArtistPage = () => {
   return (
     <div className="artist-page">
       
+      {/* Header - Visible on both Mobile and Desktop */}
+      <Header />
+      
       {/* Desktop Header - Hidden on Mobile */}
       <div className="desktop-header">
         <Header />
