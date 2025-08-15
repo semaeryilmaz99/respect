@@ -4211,6 +4211,13 @@ html {
     font-weight: 500;
   }
 
+  .supporter-recipient {
+    font-size: 11px;
+    color: #666;
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
   .supporter-time {
     font-size: 11px;
     color: #999;

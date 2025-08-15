@@ -4,6 +4,7 @@ import { respectService } from '../api'
 import searchService from '../api/searchService'
 import artistService from '../api/artistService'
 import songService from '../api/songService'
+import { supabase } from '../config/supabase'
 import Header from './Header'
 import BackButton from './common/BackButton'
 import LoadingSpinner from './LoadingSpinner'
@@ -114,33 +115,43 @@ const SendRespectPage = () => {
   // Fetch recent supporters when selectedItem changes
   useEffect(() => {
     const fetchRecentSupporters = async () => {
-      if (!selectedItem) {
-        setRecentSupporters([])
-        return
-      }
-
       try {
         setSupportersLoading(true)
         let supporters = []
 
-        if (selectedItem.type === 'artist') {
-          const response = await artistService.getArtistRecentSupporters(selectedItem.id, 5)
-          if (response?.data) {
-            supporters = response.data.map(supporter => ({
-              name: supporter.profiles?.full_name || supporter.profiles?.username || 'Bilinmeyen Kullanıcı',
-              amount: supporter.amount,
-              time: supporter.created_at,
-              avatar: supporter.profiles?.avatar_url || '/assets/user/Image.png'
-            }))
+        if (selectedItem) {
+          // Seçili item varsa, o item'ın son respect gönderenlerini getir
+          if (selectedItem.type === 'artist') {
+            const response = await artistService.getArtistRecentSupporters(selectedItem.id, 5)
+            if (response?.data) {
+              supporters = response.data.map(supporter => ({
+                name: supporter.profiles?.full_name || supporter.profiles?.username || 'Bilinmeyen Kullanıcı',
+                amount: supporter.amount,
+                time: supporter.created_at,
+                avatar: supporter.profiles?.avatar_url || '/assets/user/Image.png'
+              }))
+            }
+          } else if (selectedItem.type === 'song') {
+            const response = await songService.getSongRecentSupporters(selectedItem.id, 5)
+            if (response?.data) {
+              supporters = response.data.map(supporter => ({
+                name: supporter.profiles?.full_name || supporter.profiles?.username || 'Bilinmeyen Kullanıcı',
+                amount: supporter.amount,
+                time: supporter.created_at,
+                avatar: supporter.profiles?.avatar_url || '/assets/user/Image.png'
+              }))
+            }
           }
-        } else if (selectedItem.type === 'song') {
-          const response = await songService.getSongRecentSupporters(selectedItem.id, 5)
+        } else {
+          // Seçili item yoksa, genel son respect gönderenleri getir
+          const response = await fetchGeneralRecentSupporters(5)
           if (response?.data) {
             supporters = response.data.map(supporter => ({
               name: supporter.profiles?.full_name || supporter.profiles?.username || 'Bilinmeyen Kullanıcı',
               amount: supporter.amount,
               time: supporter.created_at,
-              avatar: supporter.profiles?.avatar_url || '/assets/user/Image.png'
+              avatar: supporter.profiles?.avatar_url || '/assets/user/Image.png',
+              recipient: supporter.artists?.name || supporter.songs?.title || 'Bilinmeyen'
             }))
           }
         }
@@ -156,6 +167,40 @@ const SendRespectPage = () => {
 
     fetchRecentSupporters()
   }, [selectedItem])
+
+  // Genel son respect gönderenleri getiren fonksiyon
+  const fetchGeneralRecentSupporters = async (limit = 5) => {
+    try {
+      const { data, error } = await supabase
+        .from('respect_transactions')
+        .select(`
+          amount,
+          created_at,
+          profiles!from_user_id (
+            id,
+            username,
+            full_name,
+            avatar_url
+          ),
+          artists (
+            id,
+            name
+          ),
+          songs (
+            id,
+            title
+          )
+        `)
+        .order('created_at', { ascending: false })
+        .limit(limit)
+
+      if (error) throw error
+      return { data, error: null }
+    } catch (error) {
+      console.error('❌ Get general recent supporters error:', error)
+      return { data: null, error }
+    }
+  }
 
   // Balance güncelleme kontrolü
   useEffect(() => {
@@ -368,6 +413,9 @@ const SendRespectPage = () => {
                     <div className="supporter-info">
                       <span className="supporter-name">{supporter.name}</span>
                       <span className="supporter-amount">{supporter.amount} Respect</span>
+                      {supporter.recipient && (
+                        <span className="supporter-recipient">→ {supporter.recipient}</span>
+                      )}
                     </div>
                     <span className="supporter-time">
                       {supporter.time ? formatTimeAgo(supporter.time) : 'Az önce'}
