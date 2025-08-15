@@ -2883,8 +2883,8 @@ html {
 
   /* Desktop Song Info - Header'ın Tam Altında */
   .desktop-song-info {
-    max-width: 1000px;
-    height: 200px;
+    max-width: 800px;
+    height: 250px;
     margin: 0 auto; /* Header'ın tam altında başlamak için üst margin yok */
     background-color: #fef5e7;
     border: 1px solid #f69f17;
@@ -2931,11 +2931,9 @@ html {
     display: flex;
     flex-direction: column;
     gap: 32px;
-    max-width: 1200px;
+    max-width: 800px;
     margin: 0 auto;
     padding: 24px;
-    padding-left: 274px; /* 200px sağa kayma + 24px orijinal padding */
-    padding-right: 420px; /* Chat alanı için boşluk */
     margin-top: 16px; /* Song info'dan sonra biraz boşluk */
   }
 
@@ -2946,7 +2944,7 @@ html {
     background-color: #f8f9f1;
     border: 1px solid #f69f17;
     border-radius: 40px;
-    padding: 32px;
+    padding: 10px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
   }
@@ -2962,7 +2960,7 @@ html {
     background-color: #f8f9f1;
     border: 1px solid #f69f17;
     border-radius: 40px;
-    padding: 32px;
+    padding: 10px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
   }
