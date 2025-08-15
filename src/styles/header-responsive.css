@@ -281,7 +281,7 @@
 
 /* Mobile Artist Page Header Styles */
 @media (max-width: 767px) {
-  .artist-page .header {
+  .artist-page > .header {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
@@ -295,44 +295,6 @@
     transform: none !important;
     will-change: auto !important;
     backface-visibility: visible !important;
-  }
-  
-  .artist-page .header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    width: 100%;
-    max-width: 100%;
-  }
-  
-  .artist-page .mobile-search {
-    display: block !important;
-    width: 100%;
-    max-width: calc(100vw - 120px); /* Hamburger ve avatar için alan bırak */
-    flex: 1;
-  }
-  
-  .artist-page .mobile-search .search-bar {
-    width: 100%;
-    max-width: 100%;
-    padding: 8px 12px;
-  }
-  
-  .artist-page .mobile-search .search-input {
-    width: 100%;
-    max-width: 100%;
-    font-size: 14px;
-  }
-  
-  .artist-page .menu-button {
-    flex-shrink: 0;
-    margin: 0;
-  }
-  
-  .artist-page .user-avatar {
-    flex-shrink: 0;
-    margin: 0;
   }
 }
 
@@ -404,24 +366,7 @@
   }
 }
 
-/* Mobile Artist Page Header Override - Ensure fixed positioning */
-@media (max-width: 767px) {
-  .artist-page .header {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 1000 !important;
-    background: #fff !important;
-    border-bottom: 1px solid #e0e0e0;
-    box-shadow: 0 2px 8px #0000001a;
-    width: 100% !important;
-    height: auto;
-    transform: none !important;
-    will-change: auto !important;
-    backface-visibility: visible !important;
-  }
-}
+
 
 /* Mobile Feed Page Header Override - Ensure fixed positioning */
 @media (max-width: 767px) {
