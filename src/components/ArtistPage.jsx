@@ -15,9 +15,6 @@ const ArtistPage = () => {
 
   return (
     <div className="artist-page">
-      <div className="page-header">
-        <BackButton />
-      </div>
       
       {/* Desktop Header - Hidden on Mobile */}
       <div className="desktop-header">
