@@ -51,8 +51,7 @@
 }
 
 .success-icon {
-  font-size: 3rem;
-  animation: bounce 0.6s ease-out;
+  display: none;
 }
 
 .close-button {
