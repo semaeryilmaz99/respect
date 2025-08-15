@@ -2046,7 +2046,7 @@ html {
 
   .respect-modal {
     background: white;
-    border-radius: 20px;
+    border-radius: 40px;
     padding: 24px;
     width: 90%;
     max-width: 500px;
@@ -2095,13 +2095,13 @@ html {
     margin-bottom: 24px;
     padding: 16px;
     background: #f8f9fa;
-    border-radius: 12px;
+    border-radius: 40px;
   }
 
   .song-info-modal img {
     width: 60px;
     height: 60px;
-    border-radius: 8px;
+    border-radius: 12px;
     object-fit: cover;
   }
 
@@ -2161,7 +2161,7 @@ html {
     min-height: 80px;
     padding: 12px;
     border: 2px solid #e9ecef;
-    border-radius: 12px;
+    border-radius: 40px;
     font-size: 14px;
     font-family: inherit;
     resize: vertical;
@@ -2183,7 +2183,7 @@ html {
     flex: 1;
     background: linear-gradient(135deg, #f8a61d 0%, #feb822 100%);
     border: none;
-    border-radius: 12px;
+    border-radius: 40px;
     padding: 14px 20px;
     font-size: 16px;
     font-weight: 600;
@@ -2205,7 +2205,7 @@ html {
   .change-amount-btn {
     background: #f8f9fa;
     border: 2px solid #e9ecef;
-    border-radius: 12px;
+    border-radius: 40px;
     padding: 14px 20px;
     font-size: 14px;
     font-weight: 600;

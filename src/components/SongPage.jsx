@@ -9,6 +9,7 @@ import SongRealTimeChat from './SongRealTimeChat'
 import MoreByArtist from './MoreByArtist'
 import FavoriteButton from './FavoriteButton'
 import respectService from '../api/respectService'
+import SuccessPopup from './SuccessPopup'
 
 import LoadingSpinner from './LoadingSpinner'
 
@@ -21,6 +22,8 @@ const SongPage = () => {
   const [sendingRespect, setSendingRespect] = useState(false)
   const [respectMessage, setRespectMessage] = useState('')
   const [showRespectModal, setShowRespectModal] = useState(false)
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
 
   // Şarkı verilerini Supabase'den fetch et
   useEffect(() => {
@@ -132,11 +135,14 @@ const SongPage = () => {
       setSelectedAmount(null)
       setRespectMessage('')
       
-      alert('Respect başarıyla gönderildi! 🎉')
+      // Success popup göster
+      setSuccessMessage(`${selectedAmount} Respect başarıyla gönderildi! 🎉`)
+      setShowSuccessPopup(true)
       
     } catch (error) {
       console.error('❌ Respect gönderme hatası:', error)
-      alert('Respect gönderilirken hata oluştu: ' + error.message)
+      setSuccessMessage('Respect gönderilirken hata oluştu: ' + error.message)
+      setShowSuccessPopup(true)
     } finally {
       setSendingRespect(false)
     }
@@ -362,6 +368,17 @@ const SongPage = () => {
             </div>
           </div>
         )}
+
+        {/* Success Popup */}
+        <SuccessPopup
+          isVisible={showSuccessPopup}
+          onClose={() => setShowSuccessPopup(false)}
+          title="Respect Gönderildi!"
+          message={successMessage}
+          icon="🎉"
+          autoClose={true}
+          autoCloseDelay={3000}
+        />
       </div>
     </div>
   )
