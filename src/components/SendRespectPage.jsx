@@ -276,13 +276,7 @@ const SendRespectPage = () => {
 
 
 
-          {/* İstatistik Bildirimleri */}
-          <div className="stats-section">
-            <h3 className="panel-title">İstatistikler</h3>
-            <div className="stat-item">
-              <p>Bugün bu {selectedItem?.type === 'artist' ? 'sanatçıya' : 'şarkıya'} respect gönderen <strong>18. kişisiniz</strong></p>
-            </div>
-          </div>
+
 
           {/* Son Respect Göndericiler */}
           <div className="recent-supporters-section">
