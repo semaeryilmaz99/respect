@@ -16,6 +16,26 @@ body {
    RESPONSIVE DESIGN BREAKPOINTS
    =========================================== */
 
+/* Mobile-first approach - default styles for mobile */
+.mobile-only {
+  display: block;
+}
+
+.desktop-only {
+  display: none;
+}
+
+/* Desktop styles */
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none !important;
+  }
+  
+  .desktop-only {
+    display: block !important;
+  }
+}
+
 /* Data Source Info Styles */
 .data-source-info {
   background: linear-gradient(135deg, rgba(249, 220, 56, 0.1) 0%, rgba(244, 212, 48, 0.1) 100%);
