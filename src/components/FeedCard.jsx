@@ -42,8 +42,8 @@ const FeedCard = ({ type, title, profileImage, artistId, userId, songId, songTit
   // Respect butonunun görünür olup olmadığını belirle
   const shouldShowRespectButton = () => {
     return (type === 'respect_sent' && songId) || 
-           (type === 'artist_followed' && artistId) || 
-           (type === 'song_favorited' && songId)
+        (type === 'artist_followed' && artistId) || 
+        (type === 'song_favorited' && songId)
   }
 
 
@@ -92,9 +92,9 @@ const FeedCard = ({ type, title, profileImage, artistId, userId, songId, songTit
               className="feed-respect-button"
               onClick={handleRespectClick}
               title={type === 'respect_sent' && songId ? `${songTitle} şarkısını görüntüle` : 
-                     type === 'artist_followed' && artistId ? `${artistName} sanatçısını görüntüle` :
-                     type === 'song_favorited' && songId ? `${songTitle} şarkısını görüntüle` : 
-                     "Detayları görüntüle"}
+                type === 'artist_followed' && artistId ? `${artistName} sanatçısını görüntüle` :
+                type === 'song_favorited' && songId ? `${songTitle} şarkısını görüntüle` : 
+                "Detayları görüntüle"}
             >
               Görüntüle
             </button>

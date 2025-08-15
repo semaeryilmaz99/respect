@@ -13,7 +13,7 @@ body {
 }
 
 /* ===========================================
-   RESPONSIVE DESIGN BREAKPOINTS
+RESPONSIVE DESIGN BREAKPOINTS
    =========================================== */
 
 /* Data Source Info Styles */
@@ -4100,6 +4100,33 @@ html {
     cursor: pointer;
     transition: all 0.3s ease;
     margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quick-send-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.6) 50%,
+      transparent 100%
+    );
+    animation: quickSendShimmer 4s infinite;
+  }
+
+  @keyframes quickSendShimmer {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
   }
 
   .quick-send-button:hover {
@@ -4764,7 +4791,7 @@ html {
 }
 
 /* ===========================================
-   SIDEBAR STYLES
+SIDEBAR STYLES
    =========================================== */
 
 /* Sidebar Overlay */
@@ -5030,7 +5057,7 @@ html {
 }
 
 /* ===========================================
-   PROFILE SETTINGS PAGE STYLES
+PROFILE SETTINGS PAGE STYLES
    =========================================== */
 
 .profile-settings-page {
@@ -6319,7 +6346,7 @@ html {
 }
 
 /* ===========================================
-   NEW USER PROFILE COMPONENTS
+NEW USER PROFILE COMPONENTS
    =========================================== */
 
 /* User Followed Artists */
