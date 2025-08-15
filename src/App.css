@@ -3106,7 +3106,6 @@ html {
   padding: 0 16px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 }
 
@@ -3116,6 +3115,8 @@ html {
   gap: 12px;
   padding: 8px 0;
   border-bottom: 1px solid #f0f0f0;
+  flex-shrink: 0;
+  width: 100%;
 }
 
 .artist-song-item:last-child {
