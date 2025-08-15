@@ -4144,6 +4144,34 @@ html {
   }
 }
 
+/* Mobile Responsive for Respect Left Panel */
+@media (max-width: 767px) {
+  .respect-main-container {
+    flex-direction: column;
+    gap: 20px;
+    padding: 16px;
+    margin-top: 20px;
+  }
+
+  .respect-left-panel {
+    flex: none;
+    width: 100%;
+    order: 2; /* Respect content'in altında göster */
+    margin-top: 20px;
+  }
+
+  .respect-content {
+    flex: none;
+    width: 100%;
+    order: 1; /* Respect content üstte */
+    margin: 0;
+  }
+
+  .desktop-only {
+    display: block !important; /* Mobilde de göster */
+  }
+}
+
 /* Respect Header */
 .respect-header {
   display: flex;
