@@ -121,9 +121,28 @@ const SongPage = () => {
 
       {/* Desktop Layout - Header'ın Altında */}
       <div className="song-content desktop-only">
-        {/* Song Info - Header'ın Altında */}
+        {/* Desktop Song Info - Header'ın Altında */}
         <div className="desktop-song-info">
-          <SongInfo />
+          <div className="song-album-cover">
+            <img src={song?.cover_url || '/assets/song/Image.png'} alt="Şarkı Kapağı" />
+          </div>
+          
+          <div className="song-details">
+            <div className="song-title-section">
+              <h2 className="song-title">{song?.title || 'Bilinmeyen Şarkı'}</h2>
+              <h3 className="song-subtitle">{song?.artist?.name || song?.artist_name || 'Bilinmeyen Sanatçı'}</h3>
+              <p className="song-respect">{song?.total_respect?.toLocaleString() || '0'} Respect</p>
+            </div>
+            
+            <div className="song-buttons">
+              <button className="play-spotify-button">
+                Spotify'da Dinle
+              </button>
+              <button className="send-respect-button" onClick={handleFullRespect}>
+                Respect Gönder
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* 2 Bölümlü Layout */}
