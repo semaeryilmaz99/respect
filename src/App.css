@@ -3726,6 +3726,17 @@ html {
   padding-top: 80px; /* Header için space bırak */
 }
 
+/* Mobile'da header'ı gizle */
+@media (max-width: 767px) {
+  .send-respect-page .header {
+    display: none !important;
+  }
+  
+  .send-respect-page {
+    padding-top: 0; /* Mobile'da header yok, padding'e gerek yok */
+  }
+}
+
 /* Respect Header */
 .respect-header {
   display: flex;
