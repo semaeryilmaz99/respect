@@ -33,6 +33,13 @@ const SendRespectPage = () => {
   const [recentSupporters, setRecentSupporters] = useState([])
   const [supportersLoading, setSupportersLoading] = useState(false)
   
+  // Quick send popup state
+  const [showQuickSendPopup, setShowQuickSendPopup] = useState(false)
+  const [selectedItems, setSelectedItems] = useState([])
+  const [popupSearchQuery, setPopupSearchQuery] = useState('')
+  const [popupSearchResults, setPopupSearchResults] = useState({ artists: [], songs: [] })
+  const [popupSearchLoading, setPopupSearchLoading] = useState(false)
+  
   // Ref for search results
   const searchResultsRef = useRef(null)
 
@@ -199,6 +206,111 @@ const SendRespectPage = () => {
     } catch (error) {
       console.error('❌ Get general recent supporters error:', error)
       return { data: null, error }
+    }
+  }
+
+  // Quick send popup fonksiyonları
+  const handleQuickSendPopup = () => {
+    setShowQuickSendPopup(true)
+    setSelectedItems([])
+    setPopupSearchQuery('')
+    setPopupSearchResults({ artists: [], songs: [] })
+  }
+
+  const handlePopupSearch = async (query) => {
+    setPopupSearchQuery(query)
+    if (query.trim().length < 2) {
+      setPopupSearchResults({ artists: [], songs: [] })
+      return
+    }
+
+    try {
+      setPopupSearchLoading(true)
+      const results = await searchService.searchArtistsAndSongs(query, 10)
+      setPopupSearchResults(results)
+    } catch (error) {
+      console.error('Popup search error:', error)
+      setPopupSearchResults({ artists: [], songs: [] })
+    } finally {
+      setPopupSearchLoading(false)
+    }
+  }
+
+  const handleAddItem = (item, type) => {
+    const newItem = {
+      id: item.id,
+      name: type === 'artist' ? item.name : item.title,
+      type: type,
+      avatar: type === 'artist' ? item.avatar_url : item.cover_url,
+      artistName: type === 'artist' ? item.name : item.artists?.name
+    }
+    
+    // Eğer item zaten seçiliyse, kaldır
+    if (selectedItems.find(selected => selected.id === item.id && selected.type === type)) {
+      setSelectedItems(selectedItems.filter(selected => !(selected.id === item.id && selected.type === type)))
+    } else {
+      // Eğer seçili değilse, ekle
+      setSelectedItems([...selectedItems, newItem])
+    }
+  }
+
+  const handleRemoveItem = (itemId, type) => {
+    setSelectedItems(selectedItems.filter(item => !(item.id === itemId && item.type === type)))
+  }
+
+  const handleSendMultipleRespect = async () => {
+    if (selectedItems.length === 0) return
+
+    try {
+      setLoading(true)
+      let successCount = 0
+      let errorCount = 0
+
+      for (const item of selectedItems) {
+        try {
+          if (item.type === 'artist') {
+            const result = await respectService.sendRespectToArtist(item.id, 2000)
+            if (result.error) {
+              errorCount++
+            } else {
+              successCount++
+            }
+          } else if (item.type === 'song') {
+            const result = await respectService.sendRespectToSong(item.id, 2000)
+            if (result.error) {
+              errorCount++
+            } else {
+              successCount++
+            }
+          }
+        } catch (error) {
+          console.error(`Error sending respect to ${item.name}:`, error)
+          errorCount++
+        }
+      }
+
+      // Sonuç mesajını göster
+      if (errorCount === 0) {
+        setSuccessMessage(`${successCount} item'a başarıyla 2000 respect gönderildi!`)
+        setShowSuccessPopup(true)
+        setShowQuickSendPopup(false)
+        setSelectedItems([])
+        
+        // Balance'ı güncelle
+        const { data } = await respectService.getRespectBalance()
+        if (data) {
+          setUserBalance(data.respect_balance || 0)
+        }
+      } else {
+        setSuccessMessage(`${successCount} item'a respect gönderildi, ${errorCount} item'da hata oluştu.`)
+        setShowSuccessPopup(true)
+      }
+    } catch (error) {
+      console.error('Multiple respect send error:', error)
+      setSuccessMessage('Respect gönderirken hata oluştu.')
+      setShowSuccessPopup(true)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -390,10 +502,10 @@ const SendRespectPage = () => {
             <h3 className="panel-title">Hızlı Gönderim</h3>
             <button 
               className="quick-send-button"
-              onClick={() => handleAmountSelect(100)}
+              onClick={() => handleQuickSendPopup()}
               disabled={loading}
             >
-              100 Respect Gönder
+              2000 Respect Gönder
             </button>
           </div>
 
@@ -605,6 +717,134 @@ const SendRespectPage = () => {
         </div>
       </div>
       
+      {/* Quick Send Popup */}
+      {showQuickSendPopup && (
+        <div className="quick-send-popup-overlay" onClick={() => setShowQuickSendPopup(false)}>
+          <div className="quick-send-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="popup-header">
+              <h2>Çoklu Respect Gönder</h2>
+              <button 
+                className="popup-close-btn"
+                onClick={() => setShowQuickSendPopup(false)}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="popup-content">
+              <div className="search-section">
+                <div className="search-input-wrapper">
+                  <div className="search-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                  </div>
+                  <input 
+                    type="text" 
+                    placeholder="Sanatçı veya şarkı ara..."
+                    className="search-input"
+                    value={popupSearchQuery}
+                    onChange={(e) => handlePopupSearch(e.target.value)}
+                  />
+                  {popupSearchLoading && (
+                    <div className="search-loading">
+                      <div className="spinner"></div>
+                    </div>
+                  )}
+                </div>
+                
+                {popupSearchResults.artists.length > 0 || popupSearchResults.songs.length > 0 ? (
+                  <div className="search-results">
+                    {popupSearchResults.artists.map((artist) => (
+                      <div 
+                        key={`popup-artist-${artist.id}`} 
+                        className={`search-result-item ${selectedItems.find(item => item.id === artist.id && item.type === 'artist') ? 'selected' : ''}`}
+                        onClick={() => handleAddItem(artist, 'artist')}
+                      >
+                        <div className="result-avatar">
+                          <img src={artist.avatar_url || '/assets/artist/Image.png'} alt={artist.name} />
+                        </div>
+                        <div className="result-info">
+                          <h4>{artist.name}</h4>
+                          <p>Sanatçı • {artist.total_respect || 0} Respect</p>
+                        </div>
+                        <div className="add-button">
+                          {selectedItems.find(item => item.id === artist.id && item.type === 'artist') ? '✓' : '+'}
+                        </div>
+                      </div>
+                    ))}
+                    {popupSearchResults.songs.map((song) => (
+                      <div 
+                        key={`popup-song-${song.id}`} 
+                        className={`search-result-item ${selectedItems.find(item => item.id === song.id && item.type === 'song') ? 'selected' : ''}`}
+                        onClick={() => handleAddItem(song, 'song')}
+                      >
+                        <div className="result-avatar">
+                          <img src={song.cover_url || '/assets/song/Image.png'} alt={song.title} />
+                        </div>
+                        <div className="result-info">
+                          <h4>{song.title}</h4>
+                          <p>Şarkı • {song.artists?.name || 'Bilinmeyen Sanatçı'} • {song.total_respect || 0} Respect</p>
+                        </div>
+                        <div className="add-button">
+                          {selectedItems.find(item => item.id === song.id && item.type === 'song') ? '✓' : '+'}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : popupSearchQuery && !popupSearchLoading ? (
+                  <div className="no-results">
+                    <p>Sonuç bulunamadı</p>
+                  </div>
+                ) : null}
+              </div>
+
+              {selectedItems.length > 0 && (
+                <div className="selected-items-section">
+                  <h3>Seçilen Item'lar ({selectedItems.length})</h3>
+                  <div className="selected-items-list">
+                    {selectedItems.map((item, index) => (
+                      <div key={`${item.type}-${item.id}`} className="selected-item">
+                        <div className="selected-item-avatar">
+                          <img src={item.avatar || '/assets/artist/Image.png'} alt={item.name} />
+                        </div>
+                        <div className="selected-item-info">
+                          <span className="selected-item-name">{item.name}</span>
+                          <span className="selected-item-type">{item.type === 'artist' ? 'Sanatçı' : 'Şarkı'}</span>
+                        </div>
+                        <button 
+                          className="remove-item-btn"
+                          onClick={() => handleRemoveItem(item.id, item.type)}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="popup-actions">
+                <button 
+                  className="cancel-btn"
+                  onClick={() => setShowQuickSendPopup(false)}
+                >
+                  İptal
+                </button>
+                <button 
+                  className="send-multiple-btn"
+                  onClick={handleSendMultipleRespect}
+                  disabled={selectedItems.length === 0 || loading}
+                >
+                  {loading ? 'Gönderiliyor...' : `${selectedItems.length} Item'a 2000 Respect Gönder`}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Success Popup */}
       <SuccessPopup
         isVisible={showSuccessPopup}
