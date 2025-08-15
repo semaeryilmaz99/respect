@@ -175,6 +175,16 @@ const SendRespectPage = () => {
     fetchRecentSupporters()
   }, [selectedItem])
 
+  // Debug popup state changes
+  useEffect(() => {
+    console.log('🔍 Popup state changed:', {
+      showQuickSendPopup,
+      popupSearchQuery,
+      popupSearchResults,
+      selectedItems
+    })
+  }, [showQuickSendPopup, popupSearchQuery, popupSearchResults, selectedItems])
+
   // Genel son respect gönderenleri getiren fonksiyon
   const fetchGeneralRecentSupporters = async (limit = 5) => {
     try {
@@ -211,25 +221,32 @@ const SendRespectPage = () => {
 
   // Quick send popup fonksiyonları
   const handleQuickSendPopup = () => {
+    console.log('🚀 Opening quick send popup')
     setShowQuickSendPopup(true)
     setSelectedItems([])
     setPopupSearchQuery('')
     setPopupSearchResults({ artists: [], songs: [] })
+    console.log('✅ Popup state set to true')
   }
 
   const handlePopupSearch = async (query) => {
+    console.log('🔍 handlePopupSearch called with query:', query)
     setPopupSearchQuery(query)
+    
     if (query.trim().length < 2) {
+      console.log('❌ Query too short, clearing results')
       setPopupSearchResults({ artists: [], songs: [] })
       return
     }
 
     try {
+      console.log('📡 Starting search for:', query)
       setPopupSearchLoading(true)
       const results = await searchService.searchArtistsAndSongs(query, 10)
+      console.log('✅ Search results received:', results)
       setPopupSearchResults(results)
     } catch (error) {
-      console.error('Popup search error:', error)
+      console.error('❌ Popup search error:', error)
       setPopupSearchResults({ artists: [], songs: [] })
     } finally {
       setPopupSearchLoading(false)
@@ -745,7 +762,22 @@ const SendRespectPage = () => {
                     placeholder="Sanatçı veya şarkı ara..."
                     className="search-input"
                     value={popupSearchQuery}
-                    onChange={(e) => handlePopupSearch(e.target.value)}
+                    onChange={(e) => {
+                      console.log('🔍 Input onChange triggered:', e.target.value)
+                      handlePopupSearch(e.target.value)
+                    }}
+                    onKeyUp={(e) => {
+                      console.log('🔍 Input onKeyUp triggered:', e.target.value)
+                    }}
+                    onFocus={() => {
+                      console.log('🔍 Input focused')
+                    }}
+                    onBlur={() => {
+                      console.log('🔍 Input blurred')
+                    }}
+                    onClick={() => {
+                      console.log('🔍 Input clicked')
+                    }}
                   />
                   {popupSearchLoading && (
                     <div className="search-loading">
@@ -753,6 +785,26 @@ const SendRespectPage = () => {
                     </div>
                   )}
                 </div>
+                
+                {/* Test button for debugging */}
+                <button 
+                  className="test-search-btn"
+                  onClick={() => {
+                    console.log('🧪 Test search button clicked')
+                    handlePopupSearch('test')
+                  }}
+                  style={{
+                    marginTop: '10px',
+                    padding: '8px 16px',
+                    background: '#007bff',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Test Search
+                </button>
                 
                 {popupSearchResults.artists.length > 0 || popupSearchResults.songs.length > 0 ? (
                   <div className="search-results">

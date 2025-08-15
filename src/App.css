@@ -3866,6 +3866,7 @@ html {
 .popup-content .search-input-wrapper {
   position: relative;
   margin-bottom: 16px;
+  z-index: 10;
 }
 
 .popup-content .search-input {
@@ -3877,6 +3878,8 @@ html {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
 }
 
 .popup-content .search-input:focus {
