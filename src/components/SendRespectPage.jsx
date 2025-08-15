@@ -372,6 +372,16 @@ const SendRespectPage = () => {
     <div className="send-respect-page">
       <Header />
 
+      {/* Mobil için orta tarafta back button */}
+      <div className="mobile-respect-header">
+        <button className="mobile-back-button" onClick={() => navigate(-1)}>
+          <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <h1 className="mobile-respect-title">Respect Gönder</h1>
+      </div>
+
       <div className="respect-main-container">
         {/* Sol Bölüm - Sadece Masaüstünde Görünür */}
         <div className="respect-left-panel desktop-only">
