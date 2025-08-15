@@ -250,6 +250,32 @@ const songService = {
       console.error('❌ Get similar songs error:', error)
       return { data: null, error }
     }
+  },
+
+  // Get songs by artist (excluding current song)
+  getSongsByArtist: async (artistId, currentSongId, limit = 10) => {
+    try {
+      const { data, error } = await supabase
+        .from('songs')
+        .select(`
+          *,
+          artists (
+            id,
+            name,
+            avatar_url
+          )
+        `)
+        .eq('artist_id', artistId)
+        .neq('id', currentSongId)
+        .order('total_respect', { ascending: false })
+        .limit(limit)
+
+      if (error) throw error
+      return { data, error: null }
+    } catch (error) {
+      console.error('❌ Get songs by artist error:', error)
+      return { data: null, error }
+    }
   }
 }
 
