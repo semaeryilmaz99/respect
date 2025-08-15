@@ -271,6 +271,27 @@ body {
   box-shadow: 0 4px 15px rgba(27, 38, 46, 0.15);
 }
 
+/* Artist Name Highlight - Mobile */
+.artist-name-highlight {
+  background-color: #ffffff;
+  border: 2px solid #f9dc38;
+  border-radius: 40px;
+  padding: 2px 6px;
+  margin: 0 2px;
+  font-weight: 600;
+  color: #1b262e;
+  box-shadow: 0 2px 4px rgba(249, 220, 56, 0.3);
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.artist-name-highlight:hover {
+  background-color: #f9dc38;
+  color: #1b262e;
+  box-shadow: 0 4px 8px rgba(249, 220, 56, 0.4);
+  transform: translateY(-1px);
+}
+
 
 
 .card-content {

@@ -48,12 +48,28 @@ const FeedCard = ({ type, title, profileImage, artistId, userId, songId, songTit
 
 
 
+  // Sanatçı ismini vurgulayarak title'ı formatla
+  const formatTitleWithArtistHighlight = () => {
+    if (!artistName) return title;
+    
+    // Sanatçı ismini bul ve vurgula
+    const artistNameRegex = new RegExp(`(${artistName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = title.split(artistNameRegex);
+    
+    return parts.map((part, index) => {
+      if (part.toLowerCase() === artistName.toLowerCase()) {
+        return <span key={index} className="artist-name-highlight">{part}</span>;
+      }
+      return part;
+    });
+  };
+
   return (
     <div className="feed-card" data-type={type}>
       <div className="card-content">
         <div className="card-top">
           <div className="card-text">
-            <h3 className="card-title">{title}</h3>
+            <h3 className="card-title">{formatTitleWithArtistHighlight()}</h3>
           </div>
           
           <div 
