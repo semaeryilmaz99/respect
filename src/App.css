@@ -2124,8 +2124,8 @@ html {
   }
 
   .amount-buttons {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 12px;
     margin-bottom: 20px;
     max-height: 250px;
