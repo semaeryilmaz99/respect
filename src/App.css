@@ -1935,22 +1935,98 @@ html {
   pointer-events: none;
 }
 
-/* Desktop Song Page Real-Time Chat */
+/* Desktop Song Page Real-Time Chat - Feed ile aynı tasarım */
 @media (min-width: 768px) {
   .song-page .real-time-chat {
-    position: fixed;
-    bottom: 0;
-    right: 20px;
-    left: auto;
-    width: 400px;
-    max-height: 500px;
-    border-radius: 16px;
-    border: 2px solid #fbdb3a;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    position: fixed !important;
+    top: 140px !important;
+    right: 100px !important;
+    left: auto !important;
+    width: 400px !important;
+    height: calc(100vh - 140px) !important;
+    border-radius: 40px !important;
+    border: 2px solid #fbdb3a !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+    z-index: 1000 !important;
+    max-height: none !important;
+    bottom: auto !important;
+    background-color: #ffffff !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 
   .song-page .real-time-chat.closed {
-    max-height: 60px;
+    height: calc(100vh - 140px) !important;
+    overflow: hidden !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  /* Desktop Song Page Chat Content Height - Fill available space */
+  .song-page .real-time-chat .chat-content {
+    height: calc(100% - 80px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+  }
+
+  .song-page .real-time-chat.closed .chat-content {
+    height: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+  }
+
+  /* Desktop Song Page Chat Input Container - Hide when chat is closed */
+  .song-page .real-time-chat.closed .chat-input-container {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.3s ease, visibility 0.3s ease !important;
+  }
+
+  /* Desktop Song Page Chat Messages - Fill available space */
+  .song-page .real-time-chat .chat-messages {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    min-height: 0 !important;
+    padding: 16px !important;
+    padding-bottom: 20px !important;
+    max-height: none !important;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+  
+  .song-page .real-time-chat.closed .chat-messages {
+    opacity: 0 !important;
+    transition: opacity 0.3s ease !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+  
+  /* Desktop Song Page Chat Input Container - Positioned at Bottom of Chat Container */
+  .song-page .real-time-chat .chat-input-container {
+    position: absolute !important;
+    bottom: 0px !important;
+    left: 0px !important;
+    right: 0px !important;
+    width: 100% !important;
+    height: 80px !important;
+    padding: 16px !important;
+    border-top: 1px solid rgba(251, 219, 58, 0.3) !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    border-radius: 0 0 40px 40px !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1) !important;
+    z-index: 1001 !important;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    box-sizing: border-box !important;
+  }
+  
+  .song-page .real-time-chat.closed .chat-input-container {
+    display: none !important;
   }
 
   /* Desktop Fixed Respect Gönder - Sol Alt */
@@ -3144,8 +3220,7 @@ html {
   }
 }
 
-.play-spotify-button:hover {
-  background-color: #1ed760; /* Daha açık Spotify yeşili */
+.play-spotify-button:hover { /* Daha açık Spotify yeşili */
   box-shadow: 0 6px 16px rgba(51, 51, 51, 0.4);
   transform: translateY(-1px);
 }
