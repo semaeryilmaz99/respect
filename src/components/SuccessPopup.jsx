@@ -5,8 +5,7 @@ const SuccessPopup = ({
   isVisible, 
   onClose, 
   title, 
-  message, 
-  icon = '✅',
+  message,
   autoClose = true,
   autoCloseDelay = 3000 
 }) => {
