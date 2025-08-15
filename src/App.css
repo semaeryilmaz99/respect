@@ -712,7 +712,7 @@ html {
   .artist-page .send-respect-button {
     padding: 16px 32px;
     font-size: 16px;
-    border-radius: 25px;
+    border-radius: 40px;
   }
   
   /* Desktop Artist Page Real-Time Chat - Fixed on Right */
@@ -1467,7 +1467,7 @@ html {
   color: #1b262e;
   border: none;
   padding: 12px 24px;
-  border-radius: 20px;
+  border-radius: 40px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -3074,7 +3074,7 @@ html {
 }
 
 .play-spotify-button {
-  background-color: #1DB954; /* Spotify yeşili */
+  background-color: #333; /* Spotify yeşili */
   color: #ffffff;
   border: none;
   padding: 8px 16px;
@@ -3084,7 +3084,6 @@ html {
   cursor: pointer;
   transition: all 0.3s ease;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(51, 51, 51, 0.3); /* #333 gölge */
   position: relative;
   overflow: hidden;
 }
@@ -3123,7 +3122,7 @@ html {
   color: #1b262e;
   border: none;
   padding: 8px 16px;
-  border-radius: 16px;
+  border-radius: 40px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -6202,7 +6201,7 @@ html {
   color: #1b262e;
   border: none;
   padding: 12px 24px;
-  border-radius: 25px;
+  border-radius: 40px;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
