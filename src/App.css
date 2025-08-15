@@ -2930,6 +2930,7 @@ html {
   .song-desktop-layout {
     display: flex;
     flex-direction: row;
+    justify-content: center;
     gap: 32px;
     max-width: 800px;
     margin: 0 auto;
@@ -3103,6 +3104,10 @@ html {
 
 .artist-songs-container {
   padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .artist-song-item {
