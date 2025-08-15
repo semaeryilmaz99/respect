@@ -24,6 +24,7 @@ const SongPage = () => {
   const [showRespectModal, setShowRespectModal] = useState(false)
   const [showSuccessPopup, setShowSuccessPopup] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
+  const [sendingAmount, setSendingAmount] = useState(null)
 
   // Şarkı verilerini Supabase'den fetch et
   useEffect(() => {
@@ -81,16 +82,22 @@ const SongPage = () => {
     fetchSong()
   }, [songId])
 
-  const handleQuickRespect = async (amount) => {
+  const handleQuickRespect = (amount) => {
     if (!song) return
+    setSelectedAmount(amount)
+  }
+
+  const handleFullRespect = async () => {
+    if (!song || !selectedAmount) return
     
     try {
       setSendingRespect(true)
+      setSendingAmount(selectedAmount)
       
       const { data, error } = await respectService.sendRespectToSong(
         song.id, 
-        amount, 
-        null // Mesaj yok
+        selectedAmount, 
+        respectMessage || null
       )
 
       if (error) {
@@ -120,8 +127,13 @@ const SongPage = () => {
         setSong(updatedSong)
       }
 
+      // Modal'ı kapat ve state'leri temizle
+      setShowRespectModal(false)
+      setSelectedAmount(null)
+      setRespectMessage('')
+      
       // Success popup göster
-      setSuccessMessage(`${amount} Respect başarıyla gönderildi! 🎉`)
+      setSuccessMessage(`${selectedAmount} Respect başarıyla gönderildi! 🎉`)
       setShowSuccessPopup(true)
       
     } catch (error) {
@@ -130,12 +142,8 @@ const SongPage = () => {
       setShowSuccessPopup(true)
     } finally {
       setSendingRespect(false)
+      setSendingAmount(null)
     }
-  }
-
-  const handleFullRespect = () => {
-    if (!song) return
-    setShowRespectModal(true)
   }
 
   const handleSendRespect = async () => {
@@ -282,79 +290,83 @@ const SongPage = () => {
           
           <div className="quick-respect-buttons">
             <button 
-              className="quick-respect-btn" 
+              className={`quick-respect-btn ${selectedAmount === 50 ? 'selected' : ''}`}
               onClick={() => handleQuickRespect(50)}
               disabled={sendingRespect}
             >
-              {sendingRespect ? 'Gönderiliyor...' : '50 Respect'}
+              {sendingRespect && sendingAmount === 50 ? 'Gönderiliyor...' : '50 Respect'}
             </button>
             <button 
-              className="quick-respect-btn" 
+              className={`quick-respect-btn ${selectedAmount === 100 ? 'selected' : ''}`}
               onClick={() => handleQuickRespect(100)}
               disabled={sendingRespect}
             >
-              {sendingRespect ? 'Gönderiliyor...' : '100 Respect'}
+              {sendingRespect && sendingAmount === 100 ? 'Gönderiliyor...' : '100 Respect'}
             </button>
             <button 
-              className="quick-respect-btn" 
+              className={`quick-respect-btn ${selectedAmount === 250 ? 'selected' : ''}`}
               onClick={() => handleQuickRespect(250)}
               disabled={sendingRespect}
             >
-              {sendingRespect ? 'Gönderiliyor...' : '250 Respect'}
+              {sendingRespect && sendingAmount === 250 ? 'Gönderiliyor...' : '250 Respect'}
             </button>
             <button 
-              className="quick-respect-btn" 
+              className={`quick-respect-btn ${selectedAmount === 500 ? 'selected' : ''}`}
               onClick={() => handleQuickRespect(500)}
               disabled={sendingRespect}
             >
-              {sendingRespect ? 'Gönderiliyor...' : '500 Respect'}
+              {sendingRespect && sendingAmount === 500 ? 'Gönderiliyor...' : '500 Respect'}
             </button>
             <button 
-              className="quick-respect-btn" 
+              className={`quick-respect-btn ${selectedAmount === 1000 ? 'selected' : ''}`}
               onClick={() => handleQuickRespect(1000)}
               disabled={sendingRespect}
             >
-              {sendingRespect ? 'Gönderiliyor...' : '1000 Respect'}
+              {sendingRespect && sendingAmount === 1000 ? 'Gönderiliyor...' : '1000 Respect'}
             </button>
             <button 
-              className="quick-respect-btn" 
+              className={`quick-respect-btn ${selectedAmount === 2000 ? 'selected' : ''}`}
               onClick={() => handleQuickRespect(2000)}
               disabled={sendingRespect}
             >
-              {sendingRespect ? 'Gönderiliyor...' : '2000 Respect'}
+              {sendingRespect && sendingAmount === 2000 ? 'Gönderiliyor...' : '2000 Respect'}
             </button>
             <button 
-              className="quick-respect-btn" 
+              className={`quick-respect-btn ${selectedAmount === 3000 ? 'selected' : ''}`}
               onClick={() => handleQuickRespect(3000)}
               disabled={sendingRespect}
             >
-              {sendingRespect ? 'Gönderiliyor...' : '3000 Respect'}
+              {sendingRespect && sendingAmount === 3000 ? 'Gönderiliyor...' : '3000 Respect'}
             </button>
             <button 
-              className="quick-respect-btn" 
+              className={`quick-respect-btn ${selectedAmount === 4000 ? 'selected' : ''}`}
               onClick={() => handleQuickRespect(4000)}
               disabled={sendingRespect}
             >
-              {sendingRespect ? 'Gönderiliyor...' : '4000 Respect'}
+              {sendingRespect && sendingAmount === 4000 ? 'Gönderiliyor...' : '4000 Respect'}
             </button>
             <button 
-              className="quick-respect-btn" 
+              className={`quick-respect-btn ${selectedAmount === 5000 ? 'selected' : ''}`}
               onClick={() => handleQuickRespect(5000)}
               disabled={sendingRespect}
             >
-              {sendingRespect ? 'Gönderiliyor...' : '5000 Respect'}
+              {sendingRespect && sendingAmount === 5000 ? 'Gönderiliyor...' : '5000 Respect'}
             </button>
             <button 
-              className="quick-respect-btn" 
+              className={`quick-respect-btn ${selectedAmount === 10000 ? 'selected' : ''}`}
               onClick={() => handleQuickRespect(10000)}
               disabled={sendingRespect}
             >
-              {sendingRespect ? 'Gönderiliyor...' : '10000 Respect'}
+              {sendingRespect && sendingAmount === 10000 ? 'Gönderiliyor...' : '10000 Respect'}
             </button>
           </div>
           
-          <button className="full-respect-button" onClick={handleFullRespect}>
-            Respect Gönder
+          <button 
+            className="full-respect-button" 
+            onClick={handleFullRespect}
+            disabled={!selectedAmount || sendingRespect}
+          >
+            {sendingRespect ? 'Gönderiliyor...' : 'Respect Gönder'}
           </button>
         </div>
 

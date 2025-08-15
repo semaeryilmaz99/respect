@@ -2289,6 +2289,18 @@ html {
     transform: none;
   }
 
+  .desktop-fixed-respect-send .quick-respect-btn.selected {
+    background: #ffe8a0;
+    border-color: #f9dc38;
+    color: #1b262e;
+    font-weight: 700;
+  }
+
+  .desktop-fixed-respect-send .quick-respect-btn.selected:hover {
+    background: #f9dc38;
+    transform: translateY(-1px);
+  }
+
   .desktop-fixed-respect-send .full-respect-button {
     width: 100%;
     background: #1b262e;
@@ -2332,6 +2344,17 @@ html {
   .desktop-fixed-respect-send .full-respect-button:hover {
     background: #2a3740;
     transform: translateY(-1px);
+  }
+
+  .desktop-fixed-respect-send .full-respect-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .desktop-fixed-respect-send .full-respect-button:disabled:hover {
+    background: #1b262e;
+    transform: none;
   }
 
   /* Desktop User Page Styles */
