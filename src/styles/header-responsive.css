@@ -279,9 +279,9 @@
   }
 }
 
-/* Mobile Artist Page Header Content Styles */
+/* Mobile Header Content Styles - Applies to all pages */
 @media (max-width: 767px) {
-  .artist-page .header-content {
+  .header-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -290,31 +290,31 @@
     max-width: 100%;
   }
   
-  .artist-page .mobile-search {
+  .mobile-search {
     display: block !important;
     width: 100%;
     max-width: calc(100vw - 120px); /* Hamburger ve avatar için alan bırak */
     flex: 1;
   }
   
-  .artist-page .mobile-search .search-bar {
+  .mobile-search .search-bar {
     width: 100%;
     max-width: 100%;
     padding: 8px 12px;
   }
   
-  .artist-page .mobile-search .search-input {
+  .mobile-search .search-input {
     width: 100%;
     max-width: 100%;
     font-size: 14px;
   }
   
-  .artist-page .menu-button {
+  .menu-button {
     flex-shrink: 0;
     margin: 0;
   }
   
-  .artist-page .user-avatar {
+  .user-avatar {
     flex-shrink: 0;
     margin: 0;
   }
