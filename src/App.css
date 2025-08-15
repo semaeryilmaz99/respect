@@ -1772,6 +1772,16 @@ html {
   animation-play-state: paused;
 }
 
+/* Desktop Recent Supporters Grid */
+@media (min-width: 768px) {
+  .recent-supporters-grid {
+    max-width: 800px;
+    margin: 0 auto;
+    justify-content: center;
+    gap: 24px;
+  }
+}
+
 /* Mobile-specific slider enhancements */
 @media (max-width: 768px) {
   .recent-supporters-grid {
