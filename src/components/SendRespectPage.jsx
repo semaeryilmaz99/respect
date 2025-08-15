@@ -485,71 +485,67 @@ const SendRespectPage = () => {
             </div>
           )}
 
-          {/* Amount Selection - Only show if item is selected */}
-          {selectedItem && (
-            <>
-              <div className="amount-selection">
-                <h3 className="section-title">Miktar Seç</h3>
-                
-                {/* Balance Display */}
-                <div className="balance-display">
-                  <span className="balance-label">Mevcut Balance:</span>
-                  {balanceLoading ? (
-                    <LoadingSpinner size="small" />
-                  ) : (
-                    <span className="balance-amount">{userBalance.toLocaleString()} Respect</span>
-                  )}
-                </div>
-                
-                {error && (
-                  <div className="error-message" style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>
-                    {error}
-                  </div>
-                )}
-                
-                <div className="amount-grid">
-                  {respectAmounts.map((amount) => (
-                    <button
-                      key={amount}
-                      className={`amount-button ${selectedAmount === amount ? 'selected' : ''} ${amount > userBalance ? 'insufficient' : ''}`}
-                      onClick={() => handleAmountSelect(amount)}
-                      disabled={loading}
-                    >
-                      {amount} Respect
-                      {amount > userBalance && <span className="insufficient-indicator">Yetersiz</span>}
-                    </button>
-                  ))}
-                </div>
-
-                <input
-                  type="number"
-                  placeholder="Miktar girin"
-                  value={customAmount}
-                  onChange={handleCustomAmountChange}
-                  className="custom-amount-input"
-                  disabled={loading}
-                />
+          {/* Amount Selection - Always visible */}
+          <div className="amount-selection">
+            <h3 className="section-title">Miktar Seç</h3>
+            
+            {/* Balance Display */}
+            <div className="balance-display">
+              <span className="balance-label">Mevcut Balance:</span>
+              {balanceLoading ? (
+                <LoadingSpinner size="small" />
+              ) : (
+                <span className="balance-amount">{userBalance.toLocaleString()} Respect</span>
+              )}
+            </div>
+            
+            {error && (
+              <div className="error-message" style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>
+                {error}
               </div>
-
-              <div className="action-buttons">
-                <button 
-                  className="send-support-button"
-                  onClick={handleSendRespect}
-                  disabled={(!selectedAmount && !customAmount) || loading || (selectedAmount && selectedAmount > userBalance) || (customAmount && parseInt(customAmount) > userBalance)}
-                >
-                  {loading ? 'Gönderiliyor...' : 'Gönder ve Destekle'}
-                </button>
-                
-                <button 
-                  className="purchase-respect-button"
-                  onClick={handlePurchaseRespect}
+            )}
+            
+            <div className="amount-grid">
+              {respectAmounts.map((amount) => (
+                <button
+                  key={amount}
+                  className={`amount-button ${selectedAmount === amount ? 'selected' : ''} ${amount > userBalance ? 'insufficient' : ''}`}
+                  onClick={() => handleAmountSelect(amount)}
                   disabled={loading}
                 >
-                  Respect Satın Al
+                  {amount} Respect
+                  {amount > userBalance && <span className="insufficient-indicator">Yetersiz</span>}
                 </button>
-              </div>
-            </>
-          )}
+              ))}
+            </div>
+
+            <input
+              type="number"
+              placeholder="Miktar girin"
+              value={customAmount}
+              onChange={handleCustomAmountChange}
+              className="custom-amount-input"
+              disabled={loading}
+            />
+          </div>
+
+          <div className="action-buttons">
+            <button 
+              className="send-support-button"
+              onClick={handleSendRespect}
+              disabled={!selectedItem || (!selectedAmount && !customAmount) || loading || (selectedAmount && selectedAmount > userBalance) || (customAmount && parseInt(customAmount) > userBalance)}
+            >
+              {loading ? 'Gönderiliyor...' : 'Gönder ve Destekle'}
+            </button>
+            
+            <button 
+              className="purchase-respect-button"
+              onClick={handlePurchaseRespect}
+              disabled={loading}
+            >
+              Respect Satın Al
+            </button>
+          </div>
         </div>
       </div>
       

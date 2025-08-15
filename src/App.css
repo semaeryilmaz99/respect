@@ -3507,6 +3507,7 @@ html {
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
+  padding-top: 80px; /* Header için space bırak */
 }
 
 /* Search Section Styles */
@@ -3724,6 +3725,17 @@ html {
     border: 2px solid #f8a61d !important;
     border-radius: 40px !important;
     margin: 16px !important;
+  }
+  
+  .send-respect-page {
+    padding-top: 120px; /* Desktop'ta daha fazla space */
+  }
+}
+
+/* Mobile Send Respect Page */
+@media (max-width: 767px) {
+  .send-respect-page {
+    padding-top: 60px; /* Mobile'da daha az space */
   }
 }
 
