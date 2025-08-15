@@ -281,12 +281,19 @@
 
 /* Mobile Artist Page Header Styles */
 @media (max-width: 767px) {
-  .artist-page .header {
+  .artist-page .mobile-header {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
     z-index: 1000 !important;
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .artist-page .mobile-header .header {
+    position: relative !important;
     padding: 12px 16px;
     box-sizing: border-box;
     width: 100%;

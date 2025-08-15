@@ -1241,11 +1241,16 @@ html {
 
 .artist-page .mobile-sections {
   display: block;
+  padding-top: 80px; /* Add padding for fixed mobile header */
 }
 
 /* Mobile-specific styles - Hide desktop components on mobile */
 .artist-page .desktop-header {
   display: none;
+}
+
+.artist-page .mobile-header {
+  display: block;
 }
 
 .artist-page .desktop-realtime-chat {
@@ -1266,6 +1271,10 @@ html {
     display: block;
   }
   
+  .artist-page .mobile-header {
+    display: none;
+  }
+  
   .artist-page .desktop-realtime-chat {
     display: block;
   }
@@ -1281,6 +1290,13 @@ html {
   justify-content: center;
   padding: 24px 16px;
   text-align: center;
+}
+
+/* Mobile Artist Profile - Add top padding for fixed header */
+@media (max-width: 767px) {
+  .artist-page .artist-profile {
+    padding-top: 80px;
+  }
 }
 
 .artist-info {

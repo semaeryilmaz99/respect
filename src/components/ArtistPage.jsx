@@ -21,6 +21,11 @@ const ArtistPage = () => {
         <Header />
       </div>
       
+      {/* Mobile Header - Same as Feed Page */}
+      <div className="mobile-header">
+        <Header />
+      </div>
+      
       <div className="artist-content">
         <ArtistProfile artistId={id} />
         
