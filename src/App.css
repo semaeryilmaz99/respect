@@ -262,25 +262,25 @@ body {
 .feed-card {
   background-color: #ffffff;
   border-radius: 40px;
-  box-shadow: 0 2px 10px rgba(27, 38, 46, 0.08);
+  box-shadow: 0 2px 10px rgba(51, 51, 51, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .feed-card:hover {
   transform: scale(1.02);
-  box-shadow: 0 4px 15px rgba(27, 38, 46, 0.15);
+  box-shadow: 0 6px 20px rgba(51, 51, 51, 0.25);
 }
 
 /* Artist Name Highlight - Mobile */
 .artist-name-highlight {
-  background-color: #ffffff;
+  background-color: #d6d0d0;
   border: 2px solid #f9dc38;
   border-radius: 40px;
   padding: 2px 6px;
   margin: 0 2px;
   font-weight: 600;
   color: #1b262e;
-  box-shadow: 0 2px 4px rgba(249, 220, 56, 0.3);
+  box-shadow: 0 2px 4px rgba(249, 220, 56, 0.3), 0 2px 6px rgba(51, 51, 51, 0.2);
   display: inline-block;
   transition: all 0.3s ease;
 }
@@ -288,7 +288,7 @@ body {
 .artist-name-highlight:hover {
   background-color: #f9dc38;
   color: #1b262e;
-  box-shadow: 0 4px 8px rgba(249, 220, 56, 0.4);
+  box-shadow: 0 4px 8px rgba(249, 220, 56, 0.4), 0 4px 12px rgba(51, 51, 51, 0.3);
   transform: translateY(-1px);
 }
 

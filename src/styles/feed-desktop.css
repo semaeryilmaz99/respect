@@ -64,7 +64,7 @@
   
   .feed-card:hover {
     transform: scale(1.02) !important;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 8px 25px rgba(51, 51, 51, 0.3) !important;
   }
   
   /* Feed Header - Desktop */
@@ -163,7 +163,7 @@
     margin: 0 2px;
     font-weight: 600;
     color: #1b262e;
-    box-shadow: 0 2px 4px rgba(249, 220, 56, 0.3);
+    box-shadow: 0 2px 4px rgba(249, 220, 56, 0.3), 0 2px 6px rgba(51, 51, 51, 0.2);
     display: inline-block;
     transition: all 0.3s ease;
   }
@@ -171,7 +171,7 @@
   .artist-name-highlight:hover {
     background-color: #f9dc38;
     color: #1b262e;
-    box-shadow: 0 4px 8px rgba(249, 220, 56, 0.4);
+    box-shadow: 0 4px 8px rgba(249, 220, 56, 0.4), 0 4px 12px rgba(51, 51, 51, 0.3);
     transform: translateY(-1px);
   }
   
@@ -616,7 +616,7 @@
   
   .feed-card:hover {
     transform: scale(1.02) !important;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 8px 25px rgba(51, 51, 51, 0.3) !important;
   }
   
   /* Feed Header - Large Desktop */
@@ -747,7 +747,7 @@
   
   .feed-card:hover {
     transform: scale(1.02) !important;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 8px 25px rgba(51, 51, 51, 0.3) !important;
   }
   
   /* Feed Header - Extra Large Desktop */
