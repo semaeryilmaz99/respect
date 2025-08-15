@@ -106,6 +106,20 @@ const SongPage = () => {
     })
   }
 
+  const handleSpotifyClick = () => {
+    if (!song) return
+    
+    // Spotify bağlantısı varsa onu kullan, yoksa Spotify'da arama yap
+    if (song.spotify_url) {
+      window.open(song.spotify_url, '_blank')
+    } else {
+      // Spotify'da arama yapmak için URL oluştur
+      const searchQuery = encodeURIComponent(`${song.title} ${song.artist?.name || song.artist_name}`)
+      const spotifySearchUrl = `https://open.spotify.com/search/${searchQuery}`
+      window.open(spotifySearchUrl, '_blank')
+    }
+  }
+
   return (
     <div className="song-page">
       <Header />
@@ -135,7 +149,7 @@ const SongPage = () => {
             </div>
             
             <div className="song-buttons">
-              <button className="play-spotify-button">
+              <button className="play-spotify-button" onClick={handleSpotifyClick}>
                 Spotify'da Dinle
               </button>
               <button className="send-respect-button" onClick={handleFullRespect}>
@@ -157,10 +171,15 @@ const SongPage = () => {
             {/* Sanatçıdan Diğer Şarkılar */}
             <MoreByArtist />
           </div>
-
-          {/* Chat (Fixed Positioned - diğerlerinin üstünde) */}
-          <SongRealTimeChat />
         </div>
+
+        {/* Son Destekleyenler - Alt Bölüm */}
+        <div className="song-recent-supporters-section">
+          <SongRecentSupporters />
+        </div>
+
+        {/* Chat (Fixed Positioned - diğerlerinin üstünde) */}
+        <SongRealTimeChat />
 
         {/* Desktop Fixed Respect Gönder - Sol Alt */}
         <div className="desktop-fixed-respect-send">

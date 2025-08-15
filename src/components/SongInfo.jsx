@@ -86,6 +86,20 @@ const SongInfo = () => {
     })
   }
 
+  const handleSpotifyClick = () => {
+    if (!song) return
+    
+    // Spotify bağlantısı varsa onu kullan, yoksa Spotify'da arama yap
+    if (song.spotify_url) {
+      window.open(song.spotify_url, '_blank')
+    } else {
+      // Spotify'da arama yapmak için URL oluştur
+      const searchQuery = encodeURIComponent(`${song.title} ${song.artist?.name || song.artist_name}`)
+      const spotifySearchUrl = `https://open.spotify.com/search/${searchQuery}`
+      window.open(spotifySearchUrl, '_blank')
+    }
+  }
+
   if (loading) {
     return (
       <div className="song-info">
@@ -116,7 +130,7 @@ const SongInfo = () => {
         </div>
         
         <div className="song-buttons">
-          <button className="play-spotify-button">
+          <button className="play-spotify-button" onClick={handleSpotifyClick}>
             Spotify'da Dinle
           </button>
           <button className="send-respect-button" onClick={handleSendRespect}>
