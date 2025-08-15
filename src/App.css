@@ -2860,7 +2860,7 @@ html {
   .desktop-song-info {
     max-width: 1000px;
     height: 200px;
-    margin: 120px auto 16px auto; /* Header'ın altında kalmak için margin-top: 120px */
+    margin: 16px auto; /* Header'ın hemen altında başlaması için margin-top: 16px */
     background-color: #fef5e7;
     border: 1px solid #f69f17;
     border-radius: 40px;
