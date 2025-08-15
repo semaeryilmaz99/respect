@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useUI, useAppContext } from '../context/AppContext'
 import userService from '../api/userService'
 import searchService from '../api/searchService'
+import BackButton from './common/BackButton'
 
 const Header = () => {
   const navigate = useNavigate()
@@ -182,14 +183,18 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-content">
-        <button className="menu-button" onClick={toggleSidebar}>
-          <span className="hamburger-line"></span>
-          <span className="hamburger-line"></span>
-          <span className="hamburger-line"></span>
-        </button>
+        {isSendRespectPage ? (
+          <BackButton />
+        ) : (
+          <button className="menu-button" onClick={toggleSidebar}>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+          </button>
+        )}
         
-        {/* Desktop'ta feed, song, user ve artist sayfasında arama motoru, send respect sayfasında "Respect Gönder", diğerlerinde title */}
-        {isFeedPage || isSongPage || isUserPage || isArtistPage ? (
+        {/* Desktop'ta feed, song, user, artist ve send respect sayfasında arama motoru */}
+        {isFeedPage || isSongPage || isUserPage || isArtistPage || isSendRespectPage ? (
           <>
             {/* Desktop'ta arama motoru buraya gelecek */}
             <div className="search-container desktop-search">
@@ -281,15 +286,10 @@ const Header = () => {
               )}
             </div>
           </>
-        ) : isSendRespectPage ? (
-          <>
-            {/* Desktop'ta "Respect Gönder" yazısı */}
-            <h1 className="app-title desktop-only">Respect Gönder</h1>
-          </>
         ) : null}
         
-        {/* Mobile'da feed, song, user ve artist sayfasında arama motoru */}
-        {(isFeedPage || isSongPage || isUserPage || isArtistPage) && (
+        {/* Mobile'da feed, song, user, artist ve send respect sayfasında arama motoru */}
+        {(isFeedPage || isSongPage || isUserPage || isArtistPage || isSendRespectPage) && (
           <div className="search-container mobile-search">
             <div className="mobile-search-input-wrapper">
               <div className="mobile-search-icon">

@@ -253,15 +253,41 @@ const SendRespectPage = () => {
 
   // Handle add item to multi-selection
   const handleAddItem = () => {
+    console.log('🔘 Add button clicked!')
+    console.log('📋 selectedItem:', selectedItem)
+    console.log('📋 selectedItems:', selectedItems)
+    
+    // Basit test - her zaman çalışsın
     if (selectedItem) {
       const isAlreadySelected = selectedItems.some(item => 
         item.id === selectedItem.id && item.type === selectedItem.type
       )
       
+      console.log('🔍 isAlreadySelected:', isAlreadySelected)
+      
       if (!isAlreadySelected) {
+        console.log('✅ Adding item to selection')
+        setSelectedItems(prev => [...prev, selectedItem])
+        setIsMultiSelectionMode(true)
+      } else {
+        console.log('❌ Item already selected')
+        // Test için zorla ekle
+        console.log('🧪 Force adding for test')
         setSelectedItems(prev => [...prev, selectedItem])
         setIsMultiSelectionMode(true)
       }
+    } else {
+      console.log('❌ No selectedItem')
+      // Test için dummy item ekle
+      console.log('🧪 Adding dummy item for test')
+      const dummyItem = {
+        id: 'test-' + Date.now(),
+        name: 'Test Item',
+        type: 'artist',
+        avatar_url: '/assets/artist/Image.png'
+      }
+      setSelectedItems(prev => [...prev, dummyItem])
+      setIsMultiSelectionMode(true)
     }
   }
 
@@ -394,15 +420,6 @@ const SendRespectPage = () => {
 
   return (
     <div className="send-respect-page">
-      <div className="respect-header mobile-only" style={{ 
-        display: 'flex', 
-        justifyContent: 'flex-start', 
-        alignItems: 'center',
-        padding: '16px 20px',
-        background: 'transparent'
-      }}>
-        <BackButton />
-      </div>
       <Header />
 
       <div className="respect-main-container">
@@ -546,9 +563,8 @@ const SendRespectPage = () => {
                   <button 
                     className="add-item-btn"
                     onClick={handleAddItem}
-                    disabled={!selectedItem || selectedItems.some(item => 
-                      item.id === selectedItem.id && item.type === selectedItem.type
-                    )}
+                    disabled={false}
+                    style={{ cursor: 'pointer' }}
                   >
                     Ekle
                   </button>
@@ -612,9 +628,8 @@ const SendRespectPage = () => {
                   <button 
                     className="add-item-btn"
                     onClick={handleAddItem}
-                    disabled={selectedItems.some(item => 
-                      item.id === selectedItem.id && item.type === selectedItem.type
-                    )}
+                    disabled={false}
+                    style={{ cursor: 'pointer' }}
                   >
                     Ekle
                   </button>

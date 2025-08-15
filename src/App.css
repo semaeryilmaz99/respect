@@ -3754,9 +3754,10 @@ html {
 }
 
 .add-item-btn:disabled {
-  background: #6c757d;
-  cursor: not-allowed;
+  background: #6c757d !important;
+  cursor: not-allowed !important;
   opacity: 0.6;
+  pointer-events: none;
 }
 
 .remove-item-btn {
@@ -3787,24 +3788,9 @@ html {
   gap: 8px;
 }
 
-/* Send Respect Page Header Styles - Desktop Only */
-@media (min-width: 768px) {
-  .send-respect-page .header {
-    border: 2px solid #f8a61d !important;
-    border-radius: 40px !important;
-    margin: 16px !important;
-  }
-  
-  .send-respect-page {
-    padding-top: 120px; /* Desktop'ta daha fazla space */
-  }
-}
-
-/* Mobile Send Respect Page */
-@media (max-width: 767px) {
-  .send-respect-page {
-    padding-top: 60px; /* Mobile'da daha az space */
-  }
+/* Send Respect Page - Header spacing */
+.send-respect-page {
+  padding-top: 80px; /* Header için space bırak */
 }
 
 /* Respect Header */
