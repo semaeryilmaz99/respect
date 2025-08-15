@@ -4018,24 +4018,12 @@ html {
   .respect-left-panel {
     flex: 1;
     width: 700px;
-    background: linear-gradient(135deg, #fefcf0 0%, #f8f9fa 100%);
-    border-radius: 24px;
-    padding: 32px;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
     height: fit-content;
-    border: 2px solid #f8a61d;
-    box-shadow: 0 8px 32px rgba(248, 166, 29, 0.15);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .respect-left-panel::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #f8a61d 0%, #feb822 50%, #f8a61d 100%);
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
 
   /* Sağ panel (mevcut respect content) */
@@ -4047,28 +4035,13 @@ html {
 
   /* Panel başlıkları */
   .panel-title {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 600;
     color: #1b262e;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 3px solid #f8a61d;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f8a61d;
     text-align: center;
-    position: relative;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .panel-title::after {
-    content: '';
-    position: absolute;
-    bottom: -3px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 3px;
-    background: linear-gradient(90deg, #feb822 0%, #f8a61d 100%);
-    border-radius: 2px;
   }
 
   /* Hızlı gönderim butonu */
@@ -4077,63 +4050,30 @@ html {
     background: linear-gradient(135deg, #f8a61d 0%, #feb822 100%);
     color: #1b262e;
     border: none;
-    border-radius: 16px;
-    padding: 20px 24px;
-    font-size: 18px;
-    font-weight: 700;
+    border-radius: 12px;
+    padding: 16px 24px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-bottom: 32px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 16px rgba(248, 166, 29, 0.2);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .quick-send-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.5s;
+    margin-bottom: 24px;
   }
 
   .quick-send-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(248, 166, 29, 0.4);
-  }
-
-  .quick-send-button:hover::before {
-    left: 100%;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(248, 166, 29, 0.3);
   }
 
   /* Sanatçı teşekkür mesajı */
   .artist-thanks-section {
-    margin-bottom: 32px;
+    margin-bottom: 24px;
   }
 
   .thanks-message {
-    background: linear-gradient(135deg, #ffffff 0%, #fefcf0 100%);
-    border-radius: 16px;
-    padding: 20px;
-    border: 2px solid #f8a61d;
-    box-shadow: 0 4px 16px rgba(248, 166, 29, 0.1);
-    position: relative;
-  }
-
-  .thanks-message::before {
-    content: '"';
-    position: absolute;
-    top: -10px;
-    left: 20px;
-    font-size: 48px;
-    color: #f8a61d;
-    font-family: serif;
-    line-height: 1;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #e0e0e0;
   }
 
   .artist-avatar {
@@ -4167,24 +4107,14 @@ html {
 
   /* İstatistik bölümü */
   .stats-section {
-    margin-bottom: 32px;
+    margin-bottom: 24px;
   }
 
   .stat-item {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border-radius: 16px;
-    padding: 20px;
-    border: 2px solid #e0e0e0;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-    position: relative;
-  }
-
-  .stat-item::before {
-    content: '📊';
-    position: absolute;
-    top: -8px;
-    right: 20px;
-    font-size: 24px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #e0e0e0;
   }
 
   .stat-item p {
@@ -4199,11 +4129,10 @@ html {
   }
 
   .recent-supporters-list {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    border-radius: 16px;
-    border: 2px solid #e0e0e0;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
     overflow: hidden;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   }
 
   .supporter-item {
