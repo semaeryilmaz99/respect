@@ -1893,7 +1893,7 @@ html {
   /* Desktop Fixed Respect Gönder - Sol Alt */
   .desktop-fixed-respect-send {
     position: fixed;
-    bottom: 20px; /* Header'dan uzak durması için bottom: 20px */
+    bottom: 0;
     left: 20px;
     width: 380px;
     background: linear-gradient(135deg, #f8a61d 0%, #feb822 100%);
@@ -2852,15 +2852,15 @@ html {
 /* Desktop Song Content - Alt boşluğu kaldır */
 @media (min-width: 768px) {
   .song-content {
-    padding-top: 120px; /* Desktop header'ın altında kalmak için padding-top eklendi */
+    padding-top: 140px; /* Desktop header'ın tam altında başlamak için padding-top ayarlandı */
     padding-bottom: 40px;
   }
 
-  /* Desktop Song Info - Header'ın Altında */
+  /* Desktop Song Info - Header'ın Tam Altında */
   .desktop-song-info {
     max-width: 1000px;
     height: 200px;
-    margin: 16px auto; /* Header'ın hemen altında başlaması için margin-top: 16px */
+    margin: 0 auto; /* Üst margin'i kaldır, header'ın tam altında başlasın */
     background-color: #fef5e7;
     border: 1px solid #f69f17;
     border-radius: 40px;
@@ -2910,7 +2910,7 @@ html {
     padding: 24px;
     padding-left: 274px; /* 200px sağa kayma + 24px orijinal padding */
     padding-right: 420px; /* Chat alanı için boşluk */
-    margin-top: 24px; /* Desktop song info ile arasında boşluk */
+    margin-top: 16px; /* Song info'dan sonra biraz boşluk */
   }
 
   /* Sol Panel - En Çok Respect Gönderelenler */
