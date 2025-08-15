@@ -1534,7 +1534,6 @@ html {
 .real-time-chat .section-title {
   padding: 0;
   margin-bottom: 12px;
-  height: 80px;
   font-size: 16px;
   text-align: center;
 }
@@ -2028,6 +2027,11 @@ html {
   
   .song-page .real-time-chat.closed .chat-input-container {
     display: none !important;
+  }
+
+  /* Desktop Song Page Real-Time Chat Section Title */
+  .song-page .real-time-chat .section-title {
+    height: 80px !important;
   }
 
   /* Respect Modal Styles */
