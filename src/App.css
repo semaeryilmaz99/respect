@@ -3719,6 +3719,74 @@ html {
   background: #f5a623;
 }
 
+/* Multi-selection styles */
+.selected-items-section {
+  margin-bottom: 24px;
+}
+
+.selected-items-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.selected-items-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.add-item-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.add-item-btn:hover:not(:disabled) {
+  background: #218838;
+}
+
+.add-item-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.remove-item-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.remove-item-btn:hover {
+  background: #c82333;
+}
+
+.selected-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.selected-item-actions {
+  display: flex;
+  gap: 8px;
+}
+
 /* Send Respect Page Header Styles - Desktop Only */
 @media (min-width: 768px) {
   .send-respect-page .header {
@@ -3823,11 +3891,11 @@ html {
 .amount-selection {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #1b262e;
   margin: 0;
@@ -3836,15 +3904,15 @@ html {
 .amount-grid {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .amount-button {
-  padding: 16px 20px;
+  padding: 12px 16px;
   background-color: #ffffff;
   border: 2px solid #e0e0e0;
-  border-radius: 16px;
-  font-size: 16px;
+  border-radius: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: #1b262e;
   cursor: pointer;
@@ -3877,66 +3945,66 @@ html {
 /* Progressive button sizes based on respect amount */
 .amount-button:nth-child(1) {
   /* 20 Respect - smallest */
-  padding: 12px 16px;
-  font-size: 14px;
+  padding: 8px 12px;
+  font-size: 12px;
   background-color: #fbdb3a;
   border-color: #fbdb3a;
   color: #1b262e;
   opacity: 0.4;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   width: 60%;
   align-self: center;
 }
 
 .amount-button:nth-child(2) {
   /* 50 Respect */
-  padding: 14px 18px;
-  font-size: 15px;
+  padding: 10px 14px;
+  font-size: 13px;
   opacity: 0.6;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
   width: 70%;
   align-self: center;
 }
 
 .amount-button:nth-child(3) {
   /* 100 Respect */
-  padding: 16px 20px;
-  font-size: 16px;
+  padding: 12px 16px;
+  font-size: 14px;
   opacity: 0.7;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.14);
   width: 80%;
   align-self: center;
 }
 
 .amount-button:nth-child(4) {
   /* 200 Respect */
-  padding: 18px 22px;
-  font-size: 17px;
+  padding: 14px 18px;
+  font-size: 15px;
   opacity: 0.8;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16);
   width: 90%;
   align-self: center;
 }
 
 .amount-button:nth-child(5) {
   /* 500 Respect */
-  padding: 20px 24px;
-  font-size: 18px;
+  padding: 16px 20px;
+  font-size: 16px;
   opacity: 0.9;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.18);
   width: 95%;
   align-self: center;
 }
 
 .amount-button:nth-child(6) {
   /* 1000 Respect - largest */
-  padding: 22px 26px;
-  font-size: 19px;
+  padding: 18px 22px;
+  font-size: 17px;
   font-weight: 600;
   opacity: 1.0;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2), 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 3px 6px rgba(0, 0, 0, 0.15);
   width: 100%;
   align-self: center;
 }
@@ -3968,10 +4036,10 @@ html {
 
 .custom-amount-input {
   width: 100%;
-  padding: 16px 20px;
+  padding: 12px 16px;
   border: 2px solid #e0e0e0;
-  border-radius: 16px;
-  font-size: 16px;
+  border-radius: 12px;
+  font-size: 14px;
   color: #1b262e;
   background-color: #ffffff;
   transition: border-color 0.2s ease;
@@ -3989,12 +4057,12 @@ html {
 /* Send Support Button */
 .send-support-button {
   width: 100%;
-  padding: 18px;
+  padding: 14px;
   background-color: #f9dc38;
   color: #1b262e;
   border: none;
-  border-radius: 16px;
-  font-size: 18px;
+  border-radius: 12px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
