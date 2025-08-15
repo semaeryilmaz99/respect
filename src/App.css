@@ -2938,20 +2938,37 @@ html {
     margin-top: 16px; /* Song info'dan sonra biraz boşluk */
   }
 
-  /* Sol Panel - En Çok Respect Gönderelenler */
+  /* Sol Panel Card - En Çok Respect Gönderelenler */
   .song-left-panel {
     width: 320px;
     flex-shrink: 0;
-    position: static;
+    background-color: #f8f9f1;
+    border: 1px solid #f69f17;
+    border-radius: 40px;
+    padding: 32px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
   }
 
-  /* Sağ Panel - Tüm Diğer İçerikler */
+  .song-left-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2), 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Sağ Panel Card - Tüm Diğer İçerikler */
   .song-right-content {
     flex: 1;
-    display: flex;
-    flex-direction: row;
-    gap: 24px;
-    align-items: flex-start;
+    background-color: #f8f9f1;
+    border: 1px solid #f69f17;
+    border-radius: 40px;
+    padding: 32px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .song-right-content:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2), 0 6px 16px rgba(0, 0, 0, 0.15);
   }
 
   /* Sağ panel içindeki bölümler */
