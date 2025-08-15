@@ -29,16 +29,7 @@ const SendRespectPage = () => {
   // Ref for search results
   const searchResultsRef = useRef(null)
 
-  // Get data from navigation state or URL params
-  const [respectData, setRespectData] = useState({
-    songId: null,
-    songTitle: '',
-    artistId: null,
-    artistName: '',
-    songCover: '/assets/respect.png',
-    currentRespect: '0',
-    isArtist: false
-  })
+
 
   const respectAmounts = [20, 50, 100, 200, 500, 1000]
 
@@ -48,17 +39,6 @@ const SendRespectPage = () => {
     const params = new URLSearchParams(location.search)
     
     if (state) {
-      // Data from navigation state (from artist/song pages)
-      setRespectData({
-        songId: state.songId || null,
-        songTitle: state.songTitle || '',
-        artistId: state.artistId || null,
-        artistName: state.artistName || '',
-        songCover: state.songCover || '/assets/respect.png',
-        currentRespect: state.currentRespect || '0',
-        isArtist: state.isArtist || false
-      })
-      
       // If we have data from navigation, set selected item
       if (state.isArtist && state.artistId) {
         setSelectedItem({
@@ -77,22 +57,8 @@ const SendRespectPage = () => {
         })
       }
     } else if (params.get('artistId') || params.get('songId')) {
-      // Data from URL params
-      const artistId = params.get('artistId')
-      const songId = params.get('songId')
-      
-      if (artistId) {
-        setRespectData(prev => ({
-          ...prev,
-          artistId,
-          isArtist: true
-        }))
-      } else if (songId) {
-        setRespectData(prev => ({
-          ...prev,
-          songId
-        }))
-      }
+      // Data from URL params - handle if needed
+      // URL params handling can be implemented here if needed
     }
   }, [location.state, location.search])
 
@@ -171,28 +137,7 @@ const SendRespectPage = () => {
     setSearchQuery(type === 'artist' ? item.name : item.title)
     setShowSearchResults(false)
     
-    // Update respect data based on selection
-    if (type === 'artist') {
-      setRespectData({
-        artistId: item.id,
-        artistName: item.name,
-        songCover: item.avatar_url || '/assets/artist/Image.png',
-        currentRespect: item.total_respect || '0',
-        isArtist: true,
-        songId: null,
-        songTitle: ''
-      })
-    } else {
-      setRespectData({
-        songId: item.id,
-        songTitle: item.title,
-        artistName: item.artists?.name || 'Bilinmeyen Sanatçı',
-        songCover: item.cover_url || '/assets/song/Image.png',
-        currentRespect: item.total_respect || '0',
-        isArtist: false,
-        artistId: null
-      })
-    }
+
   }
 
   // Handle search input focus
@@ -232,15 +177,6 @@ const SendRespectPage = () => {
   const handleClearSelection = () => {
     setSelectedItem(null)
     setSearchQuery('')
-    setRespectData({
-      songId: null,
-      songTitle: '',
-      artistId: null,
-      artistName: '',
-      songCover: '/assets/respect.png',
-      currentRespect: '0',
-      isArtist: false
-    })
   }
 
   const handleAmountSelect = (amount) => {
