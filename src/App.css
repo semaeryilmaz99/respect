@@ -1243,6 +1243,15 @@ html {
   display: block;
 }
 
+/* Mobile-specific styles - Hide desktop components on mobile */
+.artist-page .desktop-header {
+  display: none;
+}
+
+.artist-page .desktop-realtime-chat {
+  display: none;
+}
+
 @media (min-width: 768px) {
   .artist-page .desktop-unified-sections {
     display: block;
@@ -1250,6 +1259,15 @@ html {
   
   .artist-page .mobile-sections {
     display: none;
+  }
+  
+  /* Show desktop components on desktop */
+  .artist-page .desktop-header {
+    display: block;
+  }
+  
+  .artist-page .desktop-realtime-chat {
+    display: block;
   }
 }
 

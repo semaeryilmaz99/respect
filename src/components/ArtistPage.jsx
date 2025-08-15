@@ -18,7 +18,12 @@ const ArtistPage = () => {
       <div className="page-header">
         <BackButton />
       </div>
-      <Header />
+      
+      {/* Desktop Header - Hidden on Mobile */}
+      <div className="desktop-header">
+        <Header />
+      </div>
+      
       <div className="artist-content">
         <ArtistProfile artistId={id} />
         
@@ -46,7 +51,10 @@ const ArtistPage = () => {
           <SongsList artistId={id} />
         </div>
         
-        <RealTimeChat roomId={id} roomType="artist" />
+        {/* Desktop RealTimeChat - Hidden on Mobile */}
+        <div className="desktop-realtime-chat">
+          <RealTimeChat roomId={id} roomType="artist" />
+        </div>
       </div>
     </div>
   )
