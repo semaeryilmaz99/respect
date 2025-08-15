@@ -2226,13 +2226,15 @@ html {
     left: 100px;
     width: 380px;
     height: calc(100vh - 140px);
-    background: #f9f9f9;
+    background: linear-gradient(135deg, #f8a61d 0%, #feb822 100%);
     border-radius: 16px;
     padding: 24px;
     color: #1b262e;
     box-shadow: 0 4px 16px rgba(248, 166, 29, 0.3);
     z-index: 999;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
   }
 
   .desktop-fixed-respect-send .respect-section-title {
@@ -2250,11 +2252,11 @@ html {
   }
 
   .desktop-fixed-respect-send .quick-respect-buttons {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 8px;
     margin-bottom: 18px;
-    max-height: 300px;
+    flex: 1;
     overflow-y: auto;
   }
 
@@ -2289,6 +2291,8 @@ html {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    margin-top: auto;
+    flex-shrink: 0;
   }
 
   .desktop-fixed-respect-send .full-respect-button::before {
