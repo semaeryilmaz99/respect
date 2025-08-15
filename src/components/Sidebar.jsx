@@ -103,11 +103,7 @@ const Sidebar = () => {
       path: '/songs',
       action: () => handleNavigation('/songs')
     },
-    {
-      label: 'Çalma Listeleri',
-      path: '/playlists',
-      action: () => handleNavigation('/playlists')
-    },
+
     {
       label: 'Respect Gönder',
       path: '/send-respect',
