@@ -1313,6 +1313,23 @@ html {
     padding-top: 80px;
   }
   
+  /* Ensure artist page header is fixed on mobile */
+  .artist-page .header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000 !important;
+    background: #fff !important;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 8px #0000001a;
+    width: 100% !important;
+    height: auto;
+    transform: none !important;
+    will-change: auto !important;
+    backface-visibility: visible !important;
+  }
+  
   /* Ensure feed page header is fixed on mobile */
   .feed-page .header {
     position: fixed !important;
