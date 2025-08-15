@@ -52,29 +52,62 @@ const feedService = {
         const userIds = [...new Set(data.map(item => item.user_id))]
         console.log('👥 Community feed - User IDs to fetch:', userIds)
 
-        const { data: userProfiles, error: userError } = await supabase
-          .from('profiles')
-          .select('id, username, full_name, avatar_url')
-          .in('id', userIds)
+        try {
+          const { data: userProfiles, error: userError } = await supabase
+            .from('profiles')
+            .select('id, username, full_name, avatar_url')
+            .in('id', userIds)
 
-        if (userError) {
-          console.error('❌ Community feed - User profiles fetch error:', userError)
-        } else {
-          console.log('✅ Community feed - User profiles fetched:', userProfiles)
-          
-          // Kullanıcı bilgilerini feed items'a ekle
-          const userMap = {}
-          userProfiles?.forEach(profile => {
-            userMap[profile.id] = profile
-          })
+          if (userError) {
+            console.error('❌ Community feed - User profiles fetch error:', userError)
+            // Hata durumunda fallback data ile devam et
+            const fallbackData = data.map(item => ({
+              ...item,
+              profiles: {
+                id: item.user_id,
+                username: 'kullanici',
+                full_name: 'Kullanıcı',
+                avatar_url: '/assets/user/Image.png'
+              }
+            }))
+            console.log('✅ Community feed data with fallback profiles:', fallbackData)
+            return fallbackData || []
+          } else {
+            console.log('✅ Community feed - User profiles fetched:', userProfiles)
+            
+            // Kullanıcı bilgilerini feed items'a ekle
+            const userMap = {}
+            userProfiles?.forEach(profile => {
+              userMap[profile.id] = profile
+            })
 
-          const enrichedData = data.map(item => ({
+            const enrichedData = data.map(item => ({
+              ...item,
+              profiles: userMap[item.user_id] || {
+                id: item.user_id,
+                username: 'kullanici',
+                full_name: 'Kullanıcı',
+                avatar_url: '/assets/user/Image.png'
+              }
+            }))
+
+            console.log('✅ Community feed data enriched:', enrichedData)
+            return enrichedData || []
+          }
+        } catch (profileError) {
+          console.error('❌ Community feed - User profiles fetch exception:', profileError)
+          // Exception durumunda da fallback data ile devam et
+          const fallbackData = data.map(item => ({
             ...item,
-            profiles: userMap[item.user_id]
+            profiles: {
+              id: item.user_id,
+              username: 'kullanici',
+              full_name: 'Kullanıcı',
+              avatar_url: '/assets/user/Image.png'
+            }
           }))
-
-          console.log('✅ Community feed data enriched:', enrichedData)
-          return enrichedData || []
+          console.log('✅ Community feed data with fallback profiles (exception):', fallbackData)
+          return fallbackData || []
         }
       }
 
@@ -183,30 +216,63 @@ const feedService = {
         const userIds = [...new Set(data.map(item => item.user_id))]
         console.log('👥 User IDs to fetch:', userIds)
 
-        const { data: userProfiles, error: userError } = await supabase
-          .from('profiles')
-          .select('id, username, full_name, avatar_url')
-          .in('id', userIds)
+        try {
+          const { data: userProfiles, error: userError } = await supabase
+            .from('profiles')
+            .select('id, username, full_name, avatar_url')
+            .in('id', userIds)
 
-        if (userError) {
-          console.error('❌ User profiles fetch error:', userError)
-        } else {
-          console.log('✅ User profiles fetched:', userProfiles)
-          
-          // Kullanıcı bilgilerini feed items'a ekle
-          const userMap = {}
-          userProfiles?.forEach(profile => {
-            userMap[profile.id] = profile
-          })
+          if (userError) {
+            console.error('❌ User profiles fetch error:', userError)
+            // Hata durumunda fallback data ile devam et
+            const fallbackData = data.map(item => ({
+              ...item,
+              profiles: {
+                id: item.user_id,
+                username: 'kullanici',
+                full_name: 'Kullanıcı',
+                avatar_url: '/assets/user/Image.png'
+              }
+            }))
+            console.log('✅ Personal feed data with fallback profiles:', fallbackData)
+            return fallbackData || []
+          } else {
+            console.log('✅ User profiles fetched:', userProfiles)
+            
+            // Kullanıcı bilgilerini feed items'a ekle
+            const userMap = {}
+            userProfiles?.forEach(profile => {
+              userMap[profile.id] = profile
+            })
 
-          const enrichedData = data.map(item => ({
+            const enrichedData = data.map(item => ({
+              ...item,
+              profiles: userMap[item.user_id] || {
+                id: item.user_id,
+                username: 'kullanici',
+                full_name: 'Kullanıcı',
+                avatar_url: '/assets/user/Image.png'
+              }
+            }))
+
+            console.log('✅ Personal feed data enriched:', enrichedData)
+            console.log('📊 Personal feed count:', enrichedData?.length || 0)
+            return enrichedData || []
+          }
+        } catch (profileError) {
+          console.error('❌ User profiles fetch exception:', profileError)
+          // Exception durumunda da fallback data ile devam et
+          const fallbackData = data.map(item => ({
             ...item,
-            profiles: userMap[item.user_id]
+            profiles: {
+              id: item.user_id,
+              username: 'kullanici',
+              full_name: 'Kullanıcı',
+              avatar_url: '/assets/user/Image.png'
+            }
           }))
-
-          console.log('✅ Personal feed data enriched:', enrichedData)
-          console.log('📊 Personal feed count:', enrichedData?.length || 0)
-          return enrichedData || []
+          console.log('✅ Personal feed data with fallback profiles (exception):', fallbackData)
+          return fallbackData || []
         }
       }
 
