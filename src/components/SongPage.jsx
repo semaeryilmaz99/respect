@@ -119,8 +119,8 @@ const SongPage = () => {
         <MoreByArtist />
       </div>
 
-      {/* Desktop Layout */}
-      <div className="desktop-only">
+      {/* Desktop Layout - Header'ın Altında */}
+      <div className="song-content desktop-only">
         {/* Song Info - Header'ın Altında */}
         <div className="desktop-song-info">
           <SongInfo />

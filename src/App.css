@@ -2869,18 +2869,23 @@ html {
   padding-bottom: 320px;
 }
 
-/* Desktop Song Content - Alt boşluğu kaldır */
+/* Desktop Song Content - Header'ın tam altında başlamak için */
 @media (min-width: 768px) {
   .song-content {
     padding-top: 140px; /* Desktop header'ın tam altında başlamak için padding-top ayarlandı */
     padding-bottom: 40px;
+  }
+  
+  /* Desktop song-content içindeki desktop-only class'ı için özel stil */
+  .song-content.desktop-only {
+    padding-top: 140px; /* Header'ın tam altında başlamak için */
   }
 
   /* Desktop Song Info - Header'ın Tam Altında */
   .desktop-song-info {
     max-width: 1000px;
     height: 200px;
-    margin: 0 auto; /* Üst margin'i kaldır, header'ın tam altında başlasın */
+    margin: 0 auto; /* Header'ın tam altında başlamak için üst margin yok */
     background-color: #fef5e7;
     border: 1px solid #f69f17;
     border-radius: 40px;
