@@ -298,6 +298,33 @@ body {
   margin: 0;
 }
 
+/* Highlighted song and artist names in feed cards */
+.highlighted-song {
+  color: #1b262e;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: #f9dc38;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  transition: all 0.3s ease;
+}
+
+.highlighted-artist {
+  color: #1b262e;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: #f9dc38;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+  transition: all 0.3s ease;
+}
+
+.highlighted-song:hover,
+.highlighted-artist:hover {
+  text-decoration-color: #feb822;
+  text-decoration-thickness: 3px;
+}
+
 /* Profile image container styles */
 .profile-image-container {
   width: 90px;
@@ -357,6 +384,12 @@ body {
     font-size: 14px;
   }
   
+  .highlighted-song,
+  .highlighted-artist {
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 1px;
+  }
+  
   .profile-image-container {
     width: 75px;
     height: 75px;
@@ -367,6 +400,12 @@ body {
     width: 60px;
     height: 60px;
     border-radius: 10px;
+  }
+  
+  .highlighted-song,
+  .highlighted-artist {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 1px;
   }
 }
 

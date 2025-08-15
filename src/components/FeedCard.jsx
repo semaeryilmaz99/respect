@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const FeedCard = ({ type, title, profileImage, artistId, userId, songId, respectAmount, message }) => {
+const FeedCard = ({ type, title, profileImage, artistId, userId }) => {
   const navigate = useNavigate()
 
   // Profil fotoğrafına tıklama fonksiyonu
@@ -18,75 +18,133 @@ const FeedCard = ({ type, title, profileImage, artistId, userId, songId, respect
     }
   }
 
-  // Respect butonuna tıklama fonksiyonu
-  const handleRespectButtonClick = (event) => {
-    event.stopPropagation() // Card tıklamasını engelle
-    
-    if (type === 'respect_sent' && songId) {
-      navigate(`/song/${songId}`)
-    } else if (type === 'respect_sent' && artistId) {
-      navigate(`/artist/${artistId}`)
-    } else if (type === 'song_favorited' && songId) {
-      navigate(`/song/${songId}`)
-    } else if (type === 'artist_followed' && artistId) {
-      navigate(`/artist/${artistId}`)
-    }
-  }
+  // Title'ı parse ederek artist ve song isimlerini highlight et
+  const renderHighlightedTitle = (title) => {
+    if (!title) return '';
 
-  // Respect buton metni
-  const getRespectButtonText = () => {
-    if (type === 'respect_sent') {
-      return 'Respect Detayı'
-    } else if (type === 'song_favorited') {
-      return 'Şarkıyı Gör'
-    } else if (type === 'artist_followed') {
-      return 'Sanatçıyı Gör'
-    }
-    return 'Detayı Gör'
-  }
-
-  // Artist/song isimlerini vurgula
-  const highlightNames = (text) => {
-    if (!text) return text
-    
-    // Daha kapsamlı pattern'ler ile artist/song isimlerini bul
-    const patterns = [
-      // "Şarkı Adı - Sanatçı Adı" formatı
-      /([A-ZÇĞIİÖŞÜ][a-zçğıiöşü\s]+)\s*-\s*([A-ZÇĞIİÖŞÜ][a-zçğıiöşü\s]+)/g,
-      // "Sanatçı Adı" formatı (tek başına)
-      /([A-ZÇĞIİÖŞÜ][a-zçğıiöşü\s]{2,})/g
-    ]
-    
-    let result = text
-    
-    // İlk pattern: "Şarkı - Sanatçı" formatı
-    result = result.replace(patterns[0], (match, songName, artistName) => {
-      return `<highlight>${songName.trim()} - ${artistName.trim()}</highlight>`
-    })
-    
-    // İkinci pattern: Tek sanatçı isimleri (eğer zaten highlight edilmemişse)
-    result = result.replace(patterns[1], (match, artistName) => {
-      // Eğer zaten highlight edilmişse veya çok kısa ise atla
-      if (match.includes('<highlight>') || artistName.trim().length < 3) {
-        return match
+    // Respect gönderilen şarkı formatı: "Kullanıcı Song Title - Artist Name şarkısına X respect gönderdi"
+    if (title.includes(' şarkısına ') && title.includes(' respect gönderdi')) {
+      const parts = title.split(' şarkısına ');
+      if (parts.length === 2) {
+        const beforeSong = parts[0];
+        const afterSong = parts[1];
+        
+        // Song title ve artist name'i bul - daha esnek regex
+        const songArtistMatch = beforeSong.match(/(.+?)\s+(.+?)\s*-\s*(.+?)\s*$/);
+        if (songArtistMatch) {
+          const [, userName, songTitle, artistName] = songArtistMatch;
+          return (
+            <>
+              <span>{userName} </span>
+              <span className="highlighted-song">{songTitle.trim()}</span>
+              <span> - </span>
+              <span className="highlighted-artist">{artistName.trim()}</span>
+              <span> şarkısına {afterSong}</span>
+            </>
+          );
+        }
       }
-      return `<highlight>${artistName.trim()}</highlight>`
-    })
+    }
     
-    // HTML tag'lerini React elementlerine çevir
-    const parts = result.split(/(<highlight>.*?<\/highlight>)/g)
+    // Favorilere eklenen şarkı formatı: "Kullanıcı Song Title - Artist Name şarkısını favorilere ekledi"
+    if (title.includes(' şarkısını favorilere ekledi')) {
+      const parts = title.split(' şarkısını favorilere ekledi');
+      if (parts.length === 2) {
+        const beforeSong = parts[0];
+        const songArtistMatch = beforeSong.match(/(.+?)\s+(.+?)\s*-\s*(.+?)\s*$/);
+        if (songArtistMatch) {
+          const [, userName, songTitle, artistName] = songArtistMatch;
+          return (
+            <>
+              <span>{userName} </span>
+              <span className="highlighted-song">{songTitle.trim()}</span>
+              <span> - </span>
+              <span className="highlighted-artist">{artistName.trim()}</span>
+              <span> şarkısını favorilere ekledi</span>
+            </>
+          );
+        }
+      }
+    }
     
-    return parts.map((part, index) => {
-      if (part.startsWith('<highlight>') && part.endsWith('</highlight>')) {
-        const content = part.replace(/<\/?highlight>/g, '')
+    // Sanatçı takip formatı: "Kullanıcı Artist Name sanatçısını takip etmeye başladı"
+    if (title.includes(' sanatçısını takip etmeye başladı')) {
+      const parts = title.split(' sanatçısını takip etmeye başladı');
+      if (parts.length === 2) {
+        const beforeArtist = parts[0];
+        // Kullanıcı adından sonraki tüm metni sanatçı adı olarak al
+        const artistMatch = beforeArtist.match(/(.+?)\s+(.+?)\s*$/);
+        if (artistMatch) {
+          const [, userName, artistName] = artistMatch;
+          return (
+            <>
+              <span>{userName} </span>
+              <span className="highlighted-artist">{artistName.trim()}</span>
+              <span> sanatçısını takip etmeye başladı</span>
+            </>
+          );
+        }
+      }
+    }
+    
+    // Personal feed formatları için de aynı mantık
+    if (title.includes(' favori şarkınıza ') && title.includes(' respect gönderdi:')) {
+      const parts = title.split(' favori şarkınıza ');
+      if (parts.length === 2) {
+        const userName = parts[0];
+        const afterRespect = parts[1];
+        const songArtistMatch = afterRespect.match(/(\d+)\s+respect\s+gönderdi:\s+(.+?)\s*-\s*(.+?)(?:\s*:\s*"([^"]+)")?\s*$/);
+        if (songArtistMatch) {
+          const [, amount, songTitle, artistName, message] = songArtistMatch;
+          return (
+            <>
+              <span>{userName} favori şarkınıza {amount} respect gönderdi: </span>
+              <span className="highlighted-song">{songTitle.trim()}</span>
+              <span> - </span>
+              <span className="highlighted-artist">{artistName.trim()}</span>
+              {message && <span>: "{message}"</span>}
+            </>
+          );
+        }
+      }
+    }
+    
+    if (title.includes(' favori şarkınızı favorilere ekledi:')) {
+      const parts = title.split(' favori şarkınızı favorilere ekledi: ');
+      if (parts.length === 2) {
+        const userName = parts[0];
+        const songArtist = parts[1];
+        const songArtistMatch = songArtist.match(/(.+?)\s*-\s*(.+?)\s*$/);
+        if (songArtistMatch) {
+          const [, songTitle, artistName] = songArtistMatch;
+          return (
+            <>
+              <span>{userName} favori şarkınızı favorilere ekledi: </span>
+              <span className="highlighted-song">{songTitle.trim()}</span>
+              <span> - </span>
+              <span className="highlighted-artist">{artistName.trim()}</span>
+            </>
+          );
+        }
+      }
+    }
+    
+    if (title.includes(' takip ettiğiniz sanatçıyı takip etmeye başladı:')) {
+      const parts = title.split(' takip ettiğiniz sanatçıyı takip etmeye başladı: ');
+      if (parts.length === 2) {
+        const userName = parts[0];
+        const artistName = parts[1];
         return (
-          <span key={index} className="highlighted-name">
-            {content}
-          </span>
-        )
+          <>
+            <span>{userName} takip ettiğiniz sanatçıyı takip etmeye başladı: </span>
+            <span className="highlighted-artist">{artistName.trim()}</span>
+          </>
+        );
       }
-      return part
-    })
+    }
+    
+    // Eğer hiçbir pattern eşleşmezse, orijinal title'ı döndür
+    return title;
   }
 
   return (
@@ -95,21 +153,8 @@ const FeedCard = ({ type, title, profileImage, artistId, userId, songId, respect
         <div className="card-top">
           <div className="card-text">
             <h3 className="card-title">
-              {highlightNames(title)}
+              {renderHighlightedTitle(title)}
             </h3>
-            
-            {/* Respect sayısı gösterimi */}
-            {type === 'respect_sent' && respectAmount && (
-              <div className="respect-amount-display">
-                <span className="respect-icon">💰</span>
-                <span className="respect-count">+{respectAmount} Respect</span>
-                {message && (
-                  <div className="respect-message">
-                    "{message}"
-                  </div>
-                )}
-              </div>
-            )}
           </div>
           
           <div 
@@ -123,18 +168,6 @@ const FeedCard = ({ type, title, profileImage, artistId, userId, songId, respect
               className="profile-image"
             />
           </div>
-        </div>
-        
-        {/* Respect butonu */}
-        <div className="card-actions">
-          <button 
-            className="respect-navigation-button"
-            onClick={handleRespectButtonClick}
-            title={getRespectButtonText()}
-          >
-            <span className="button-icon">🎵</span>
-            <span className="button-text">{getRespectButtonText()}</span>
-          </button>
         </div>
       </div>
     </div>
