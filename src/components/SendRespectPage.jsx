@@ -244,7 +244,14 @@ const SendRespectPage = () => {
       setPopupSearchLoading(true)
       const results = await searchService.searchArtistsAndSongs(query, 10)
       console.log('✅ Search results received:', results)
+      console.log('📊 Results breakdown:', {
+        artistsCount: results.artists?.length || 0,
+        songsCount: results.songs?.length || 0,
+        artists: results.artists,
+        songs: results.songs
+      })
       setPopupSearchResults(results)
+      console.log('✅ State updated with results')
     } catch (error) {
       console.error('❌ Popup search error:', error)
       setPopupSearchResults({ artists: [], songs: [] })
@@ -808,6 +815,19 @@ const SendRespectPage = () => {
                 
                 {popupSearchResults.artists.length > 0 || popupSearchResults.songs.length > 0 ? (
                   <div className="search-results">
+                    {console.log('🎨 Rendering search results with artists:', popupSearchResults.artists.length, 'songs:', popupSearchResults.songs.length)}
+                    
+                    {/* Debug info */}
+                    <div style={{ 
+                      background: '#f0f0f0', 
+                      padding: '10px', 
+                      marginBottom: '10px', 
+                      borderRadius: '8px',
+                      fontSize: '12px'
+                    }}>
+                      Debug: {popupSearchResults.artists.length} artists, {popupSearchResults.songs.length} songs found
+                    </div>
+                    
                     {popupSearchResults.artists.map((artist) => (
                       <div 
                         key={`popup-artist-${artist.id}`} 
@@ -849,7 +869,17 @@ const SendRespectPage = () => {
                   <div className="no-results">
                     <p>Sonuç bulunamadı</p>
                   </div>
-                ) : null}
+                ) : (
+                  <div style={{ 
+                    background: '#e0e0e0', 
+                    padding: '10px', 
+                    marginTop: '10px', 
+                    borderRadius: '8px',
+                    fontSize: '12px'
+                  }}>
+                    Debug: No results to show. Query: "{popupSearchQuery}", Loading: {popupSearchLoading.toString()}
+                  </div>
+                )}
               </div>
 
               {selectedItems.length > 0 && (
