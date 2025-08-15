@@ -59,10 +59,11 @@
   
   /* Feed Card Hover Effect - Desktop */
   .feed-card {
-    transition: box-shadow 0.3s ease !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
   }
   
   .feed-card:hover {
+    transform: scale(1.02) !important;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
   }
   
@@ -589,10 +590,11 @@
   
   /* Feed Card Hover Effect - Large Desktop */
   .feed-card {
-    transition: box-shadow 0.3s ease !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
   }
   
   .feed-card:hover {
+    transform: scale(1.02) !important;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
   }
   
@@ -719,10 +721,11 @@
   
   /* Feed Card Hover Effect - Extra Large Desktop */
   .feed-card {
-    transition: box-shadow 0.3s ease !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
   }
   
   .feed-card:hover {
+    transform: scale(1.02) !important;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
   }
   
