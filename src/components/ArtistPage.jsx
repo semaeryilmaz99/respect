@@ -21,9 +21,6 @@ const ArtistPage = () => {
         <Header />
       </div>
       
-      {/* Mobile Header - Direct usage without wrapper divs */}
-      <Header />
-      
       <div className="artist-content">
         <ArtistProfile artistId={id} />
         
