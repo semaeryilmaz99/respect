@@ -46,7 +46,15 @@ const ArtistPage = () => {
           <SongsList artistId={id} />
         </div>
         
-        <RealTimeChat roomId={id} roomType="artist" />
+        {/* Fixed Chat Panel - sadece desktop'ta görünür */}
+        <div className="chat-panel">
+          <RealTimeChat roomId={id} roomType="artist" />
+        </div>
+        
+        {/* Mobile Chat Panel - sadece mobile'da görünür */}
+        <div className="mobile-chat-panel">
+          <RealTimeChat roomId={id} roomType="artist" />
+        </div>
       </div>
     </div>
   )
