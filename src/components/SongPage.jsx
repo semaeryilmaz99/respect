@@ -375,7 +375,7 @@ const SongPage = () => {
           onClose={() => setShowSuccessPopup(false)}
           title="Respect Gönderildi!"
           message={successMessage}
-          icon="🎉"
+          icon=""
           autoClose={true}
           autoCloseDelay={3000}
         />
