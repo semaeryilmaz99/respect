@@ -3512,7 +3512,7 @@ html {
 
 /* Search Section Styles */
 .search-section {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .search-container {
@@ -3824,7 +3824,7 @@ html {
 .amount-selection {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .section-title {
@@ -7589,7 +7589,7 @@ html {
 .action-buttons {
   display: flex;
   gap: 15px;
-  margin-top: 20px;
+  margin-top: 12px;
 }
 
 .send-support-button {
