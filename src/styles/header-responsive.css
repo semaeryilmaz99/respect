@@ -279,22 +279,8 @@
   }
 }
 
-/* Mobile Artist Page Header Styles */
+/* Mobile Artist Page Header Content Styles */
 @media (max-width: 767px) {
-  .artist-page .header {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 1000 !important;
-    background: white !important;
-    border-bottom: 1px solid #e0e0e0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    width: 100% !important;
-    height: auto;
-    transform: none !important;
-  }
-  
   .artist-page .header-content {
     display: flex;
     align-items: center;
@@ -402,24 +388,7 @@
   }
 }
 
-/* Mobile Artist Page Header Override - Ensure fixed positioning */
-@media (max-width: 767px) {
-  .artist-page .header {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    z-index: 1000 !important;
-    background: white !important;
-    border-bottom: 1px solid #e0e0e0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    width: 100% !important;
-    height: auto;
-    transform: none !important;
-    will-change: auto !important;
-    backface-visibility: visible !important;
-  }
-}
+/* Mobile Artist Page Header Override - Removed, using general mobile override instead */
 
 /* Mobile Feed Page Header Override - Ensure fixed positioning */
 @media (max-width: 767px) {
