@@ -26,10 +26,6 @@ const SendRespectPage = () => {
   const [isSearching, setIsSearching] = useState(false)
   const [selectedItem, setSelectedItem] = useState(null)
   
-  // Multi-selection states
-  const [selectedItems, setSelectedItems] = useState([])
-  const [isMultiSelectionMode, setIsMultiSelectionMode] = useState(false)
-  
   // Ref for search results
   const searchResultsRef = useRef(null)
 
@@ -65,24 +61,20 @@ const SendRespectPage = () => {
       
       // If we have data from navigation, set selected item
       if (state.isArtist && state.artistId) {
-        const newItem = {
+        setSelectedItem({
           id: state.artistId,
           name: state.artistName,
           avatar_url: state.songCover,
           type: 'artist'
-        }
-        setSelectedItem(newItem)
-        setSelectedItems([newItem])
+        })
       } else if (state.songId) {
-        const newItem = {
+        setSelectedItem({
           id: state.songId,
           title: state.songTitle,
           cover_url: state.songCover,
           artists: { name: state.artistName },
           type: 'song'
-        }
-        setSelectedItem(newItem)
-        setSelectedItems([newItem])
+        })
       }
     } else if (params.get('artistId') || params.get('songId')) {
       // Data from URL params
@@ -175,22 +167,7 @@ const SendRespectPage = () => {
   const handleSearchItemClick = (item, type) => {
     const newItem = { ...item, type }
     
-    if (isMultiSelectionMode) {
-      // Multi-selection mode: add to selected items
-      const isAlreadySelected = selectedItems.some(selected => 
-        selected.id === item.id && selected.type === type
-      )
-      
-      if (!isAlreadySelected) {
-        setSelectedItems(prev => [...prev, newItem])
-        setSelectedItem(newItem) // Show the latest selected item
-      }
-    } else {
-      // Single selection mode: replace current selection
-      setSelectedItem(newItem)
-      setSelectedItems([newItem])
-    }
-    
+    setSelectedItem(newItem)
     setSearchQuery(type === 'artist' ? item.name : item.title)
     setShowSearchResults(false)
     
@@ -251,72 +228,10 @@ const SendRespectPage = () => {
     }
   }
 
-  // Handle add item to multi-selection
-  const handleAddItem = () => {
-    console.log('🔘 Add button clicked!')
-    console.log('📋 selectedItem:', selectedItem)
-    console.log('📋 selectedItems:', selectedItems)
-    
-    // Basit test - her zaman çalışsın
-    if (selectedItem) {
-      const isAlreadySelected = selectedItems.some(item => 
-        item.id === selectedItem.id && item.type === selectedItem.type
-      )
-      
-      console.log('🔍 isAlreadySelected:', isAlreadySelected)
-      
-      if (!isAlreadySelected) {
-        console.log('✅ Adding item to selection')
-        setSelectedItems(prev => [...prev, selectedItem])
-        setIsMultiSelectionMode(true)
-      } else {
-        console.log('❌ Item already selected')
-        // Test için zorla ekle
-        console.log('🧪 Force adding for test')
-        setSelectedItems(prev => [...prev, selectedItem])
-        setIsMultiSelectionMode(true)
-      }
-    } else {
-      console.log('❌ No selectedItem')
-      // Test için dummy item ekle
-      console.log('🧪 Adding dummy item for test')
-      const dummyItem = {
-        id: 'test-' + Date.now(),
-        name: 'Test Item',
-        type: 'artist',
-        avatar_url: '/assets/artist/Image.png'
-      }
-      setSelectedItems(prev => [...prev, dummyItem])
-      setIsMultiSelectionMode(true)
-    }
-  }
-
-  // Handle remove item from multi-selection
-  const handleRemoveItem = (itemToRemove) => {
-    setSelectedItems(prev => prev.filter(item => 
-      !(item.id === itemToRemove.id && item.type === itemToRemove.type)
-    ))
-    
-    // If removing the currently displayed item, show the first remaining item
-    if (selectedItem && selectedItem.id === itemToRemove.id && selectedItem.type === itemToRemove.type) {
-      const remainingItems = selectedItems.filter(item => 
-        !(item.id === itemToRemove.id && item.type === itemToRemove.type)
-      )
-      if (remainingItems.length > 0) {
-        setSelectedItem(remainingItems[0])
-      } else {
-        setSelectedItem(null)
-        setIsMultiSelectionMode(false)
-      }
-    }
-  }
-
-  // Handle clear all selections
-  const handleClearAll = () => {
+  // Handle clear selection
+  const handleClearSelection = () => {
     setSelectedItem(null)
-    setSelectedItems([])
     setSearchQuery('')
-    setIsMultiSelectionMode(false)
     setRespectData({
       songId: null,
       songTitle: '',
@@ -339,9 +254,9 @@ const SendRespectPage = () => {
   }
 
   const handleSendRespect = async () => {
-    // Check if items are selected
-    if (selectedItems.length === 0) {
-      setError('Lütfen en az bir sanatçı veya şarkı seçin')
+    // Check if an item is selected
+    if (!selectedItem) {
+      setError('Lütfen bir sanatçı veya şarkı seçin')
       return
     }
 
@@ -351,12 +266,9 @@ const SendRespectPage = () => {
       return
     }
 
-    // Calculate total amount needed
-    const totalAmount = amount * selectedItems.length
-
     // Balance kontrolü
-    if (totalAmount > userBalance) {
-      setError(`Yetersiz balance. ${selectedItems.length} öğeye ${amount} respect göndermek için ${totalAmount} respect gerekiyor.`)
+    if (amount > userBalance) {
+      setError('Yetersiz balance. Lütfen önce respect satın alın.')
       return
     }
 
@@ -364,42 +276,31 @@ const SendRespectPage = () => {
       setLoading(true)
       setError('')
       
-      // Send respect to all selected items
-      for (const item of selectedItems) {
-        if (item.type === 'artist') {
-          await respectService.sendRespectToArtist(item.id, amount)
-          console.log(`${item.name} sanatçısına ${amount} respect başarıyla gönderildi`)
-        } else {
-          await respectService.sendRespectToSong(item.id, amount)
-          console.log(`${item.title} şarkısına ${amount} respect başarıyla gönderildi`)
-        }
+      // Send respect to selected item
+      if (selectedItem.type === 'artist') {
+        await respectService.sendRespectToArtist(selectedItem.id, amount)
+        console.log(`${selectedItem.name} sanatçısına ${amount} respect başarıyla gönderildi`)
+      } else {
+        await respectService.sendRespectToSong(selectedItem.id, amount)
+        console.log(`${selectedItem.title} şarkısına ${amount} respect başarıyla gönderildi`)
       }
       
       // Balance'ı güncelle
-      setUserBalance(prev => prev - totalAmount)
+      setUserBalance(prev => prev - amount)
       
       // Başarı popup'ını göster
-      const itemCount = selectedItems.length
-      const recipientText = itemCount === 1 
-        ? (selectedItems[0].type === 'artist' ? selectedItems[0].name : selectedItems[0].title)
-        : `${itemCount} öğeye`
-      
-      setSuccessMessage(`${amount} Respect başarıyla ${recipientText}${itemCount === 1 ? (selectedItems[0].type === 'artist' ? ' sanatçısına' : ' şarkısına') : ''} gönderildi!`)
+      const recipientName = selectedItem.type === 'artist' ? selectedItem.name : selectedItem.title
+      setSuccessMessage(`${amount} Respect başarıyla ${recipientName}${selectedItem.type === 'artist' ? ' sanatçısına' : ' şarkısına'} gönderildi!`)
       setShowSuccessPopup(true)
       
       // 3 saniye sonra yönlendir
       setTimeout(() => {
         setShowSuccessPopup(false)
         // Navigate back to the appropriate page
-        if (selectedItems.length === 1) {
-          const item = selectedItems[0]
-          if (item.type === 'artist') {
-            navigate(`/artist/${item.id}`)
-          } else {
-            navigate(`/song/${item.id}`)
-          }
+        if (selectedItem.type === 'artist') {
+          navigate(`/artist/${selectedItem.id}`)
         } else {
-          navigate('/feed')
+          navigate(`/song/${selectedItem.id}`)
         }
       }, 3000)
     } catch (err) {
@@ -552,61 +453,7 @@ const SendRespectPage = () => {
             </div>
           )}
 
-          {/* Selected Items Display */}
-          {selectedItems.length > 0 && (
-            <div className="selected-items-section">
-              <div className="selected-items-header">
-                <h3 className="section-title">
-                  Seçilen Öğeler ({selectedItems.length})
-                </h3>
-                <div className="selected-items-actions">
-                  <button 
-                    className="add-item-btn"
-                    onClick={handleAddItem}
-                    disabled={false}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    Ekle
-                  </button>
-                  <button 
-                    className="change-selection-btn"
-                    onClick={handleClearAll}
-                  >
-                    Temizle
-                  </button>
-                </div>
-              </div>
-              
-                             <div className="selected-items-list">
-                 {selectedItems.map((item) => (
-                   <div key={`${item.type}-${item.id}`} className="selected-item-info">
-                    <div className="selected-item-avatar">
-                      <img 
-                        src={item.type === 'artist' ? item.avatar_url : item.cover_url} 
-                        alt={item.type === 'artist' ? item.name : item.title} 
-                      />
-                    </div>
-                    <div className="selected-item-details">
-                      <h4 className="selected-item-title">
-                        {item.type === 'artist' ? item.name : item.title}
-                      </h4>
-                      <p className="selected-item-subtitle">
-                        {item.type === 'artist' ? 'Sanatçı' : `${item.artists?.name || 'Bilinmeyen Sanatçı'} • Şarkı`}
-                      </p>
-                    </div>
-                    <button 
-                      className="remove-item-btn"
-                      onClick={() => handleRemoveItem(item)}
-                    >
-                      Kaldır
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Current Selected Item Display */}
+          {/* Selected Item Display */}
           {selectedItem && (
             <div className="selected-item-section">
               <div className="selected-item-info">
@@ -624,22 +471,12 @@ const SendRespectPage = () => {
                     {selectedItem.type === 'artist' ? 'Sanatçı' : `${selectedItem.artists?.name || 'Bilinmeyen Sanatçı'} • Şarkı`}
                   </p>
                 </div>
-                <div className="selected-item-actions">
-                  <button 
-                    className="add-item-btn"
-                    onClick={handleAddItem}
-                    disabled={false}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    Ekle
-                  </button>
-                  <button 
-                    className="change-selection-btn"
-                    onClick={handleClearAll}
-                  >
-                    Değiştir
-                  </button>
-                </div>
+                <button 
+                  className="change-selection-btn"
+                  onClick={handleClearSelection}
+                >
+                  Değiştir
+                </button>
               </div>
             </div>
           )}
@@ -692,9 +529,9 @@ const SendRespectPage = () => {
             <button 
               className="send-support-button"
               onClick={handleSendRespect}
-              disabled={selectedItems.length === 0 || (!selectedAmount && !customAmount) || loading || (selectedAmount && selectedAmount * selectedItems.length > userBalance) || (customAmount && parseInt(customAmount) * selectedItems.length > userBalance)}
+              disabled={!selectedItem || (!selectedAmount && !customAmount) || loading || (selectedAmount && selectedAmount > userBalance) || (customAmount && parseInt(customAmount) > userBalance)}
             >
-              {loading ? 'Gönderiliyor...' : `Gönder ve Destekle${selectedItems.length > 1 ? ` (${selectedItems.length} öğe)` : ''}`}
+              {loading ? 'Gönderiliyor...' : 'Gönder ve Destekle'}
             </button>
             
             <button 
