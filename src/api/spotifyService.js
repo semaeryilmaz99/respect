@@ -245,10 +245,88 @@ class SpotifyService {
         isArtist,
         userId: userProfile.body.id,
         displayName: userProfile.body.display_name,
-        tracksFound: searchResults.body.tracks.total
+        tracksFound: searchResults.body.tracks.total,
+        spotifyUserId: userProfile.body.id
       };
     } catch (error) {
       console.error('Spotify user artist status check error:', error);
+      throw error;
+    }
+  },
+
+  // Kullanıcı giriş yaptığında otomatik sanatçı tespiti ve veri çekme
+  async autoDetectAndSyncArtistData(accessToken, supabaseUserId) {
+    try {
+      console.log('🎭 Otomatik sanatçı tespiti başlıyor...');
+      
+      // 1. Kullanıcının sanatçı olup olmadığını kontrol et
+      const artistStatus = await this.checkUserArtistStatus(accessToken);
+      console.log('✅ Sanatçı durumu:', artistStatus);
+      
+      if (artistStatus.isArtist) {
+        console.log('🎵 Sanatçı tespit edildi, veri senkronizasyonu başlıyor...');
+        
+        // 2. Artists tablosuna kayıt ekle/güncelle
+        const { data: artistData, error: artistError } = await supabase
+          .from('artists')
+          .upsert({
+            name: artistStatus.displayName,
+            spotify_id: artistStatus.spotifyUserId,
+            user_id: supabaseUserId
+          }, {
+            onConflict: 'spotify_id',
+            ignoreDuplicates: false
+          })
+          .select()
+          .single();
+        
+        if (artistError) {
+          console.error('❌ Artist kayıt hatası:', artistError);
+          throw artistError;
+        }
+        
+        console.log('✅ Artist kaydı başarılı:', artistData);
+        
+        // 3. Sanatçının şarkılarını çek ve songs tablosuna ekle
+        const ownSongs = await this.getUserOwnArtistSongs(accessToken, 50);
+        console.log('✅ Spotify\'dan şarkılar çekildi:', ownSongs.length);
+        
+        // 4. Her şarkıyı songs tablosuna ekle
+        for (const song of ownSongs) {
+          const { error: songError } = await supabase
+            .from('songs')
+            .upsert({
+              title: song.name,
+              artist_id: artistData.id,
+              spotify_id: song.id,
+              cover_url: song.album?.images?.[0]?.url || null,
+              duration: song.duration_ms,
+              release_date: song.album?.release_date || new Date().toISOString().split('T')[0]
+            }, {
+              onConflict: 'spotify_id',
+              ignoreDuplicates: false
+            });
+          
+          if (songError) {
+            console.error('❌ Şarkı ekleme hatası:', songError);
+          }
+        }
+        
+        console.log('🎉 Otomatik sanatçı veri senkronizasyonu tamamlandı!');
+        return {
+          success: true,
+          artistData,
+          songsCount: ownSongs.length
+        };
+      } else {
+        console.log('👤 Kullanıcı sanatçı değil, veri senkronizasyonu atlanıyor');
+        return {
+          success: true,
+          isArtist: false
+        };
+      }
+    } catch (error) {
+      console.error('❌ Otomatik sanatçı tespiti hatası:', error);
       throw error;
     }
   }

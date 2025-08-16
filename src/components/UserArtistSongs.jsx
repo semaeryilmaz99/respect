@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useAppContext } from '../context/AppContext'
 import userService from '../api/userService'
+import spotifyService from '../api/spotifyService'
+import { supabase } from '../config/supabase'
 import LoadingSpinner from './LoadingSpinner'
 
 const UserArtistSongs = ({ userId }) => {
@@ -42,6 +44,42 @@ const UserArtistSongs = ({ userId }) => {
           console.log('✅ Sanatçı şarkıları:', songs)
           setArtistSongs(songs)
         } else {
+          // Sanatçı değilse, Spotify'dan otomatik tespit yap
+          console.log('🎵 Spotify\'dan otomatik sanatçı tespiti yapılıyor...')
+          try {
+            // Spotify bağlantısı var mı kontrol et
+            const { data: spotifyConnection } = await supabase
+              .from('spotify_connections')
+              .select('access_token')
+              .eq('user_id', targetUserId)
+              .single();
+            
+            if (spotifyConnection?.access_token) {
+              console.log('🎵 Spotify token bulundu, otomatik tespit yapılıyor...')
+              
+              // Otomatik sanatçı tespiti ve veri senkronizasyonu
+              const syncResult = await spotifyService.autoDetectAndSyncArtistData(
+                spotifyConnection.access_token,
+                targetUserId
+              );
+              
+              console.log('🎉 Otomatik tespit sonucu:', syncResult)
+              
+              if (syncResult.isArtist) {
+                console.log('🎵 Sanatçı tespit edildi, şarkılar getiriliyor...')
+                setIsArtist(true)
+                
+                // Güncellenmiş şarkıları getir
+                const updatedSongs = await userService.getUserArtistSongs(targetUserId, 10)
+                console.log('✅ Güncellenmiş sanatçı şarkıları:', updatedSongs)
+                setArtistSongs(updatedSongs)
+                return
+              }
+            }
+          } catch (syncError) {
+            console.error('❌ Otomatik tespit hatası:', syncError)
+          }
+          
           // Sanatçı değilse playlist şarkılarını getir
           console.log('🎵 Playlist şarkıları getiriliyor...')
           const songs = await userService.getUserPlaylistSongs(targetUserId, 10)
