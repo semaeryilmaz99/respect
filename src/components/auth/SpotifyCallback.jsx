@@ -1,108 +1,75 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { spotifyAuthService } from '../../api/spotifyAuthService';
+import React, { useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 
 const SpotifyCallback = () => {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams()
 
   useEffect(() => {
-    const handleCallback = async () => {
+    const handleCallback = () => {
       try {
-        console.log('🔄 Handling Spotify callback...');
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        const error = urlParams.get('error');
+        // URL'den authorization code'u al
+        const code = searchParams.get('code')
+        const error = searchParams.get('error')
         
         if (error) {
-          throw new Error(`Spotify authorization error: ${error}`);
+          console.error('❌ Spotify auth hatası:', error)
+          // Parent window'a hata mesajı gönder
+          if (window.opener) {
+            window.opener.postMessage({
+              type: 'SPOTIFY_AUTH_ERROR',
+              error: error
+            }, window.location.origin)
+          }
+          window.close()
+          return
         }
         
-        if (!code) {
-          throw new Error('Authorization code not found');
+        if (code) {
+          console.log('✅ Spotify auth code alındı:', code)
+          // Parent window'a başarı mesajı gönder
+          if (window.opener) {
+            window.opener.postMessage({
+              type: 'SPOTIFY_AUTH_SUCCESS',
+              code: code
+            }, window.location.origin)
+          }
+          window.close()
+        } else {
+          console.error('❌ Authorization code bulunamadı')
+          if (window.opener) {
+            window.opener.postMessage({
+              type: 'SPOTIFY_AUTH_ERROR',
+              error: 'Authorization code bulunamadı'
+            }, window.location.origin)
+          }
+          window.close()
         }
-
-        console.log('✅ Authorization code received');
-        
-        const result = await spotifyAuthService.handleSpotifyCallback(code);
-        
-        if (result.error) {
-          throw new Error(result.error);
+      } catch (error) {
+        console.error('❌ Callback işleme hatası:', error)
+        if (window.opener) {
+          window.opener.postMessage({
+            type: 'SPOTIFY_AUTH_ERROR',
+            error: error.message
+          }, window.location.origin)
         }
-
-        console.log('✅ Spotify authentication successful');
-        setSuccess(true);
-        
-        // 3 saniye sonra feed sayfasına yönlendir
-        setTimeout(() => {
-          navigate('/feed');
-        }, 3000);
-        
-      } catch (err) {
-        console.error('❌ Spotify callback error:', err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        window.close()
       }
-    };
+    }
 
-    handleCallback();
-  }, [navigate]);
+    handleCallback()
+  }, [searchParams])
 
-  if (loading) {
-    return (
-      <div className="spotify-callback-loading">
+  return (
+    <div className="spotify-callback">
+      <div className="callback-content">
+        <h2>Spotify Bağlantısı Kuruluyor...</h2>
+        <p>Lütfen bekleyin, otomatik olarak kapatılacak.</p>
         <div className="loading-spinner">
           <div className="spinner"></div>
         </div>
-        <h2>Spotify Hesabınız Bağlanıyor...</h2>
-        <p>Lütfen bekleyin, bu işlem birkaç saniye sürebilir.</p>
       </div>
-    );
-  }
+    </div>
+  )
+}
 
-  if (error) {
-    return (
-      <div className="spotify-callback-error">
-        <div className="error-icon">❌</div>
-        <h2>Bağlantı Hatası</h2>
-        <p className="error-message">{error}</p>
-        <div className="error-actions">
-          <button 
-            onClick={() => navigate('/login')}
-            className="btn-primary"
-          >
-            Giriş Sayfasına Dön
-          </button>
-          <button 
-            onClick={() => window.location.reload()}
-            className="btn-secondary"
-          >
-            Tekrar Dene
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (success) {
-    return (
-      <div className="spotify-callback-success">
-        <div className="success-icon">✅</div>
-        <h2>Bağlantı Başarılı!</h2>
-        <p>Spotify hesabınız başarıyla bağlandı.</p>
-        <p>Sanatçı paneline yönlendiriliyorsunuz...</p>
-        <div className="redirect-spinner">
-          <div className="spinner"></div>
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-};
-
-export default SpotifyCallback; 
+export default SpotifyCallback 
