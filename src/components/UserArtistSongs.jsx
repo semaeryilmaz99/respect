@@ -17,7 +17,11 @@ const UserArtistSongs = ({ userId }) => {
 
   useEffect(() => {
     const fetchArtistData = async () => {
+      console.log('🔍 UserArtistSongs: fetchArtistData başladı')
+      console.log('🎯 targetUserId:', targetUserId)
+      
       if (!targetUserId) {
+        console.log('❌ targetUserId yok, çıkılıyor')
         setLoading(false)
         return
       }
@@ -26,20 +30,26 @@ const UserArtistSongs = ({ userId }) => {
         setLoading(true)
         
         // Önce kullanıcının sanatçı olup olmadığını kontrol et
+        console.log('🎭 Sanatçı kontrolü başlıyor...')
         const artistStatus = await userService.isUserArtist(targetUserId)
+        console.log('✅ Sanatçı durumu:', artistStatus)
         setIsArtist(artistStatus)
         
         if (artistStatus) {
           // Sanatçı ise kendi şarkılarını getir
+          console.log('🎵 Sanatçı şarkıları getiriliyor...')
           const songs = await userService.getUserArtistSongs(targetUserId, 10)
+          console.log('✅ Sanatçı şarkıları:', songs)
           setArtistSongs(songs)
         } else {
           // Sanatçı değilse playlist şarkılarını getir
+          console.log('🎵 Playlist şarkıları getiriliyor...')
           const songs = await userService.getUserPlaylistSongs(targetUserId, 10)
+          console.log('✅ Playlist şarkıları:', songs)
           setArtistSongs(songs)
         }
       } catch (error) {
-        console.error('Error fetching artist songs:', error)
+        console.error('❌ Error fetching artist songs:', error)
         setError('Şarkı bilgileri yüklenirken hata oluştu')
         setArtistSongs([])
       } finally {

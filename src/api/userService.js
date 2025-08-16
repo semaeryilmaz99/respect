@@ -376,10 +376,13 @@ const userService = {
         .rpc('is_user_artist', { user_uuid: userId })
       
       if (error) {
+        console.error('❌ RPC error:', error)
         throw error
       }
       
-      console.log('✅ User artist status:', data)
+      console.log('✅ User artist status RPC result:', data)
+      console.log('✅ User artist status type:', typeof data)
+      console.log('✅ User artist status boolean:', Boolean(data))
       return data
     } catch (error) {
       console.error('❌ Check user artist status error:', error)
