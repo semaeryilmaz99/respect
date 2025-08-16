@@ -1,155 +1,181 @@
-import React, { useState } from 'react'
-import { testSupabaseConnection, testRespectTransaction, checkTableStructure, debugRespectTransaction } from '../utils/supabaseTest'
-import { useAppContext } from '../context/AppContext'
+import React, { useState, useEffect } from 'react'
+import { supabase } from '../config/supabase'
+import userService from '../api/userService'
 
 const SupabaseTest = () => {
-  const { state } = useAppContext()
-  const { user } = state
-  const [results, setResults] = useState(null)
+  const [testResults, setTestResults] = useState({})
   const [loading, setLoading] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
 
-  const runConnectionTest = async () => {
+  useEffect(() => {
+    // Mevcut kullanıcıyı al
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setCurrentUser(user)
+    }
+    getCurrentUser()
+  }, [])
+
+  const runTests = async () => {
     setLoading(true)
+    const results = {}
+
     try {
-      const result = await testSupabaseConnection()
-      setResults({ type: 'connection', ...result })
+      // Test 1: Supabase bağlantısı
+      console.log('🧪 Test 1: Supabase bağlantısı')
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, email')
+        .limit(1)
+      
+      if (error) {
+        results.connection = `❌ Hata: ${error.message}`
+        console.error('❌ Supabase bağlantı hatası:', error)
+      } else {
+        results.connection = `✅ Başarılı - ${data?.length || 0} kayıt`
+        console.log('✅ Supabase bağlantısı başarılı:', data)
+      }
+
+      // Test 2: Artists tablosu
+      console.log('🧪 Test 2: Artists tablosu')
+      const { data: artists, error: artistsError } = await supabase
+        .from('artists')
+        .select('*')
+        .limit(5)
+      
+      if (artistsError) {
+        results.artists = `❌ Hata: ${artistsError.message}`
+        console.error('❌ Artists tablosu hatası:', artistsError)
+      } else {
+        results.artists = `✅ Başarılı - ${artists?.length || 0} sanatçı`
+        console.log('✅ Artists verisi:', artists)
+      }
+
+      // Test 3: Songs tablosu
+      console.log('🧪 Test 3: Songs tablosu')
+      const { data: songs, error: songsError } = await supabase
+        .from('songs')
+        .select('*')
+        .limit(5)
+      
+      if (songsError) {
+        results.songs = `❌ Hata: ${songsError.message}`
+        console.error('❌ Songs tablosu hatası:', songsError)
+      } else {
+        results.songs = `✅ Başarılı - ${songs?.length || 0} şarkı`
+        console.log('✅ Songs verisi:', songs)
+      }
+
+      // Test 4: Spotify connections
+      console.log('🧪 Test 4: Spotify connections')
+      const { data: connections, error: connectionsError } = await supabase
+        .from('spotify_connections')
+        .select('*')
+        .limit(5)
+      
+      if (connectionsError) {
+        results.connections = `❌ Hata: ${connectionsError.message}`
+        console.error('❌ Spotify connections hatası:', connectionsError)
+      } else {
+        results.connections = `✅ Başarılı - ${connections?.length || 0} bağlantı`
+        console.log('✅ Spotify connections:', connections)
+      }
+
+      // Test 5: RPC fonksiyonları (eğer currentUser varsa)
+      if (currentUser) {
+        console.log('🧪 Test 5: RPC fonksiyonları')
+        
+        try {
+          const isArtist = await userService.isUserArtist(currentUser.id)
+          results.rpc_isArtist = `✅ Başarılı - ${isArtist}`
+          console.log('✅ is_user_artist RPC:', isArtist)
+        } catch (rpcError) {
+          results.rpc_isArtist = `❌ Hata: ${rpcError.message}`
+          console.error('❌ is_user_artist RPC hatası:', rpcError)
+        }
+
+        try {
+          const artistSongs = await userService.getUserArtistSongs(currentUser.id, 5)
+          results.rpc_artistSongs = `✅ Başarılı - ${artistSongs?.length || 0} şarkı`
+          console.log('✅ get_user_artist_songs RPC:', artistSongs)
+        } catch (rpcError) {
+          results.rpc_artistSongs = `❌ Hata: ${rpcError.message}`
+          console.error('❌ get_user_artist_songs RPC hatası:', rpcError)
+        }
+      } else {
+        results.rpc = '⚠️ Kullanıcı giriş yapmamış'
+      }
+
     } catch (error) {
-      setResults({ type: 'connection', success: false, error: error.message })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const runTableStructureTest = async () => {
-    setLoading(true)
-    try {
-      const result = await checkTableStructure()
-      setResults({ type: 'structure', success: true, data: result })
-    } catch (error) {
-      setResults({ type: 'structure', success: false, error: error.message })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const runRespectTransactionTest = async () => {
-    if (!user?.id) {
-      alert('Lütfen önce giriş yapın')
-      return
+      console.error('❌ Genel test hatası:', error)
+      results.general = `❌ Genel hata: ${error.message}`
     }
 
-    setLoading(true)
-    try {
-      // Test için bir artist ID kullanın (gerçek bir artist ID ile değiştirin)
-      const result = await testRespectTransaction(user.id, '550e8400-e29b-41d4-a716-446655440001', 10)
-      setResults({ type: 'transaction', ...result })
-    } catch (error) {
-      setResults({ type: 'transaction', success: false, error: error.message })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const runDebugRespectTransaction = async () => {
-    if (!user?.id) {
-      alert('Lütfen önce giriş yapın')
-      return
-    }
-
-    setLoading(true)
-    try {
-      // Test için bir artist ID kullanın (gerçek bir artist ID ile değiştirin)
-      const result = await debugRespectTransaction(user.id, '550e8400-e29b-41d4-a716-446655440001', 10)
-      setResults({ type: 'debug', ...result })
-    } catch (error) {
-      setResults({ type: 'debug', success: false, error: error.message })
-    } finally {
-      setLoading(false)
-    }
+    setTestResults(results)
+    setLoading(false)
   }
 
   return (
-    <div className="supabase-test" style={{ padding: '20px', background: '#f5f5f5', margin: '20px', borderRadius: '8px' }}>
-      <h3>🔍 Supabase Bağlantı Testi</h3>
+    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+      <h2>🧪 Supabase Bağlantı Testi</h2>
       
       <div style={{ marginBottom: '20px' }}>
-        <p><strong>Kullanıcı Durumu:</strong> {user ? `Giriş yapılmış (${user.id})` : 'Giriş yapılmamış'}</p>
-      </div>
-
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+        <p><strong>Mevcut Kullanıcı:</strong> {currentUser ? currentUser.email : 'Giriş yapılmamış'}</p>
         <button 
-          onClick={runConnectionTest}
+          onClick={runTests} 
           disabled={loading}
-          style={{ padding: '10px 15px', background: '#007bff', color: 'white', border: 'none', borderRadius: '4px' }}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: loading ? 'not-allowed' : 'pointer'
+          }}
         >
-          {loading ? 'Test Ediliyor...' : 'Bağlantı Testi'}
-        </button>
-
-        <button 
-          onClick={runTableStructureTest}
-          disabled={loading}
-          style={{ padding: '10px 15px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px' }}
-        >
-          {loading ? 'Test Ediliyor...' : 'Tablo Yapısı Testi'}
-        </button>
-
-        <button 
-          onClick={runRespectTransactionTest}
-          disabled={loading || !user}
-          style={{ padding: '10px 15px', background: '#ffc107', color: 'black', border: 'none', borderRadius: '4px' }}
-        >
-          {loading ? 'Test Ediliyor...' : 'Respect Transaction Testi'}
-        </button>
-
-        <button 
-          onClick={runDebugRespectTransaction}
-          disabled={loading || !user}
-          style={{ padding: '10px 15px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}
-        >
-          {loading ? 'Debug Ediliyor...' : 'Debug Respect Transaction'}
+          {loading ? 'Test ediliyor...' : 'Testleri Çalıştır'}
         </button>
       </div>
 
-      {results && (
+      {Object.keys(testResults).length > 0 && (
         <div style={{ 
+          backgroundColor: '#f8f9fa', 
           padding: '15px', 
-          background: results.success ? '#d4edda' : '#f8d7da', 
-          border: `1px solid ${results.success ? '#c3e6cb' : '#f5c6cb'}`, 
-          borderRadius: '4px',
-          color: results.success ? '#155724' : '#721c24'
+          borderRadius: '5px',
+          border: '1px solid #dee2e6'
         }}>
-          <h4>{results.type === 'connection' ? 'Bağlantı Testi' : 
-               results.type === 'structure' ? 'Tablo Yapısı Testi' : 
-               results.type === 'debug' ? 'Debug Respect Transaction' :
-               'Respect Transaction Testi'}</h4>
-          
-          <p><strong>Durum:</strong> {results.success ? '✅ Başarılı' : '❌ Başarısız'}</p>
-          
-          {results.error && (
-            <div>
-              <p><strong>Hata:</strong> {results.error}</p>
-              {results.details && (
-                <pre style={{ background: '#f8f9fa', padding: '10px', borderRadius: '4px', fontSize: '12px' }}>
-                  {JSON.stringify(results.details, null, 2)}
-                </pre>
-              )}
+          <h3>Test Sonuçları:</h3>
+          {Object.entries(testResults).map(([test, result]) => (
+            <div key={test} style={{ marginBottom: '10px' }}>
+              <strong>{test}:</strong> {result}
             </div>
-          )}
-          
-          {results.data && (
-            <div>
-              <p><strong>Veri:</strong></p>
-              <pre style={{ background: '#f8f9fa', padding: '10px', borderRadius: '4px', fontSize: '12px' }}>
-                {JSON.stringify(results.data, null, 2)}
-              </pre>
-            </div>
-          )}
-          
-          {results.message && (
-            <p><strong>Mesaj:</strong> {results.message}</p>
-          )}
+          ))}
         </div>
       )}
+
+      <div style={{ marginTop: '20px' }}>
+        <h3>🔍 Manuel Test Komutları</h3>
+        <p>Console'da bu komutları çalıştırabilirsiniz:</p>
+        <pre style={{ 
+          backgroundColor: '#f1f3f4', 
+          padding: '10px', 
+          borderRadius: '5px',
+          overflow: 'auto'
+        }}>
+{`// Supabase bağlantısını test et
+supabase.from('profiles').select('*').limit(1)
+
+// Artists tablosunu test et
+supabase.from('artists').select('*').limit(5)
+
+// Songs tablosunu test et
+supabase.from('songs').select('*').limit(5)
+
+// RPC fonksiyonlarını test et (eğer giriş yapmışsanız)
+supabase.rpc('is_user_artist', { user_uuid: 'YOUR_USER_ID' })
+supabase.rpc('get_user_artist_songs', { user_uuid: 'YOUR_USER_ID' })`}
+        </pre>
+      </div>
     </div>
   )
 }

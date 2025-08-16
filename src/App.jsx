@@ -24,6 +24,7 @@ import UserPage from './components/UserPage'
 import ProfileSettingsPage from './components/ProfileSettingsPage'
 import ArtistsPage from './components/ArtistsPage'
 import SongsPage from './components/SongsPage'
+import SupabaseTest from './components/SupabaseTest'
 
 import Sidebar from './components/Sidebar'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -128,6 +129,13 @@ function App() {
                   <Route path="/songs" element={
                     <ProtectedRoute>
                       <SongsPage />
+                    </ProtectedRoute>
+                  } />
+                  
+                  {/* Test route */}
+                  <Route path="/test" element={
+                    <ProtectedRoute>
+                      <SupabaseTest />
                     </ProtectedRoute>
                   } />
 
