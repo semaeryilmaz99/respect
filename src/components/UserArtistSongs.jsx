@@ -3,6 +3,7 @@ import { useAppContext } from '../context/AppContext'
 import userService from '../api/userService'
 import spotifyService from '../api/spotifyService'
 import { supabase } from '../config/supabase'
+import { authHelper } from '../utils/authHelper'
 import LoadingSpinner from './LoadingSpinner'
 
 const UserArtistSongs = ({ userId }) => {
@@ -21,6 +22,15 @@ const UserArtistSongs = ({ userId }) => {
     const fetchArtistData = async () => {
       console.log('🔍 UserArtistSongs: fetchArtistData başladı')
       console.log('🎯 targetUserId:', targetUserId)
+      
+      // Auth durumunu kontrol et
+      const isAuthValid = await authHelper.checkTokenValidity()
+      if (!isAuthValid) {
+        console.log('❌ Auth token geçersiz, çıkılıyor')
+        setError('Oturum süresi dolmuş, lütfen tekrar giriş yapın')
+        setLoading(false)
+        return
+      }
       
       if (!targetUserId) {
         console.log('❌ targetUserId yok, çıkılıyor')
