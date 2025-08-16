@@ -13,6 +13,7 @@ import UserTopSongs from './UserTopSongs'
 import UserFollowedArtists from './UserFollowedArtists'
 import UserFavoritedSongs from './UserFavoritedSongs'
 import UserRecentRespects from './UserRecentRespects'
+import UserArtistSongs from './UserArtistSongs'
 
 import LoadingSpinner from './LoadingSpinner'
 
@@ -498,6 +499,7 @@ const UserPage = () => {
         <UserStats userData={displayUserData} userId={displayUserId} />
         
         <UserRecentRespects showCurrentUserOnly={isOwnProfile} />
+        <UserArtistSongs userId={displayUserId} />
         <UserFollowedArtists userId={displayUserId} />
         <UserFavoritedSongs userId={displayUserId} />
         <UserTopArtists userId={displayUserId} />
@@ -543,6 +545,9 @@ const UserPage = () => {
           <div className="unified-sections-container">
             <div className="unified-section">
               <UserRecentRespects showCurrentUserOnly={isOwnProfile} />
+            </div>
+            <div className="unified-section">
+              <UserArtistSongs userId={displayUserId} />
             </div>
             <div className="unified-section">
               <UserFollowedArtists userId={displayUserId} />

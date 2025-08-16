@@ -2034,6 +2034,148 @@ html {
     height: 80px !important;
   }
 
+  /* User Artist Songs Component Styles */
+  .user-artist-songs {
+    margin-bottom: 32px;
+  }
+
+  .user-artist-songs .section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1b262e;
+    margin-bottom: 20px;
+    padding: 0 16px;
+  }
+
+  .artist-songs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  .artist-song-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+  }
+
+  .artist-song-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .artist-song-cover {
+    position: relative;
+    margin-bottom: 12px;
+  }
+
+  .artist-song-cover img {
+    width: 100%;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
+  .artist-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .artist-song-info {
+    text-align: center;
+  }
+
+  .artist-song-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1b262e;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .artist-song-artist {
+    font-size: 12px;
+    color: #666;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+  }
+
+  .artist-song-respect {
+    font-size: 12px;
+    color: #667eea;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+  }
+
+  .artist-song-release {
+    font-size: 11px;
+    color: #999;
+    margin: 0;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 16px;
+    color: #666;
+  }
+
+  .empty-state p {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  /* Desktop Artist Songs Styles */
+  @media (min-width: 768px) {
+    .artist-songs-grid {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 24px;
+      padding: 0;
+    }
+
+    .artist-song-card {
+      padding: 20px;
+    }
+
+    .artist-song-cover img {
+      height: 160px;
+    }
+
+    .artist-song-title {
+      font-size: 16px;
+    }
+
+    .artist-song-artist {
+      font-size: 14px;
+    }
+
+    .artist-song-respect {
+      font-size: 14px;
+    }
+
+    .artist-song-release {
+      font-size: 12px;
+    }
+  }
+
   /* Respect Modal Styles */
   .respect-modal-overlay {
     position: fixed;

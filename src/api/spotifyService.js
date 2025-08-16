@@ -175,6 +175,83 @@ class SpotifyService {
       throw error;
     }
   }
+
+  // Kullanıcının kendi sanatçı şarkılarını getir (eğer sanatçı ise)
+  async getUserOwnArtistSongs(accessToken, limit = 50) {
+    try {
+      this.spotifyApi.setAccessToken(accessToken);
+      
+      // Önce kullanıcının kendi sanatçı profilini al
+      const userProfile = await this.spotifyApi.getMe();
+      const userId = userProfile.body.id;
+      
+      // Kullanıcının kendi sanatçı şarkılarını ara
+      const searchQuery = `artist:${userProfile.body.display_name}`;
+      const searchResults = await this.spotifyApi.searchTracks(searchQuery, { 
+        limit,
+        type: 'track'
+      });
+      
+      return searchResults.body.tracks.items;
+    } catch (error) {
+      console.error('Spotify user own artist songs error:', error);
+      throw error;
+    }
+  }
+
+  // Kullanıcının playlist şarkılarını getir (eğer sanatçı değilse)
+  async getUserPlaylistSongs(accessToken, limit = 50) {
+    try {
+      this.spotifyApi.setAccessToken(accessToken);
+      
+      // Kullanıcının playlist'lerini al
+      const playlists = await this.spotifyApi.getUserPlaylists({ limit: 20 });
+      const allTracks = [];
+      
+      // Her playlist'ten şarkıları topla
+      for (const playlist of playlists.body.items.slice(0, 5)) { // İlk 5 playlist
+        const tracks = await this.spotifyApi.getPlaylistTracks(playlist.id, { limit: 20 });
+        allTracks.push(...tracks.body.items);
+      }
+      
+      // Tekrar eden şarkıları kaldır ve limit'e uygun hale getir
+      const uniqueTracks = allTracks
+        .filter((track, index, self) => 
+          index === self.findIndex(t => t.track.id === track.track.id)
+        )
+        .slice(0, limit);
+      
+      return uniqueTracks;
+    } catch (error) {
+      console.error('Spotify user playlist songs error:', error);
+      throw error;
+    }
+  }
+
+  // Kullanıcının sanatçı olup olmadığını kontrol et
+  async checkUserArtistStatus(accessToken) {
+    try {
+      this.spotifyApi.setAccessToken(accessToken);
+      
+      // Kullanıcının kendi sanatçı şarkılarını ara
+      const userProfile = await this.spotifyApi.getMe();
+      const searchQuery = `artist:${userProfile.body.display_name}`;
+      const searchResults = await this.spotifyApi.searchTracks(searchQuery, { limit: 1 });
+      
+      // Eğer kendi adıyla şarkı bulunuyorsa sanatçıdır
+      const isArtist = searchResults.body.tracks.total > 0;
+      
+      return {
+        isArtist,
+        userId: userProfile.body.id,
+        displayName: userProfile.body.display_name,
+        tracksFound: searchResults.body.tracks.total
+      };
+    } catch (error) {
+      console.error('Spotify user artist status check error:', error);
+      throw error;
+    }
+  }
 }
 
 export default new SpotifyService(); 

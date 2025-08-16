@@ -365,6 +365,68 @@ const userService = {
       console.error('❌ Get top respected songs error:', error)
       return []
     }
+  },
+
+  // Check if user is an artist
+  isUserArtist: async (userId) => {
+    try {
+      console.log('🎭 Checking if user is artist:', userId)
+      
+      const { data, error } = await supabase
+        .rpc('is_user_artist', { user_uuid: userId })
+      
+      if (error) {
+        throw error
+      }
+      
+      console.log('✅ User artist status:', data)
+      return data
+    } catch (error) {
+      console.error('❌ Check user artist status error:', error)
+      return false
+    }
+  },
+
+  // Get user's own artist songs (if they are an artist)
+  getUserArtistSongs: async (userId, limit = 10) => {
+    try {
+      console.log('🎵 Getting user artist songs:', userId)
+      
+      const { data, error } = await supabase
+        .rpc('get_user_artist_songs', { user_uuid: userId })
+      
+      if (error) {
+        throw error
+      }
+      
+      const songs = data?.slice(0, limit) || []
+      console.log('✅ User artist songs fetched:', songs.length)
+      return songs
+    } catch (error) {
+      console.error('❌ Get user artist songs error:', error)
+      return []
+    }
+  },
+
+  // Get user's playlist songs (if they are not an artist)
+  getUserPlaylistSongs: async (userId, limit = 10) => {
+    try {
+      console.log('🎵 Getting user playlist songs:', userId)
+      
+      const { data, error } = await supabase
+        .rpc('get_user_playlist_songs', { user_uuid: userId })
+      
+      if (error) {
+        throw error
+      }
+      
+      const songs = data?.slice(0, limit) || []
+      console.log('✅ User playlist songs fetched:', songs.length)
+      return songs
+    } catch (error) {
+      console.error('❌ Get user playlist songs error:', error)
+      return []
+    }
   }
 }
 
