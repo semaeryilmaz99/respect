@@ -82,9 +82,44 @@ const UserArtistSongs = ({ userId }) => {
           
           // Sanatçı değilse playlist şarkılarını getir
           console.log('🎵 Playlist şarkıları getiriliyor...')
-          const songs = await userService.getUserPlaylistSongs(targetUserId, 10)
-          console.log('✅ Playlist şarkıları:', songs)
-          setArtistSongs(songs)
+          try {
+            // Spotify bağlantısı varsa gerçek playlist verilerini çek
+            const { data: spotifyConnection } = await supabase
+              .from('spotify_connections')
+              .select('access_token')
+              .eq('user_id', targetUserId)
+              .single();
+            
+            if (spotifyConnection?.access_token) {
+              console.log('🎵 Spotify\'dan playlist şarkıları çekiliyor...')
+              const playlistSongs = await spotifyService.getUserPlaylistSongs(
+                spotifyConnection.access_token, 
+                10
+              )
+              console.log('✅ Spotify playlist şarkıları:', playlistSongs)
+              
+              // Spotify verilerini component formatına çevir
+              const formattedSongs = playlistSongs.map(track => ({
+                id: track.track.id,
+                title: track.track.name,
+                artist_name: track.track.artists?.[0]?.name || 'Bilinmeyen Sanatçı',
+                cover_url: track.track.album?.images?.[0]?.url || null,
+                spotify_id: track.track.id,
+                duration: track.track.duration_ms,
+                release_date: track.track.album?.release_date || new Date().toISOString().split('T')[0],
+                is_playlist: true
+              }))
+              
+              setArtistSongs(formattedSongs)
+            } else {
+              // Spotify bağlantısı yoksa boş array
+              console.log('❌ Spotify bağlantısı bulunamadı')
+              setArtistSongs([])
+            }
+          } catch (playlistError) {
+            console.error('❌ Playlist şarkıları çekme hatası:', playlistError)
+            setArtistSongs([])
+          }
         }
       } catch (error) {
         console.error('❌ Error fetching artist songs:', error)
@@ -138,7 +173,7 @@ const UserArtistSongs = ({ userId }) => {
       ) : (
         <div className="artist-songs-grid">
           {artistSongs.map((song, index) => (
-            <div key={song.song_id} className="artist-song-card">
+            <div key={song.id || song.song_id || index} className="artist-song-card">
               <div className="artist-song-cover">
                 <img 
                   src={song.cover_url || "/assets/song/Image.png"} 
