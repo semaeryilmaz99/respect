@@ -1,4 +1,5 @@
 import SpotifyWebApi from 'spotify-web-api-node';
+import { supabase } from '../config/supabase';
 
 class SpotifyService {
   constructor() {
@@ -252,7 +253,7 @@ class SpotifyService {
       console.error('Spotify user artist status check error:', error);
       throw error;
     }
-  },
+  }
 
   // Kullanıcı giriş yaptığında otomatik sanatçı tespiti ve veri çekme
   async autoDetectAndSyncArtistData(accessToken, supabaseUserId) {
@@ -332,4 +333,4 @@ class SpotifyService {
   }
 }
 
-export default new SpotifyService(); 
+export default new SpotifyService();

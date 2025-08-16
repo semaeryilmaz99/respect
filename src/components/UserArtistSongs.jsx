@@ -80,11 +80,30 @@ const UserArtistSongs = ({ userId }) => {
             console.error('❌ Otomatik tespit hatası:', syncError)
           }
           
-          // Sanatçı değilse playlist şarkılarını getir
-          console.log('🎵 Playlist şarkıları getiriliyor...')
-          const songs = await userService.getUserPlaylistSongs(targetUserId, 10)
-          console.log('✅ Playlist şarkıları:', songs)
-          setArtistSongs(songs)
+          // Sanatçı değilse, Spotify'dan playlist şarkılarını çek
+          console.log('🎵 Spotify\'dan playlist şarkıları getiriliyor...')
+          try {
+            const { data: spotifyConnection } = await supabase
+              .from('spotify_connections')
+              .select('access_token')
+              .eq('user_id', targetUserId)
+              .single();
+
+            if (spotifyConnection?.access_token) {
+              const playlistSongs = await spotifyService.getUserPlaylistSongs(
+                spotifyConnection.access_token, 
+                10
+              );
+              console.log('✅ Spotify playlist şarkıları:', playlistSongs)
+              setArtistSongs(playlistSongs)
+            } else {
+              console.log('⚠️ Spotify token bulunamadı')
+              setArtistSongs([])
+            }
+          } catch (playlistError) {
+            console.error('❌ Playlist şarkıları getirme hatası:', playlistError)
+            setArtistSongs([])
+          }
         }
       } catch (error) {
         console.error('❌ Error fetching artist songs:', error)
@@ -137,7 +156,7 @@ const UserArtistSongs = ({ userId }) => {
         </div>
       ) : (
         <div className="artist-songs-grid">
-          {artistSongs.map((song, index) => (
+          {artistSongs.map((song) => (
             <div key={song.song_id} className="artist-song-card">
               <div className="artist-song-cover">
                 <img 
