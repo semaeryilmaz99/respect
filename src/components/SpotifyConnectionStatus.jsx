@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { playlistService } from '../api/playlistService';
 import spotifyAuthService from '../api/spotifyAuthService';
+import spotifyService from '../api/spotifyService';
 import { useAuth } from '../hooks/useAuth';
 
 const SpotifyConnectionStatus = () => {
@@ -18,8 +18,12 @@ const SpotifyConnectionStatus = () => {
   const checkConnection = async () => {
     try {
       setLoading(true);
-      const status = await playlistService.checkSpotifyConnection(user.id);
-      setConnectionStatus(status);
+      const connection = await spotifyAuthService.checkSpotifyConnection();
+      setConnectionStatus({
+        connected: connection.connected,
+        data: connection.profile,
+        error: connection.connected ? null : 'Bağlantı bulunamadı'
+      });
     } catch (error) {
       console.error('Connection check error:', error);
       setConnectionStatus({ connected: false, error: error.message });
@@ -30,7 +34,43 @@ const SpotifyConnectionStatus = () => {
 
   const handleConnectSpotify = async () => {
     try {
-      await spotifyAuthService.initiateSpotifyLogin();
+      // Yeni Spotify OAuth flow'u kullan
+      const authUrl = spotifyService.getAuthUrl();
+      
+      // Yeni pencerede Spotify OAuth'u aç
+      window.open(
+        authUrl,
+        'spotify-auth',
+        'width=500,height=600,scrollbars=yes,resizable=yes'
+      );
+      
+      // Popup'tan gelen mesajları dinle
+      window.addEventListener('message', async (event) => {
+        if (event.origin !== window.location.origin) return;
+        
+        if (event.data.type === 'SPOTIFY_AUTH_SUCCESS') {
+          const { code } = event.data;
+          console.log('✅ Spotify auth code alındı:', code);
+          
+          try {
+            // Spotify ile kayıt ol/giriş yap
+            const result = await spotifyAuthService.signUpWithSpotify(code);
+            
+            if (result.success) {
+              console.log('✅ Spotify ile başarıyla giriş yapıldı');
+              // Bağlantı durumunu yenile
+              await checkConnection();
+            }
+          } catch (error) {
+            console.error('❌ Spotify auth hatası:', error);
+          }
+        }
+        
+        if (event.data.type === 'SPOTIFY_AUTH_ERROR') {
+          console.error('❌ Spotify auth hatası:', event.data.error);
+        }
+      });
+      
     } catch (error) {
       console.error('Spotify login error:', error);
     }
@@ -39,7 +79,9 @@ const SpotifyConnectionStatus = () => {
   const handleSyncPlaylists = async () => {
     try {
       setSyncing(true);
-      await playlistService.syncUserPlaylists(user.id);
+      // Yeni servis yapısında playlist sync henüz implement edilmedi
+      // Bu özellik gelecekte eklenebilir
+      console.log('🔄 Playlist sync özelliği henüz mevcut değil');
       await checkConnection(); // Refresh status
     } catch (error) {
       console.error('Sync error:', error);
