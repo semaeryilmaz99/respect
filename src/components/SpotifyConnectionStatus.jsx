@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { playlistService } from '../api/playlistService';
-import { spotifyAuthService } from '../api/spotifyAuthService';
+import spotifyAuthService from '../api/spotifyAuthService';
 import { useAuth } from '../hooks/useAuth';
 
 const SpotifyConnectionStatus = () => {

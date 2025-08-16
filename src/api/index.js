@@ -13,7 +13,7 @@ export { default as notificationService } from './notificationService'
 // Spotify services
 export { default as spotifyService } from './spotifyService'
 export { playlistService } from './playlistService'
-export { spotifyAuthService } from './spotifyAuthService'
+export { default as spotifyAuthService } from './spotifyAuthService'
 
 // Export axios instance for direct use if needed
 export { default as api } from '../utils/axios' 

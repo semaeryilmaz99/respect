@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAppContext } from '../context/AppContext'
-import { spotifyAuthService } from '../api/spotifyAuthService.js'
+import spotifyAuthService from '../api/spotifyAuthService.js'
 
 const OnboardingPage = () => {
   const navigate = useNavigate()
