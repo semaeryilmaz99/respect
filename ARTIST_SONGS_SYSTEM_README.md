@@ -1,6 +1,6 @@
-# Artist Songs System & Spotify Signup - Respect Uygulaması
+# Artist Songs System - Respect Uygulaması
 
-Bu dokümantasyon, Respect uygulamasına eklenen yeni sanatçı şarkıları sistemini ve Spotify hesabı ile kayıt olma özelliğini açıklar.
+Bu dokümantasyon, Respect uygulamasına eklenen yeni sanatçı şarkıları sistemini açıklar.
 
 ## 🎯 Sistem Amacı
 
@@ -65,15 +65,14 @@ const playlistSongs = await userService.getUserPlaylistSongs(userId, limit);
 
 ## 🚀 Kurulum Adımları
 
-### 1. Veritabanı Migration'ları Çalıştır
+### 1. Veritabanı Migration'ı Çalıştır
 
 ```bash
-# Supabase CLI ile migration'ları çalıştır
+# Supabase CLI ile migration'ı çalıştır
 supabase db push
 
-# Veya SQL dosyalarını manuel olarak çalıştır
-psql -h your-host -U your-user -d your-db -f supabase/migrations/20250101000013_add_artist_songs_detection_simple.sql
-psql -h your-host -U your-user -d your-db -f supabase/migrations/20250101000014_add_spotify_signup_system.sql
+# Veya SQL dosyasını manuel olarak çalıştır
+psql -h your-host -U your-user -d your-db -f supabase/migrations/20250101000013_add_artist_songs_detection.sql
 ```
 
 ### 2. Frontend Güncellemelerini Kontrol Et
@@ -254,57 +253,3 @@ Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için `LICENSE` dosy
 ---
 
 **Not**: Bu sistem, mevcut Respect uygulamasına entegre edilmiştir ve geriye dönük uyumluluğu korur.
-
-## 🆕 Spotify Signup Sistemi
-
-### Sistem Özellikleri
-
-- **Otomatik Hesap Oluşturma**: Spotify ile giriş yapan kullanıcılar için otomatik hesap oluşturulur
-- **Seamless Integration**: Mevcut kullanıcılar için otomatik giriş yapılır
-- **Profile Sync**: Spotify profil bilgileri otomatik olarak senkronize edilir
-- **Secure Authentication**: Güvenli token yönetimi ve RLS politikaları
-
-### Veritabanı Yapısı
-
-#### Yeni Tablolar
-- `spotify_auth_users` - Spotify ile kayıt olan kullanıcılar
-- `user_spotify_profiles` - Spotify profil bilgileri
-
-#### Yeni Fonksiyonlar
-- `create_user_from_spotify()` - Spotify'dan yeni kullanıcı oluşturur
-- `check_spotify_user_exists()` - Kullanıcının var olup olmadığını kontrol eder
-- `update_spotify_user_info()` - Kullanıcı bilgilerini günceller
-
-### Frontend Bileşenleri
-
-#### Yeni Component'ler
-- `SpotifyLogin.jsx` - Spotify ile giriş butonu
-- `SpotifyCallback.jsx` - OAuth callback handler
-
-#### Güncellenen Servisler
-- `spotifyAuthService.js` - Spotify authentication logic
-- `spotifyService.js` - OAuth URL ve token yönetimi
-
-### OAuth Flow
-
-1. **Kullanıcı Spotify ile giriş yapar**
-2. **Spotify OAuth popup açılır**
-3. **Authorization code alınır**
-4. **Kullanıcı var mı kontrol edilir**
-5. **Yeni kullanıcı oluşturulur veya mevcut kullanıcı giriş yapar**
-6. **Spotify bağlantısı kurulur**
-7. **Kullanıcı oturum açmış olur**
-
-### Güvenlik Özellikleri
-
-- **Row Level Security (RLS)**: Her kullanıcı sadece kendi verilerine erişebilir
-- **Token Encryption**: Access ve refresh token'lar güvenli şekilde saklanır
-- **User Isolation**: Kullanıcılar birbirlerinin verilerine erişemez
-- **Secure Password Generation**: Spotify user ID'den güvenli şifre oluşturulur
-
-### Test Etme
-
-```bash
-# Spotify Signup sistemini test et
-node test_spotify_signup_system.js
-```

@@ -56,25 +56,12 @@ class SpotifyService {
   // Kullanıcı profilini getir
   async getUserProfile(accessToken) {
     try {
-      console.log('👤 Spotify kullanıcı profili alınıyor...')
-      
       this.spotifyApi.setAccessToken(accessToken);
       const data = await this.spotifyApi.getMe();
-      
-      const userProfile = {
-        id: data.body.id,
-        email: data.body.email,
-        display_name: data.body.display_name,
-        country: data.body.country,
-        product: data.body.product,
-        images: data.body.images
-      };
-      
-      console.log('✅ Kullanıcı profili alındı:', userProfile);
-      return userProfile;
+      return data.body;
     } catch (error) {
-      console.error('❌ Kullanıcı profili alma hatası:', error);
-      throw new Error('Kullanıcı profili alınamadı');
+      console.error('Spotify user profile error:', error);
+      throw error;
     }
   }
 

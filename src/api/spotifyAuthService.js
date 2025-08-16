@@ -1,236 +1,248 @@
-import { supabase } from '../config/supabase'
-import spotifyService from './spotifyService'
+import { supabase } from '../config/supabase';
+import config from '../config/environment';
+import spotifyRateLimiter from '../utils/spotifyRateLimit.js';
 
-class SpotifyAuthService {
-  // Spotify ile kayıt olma
-  async signUpWithSpotify(authCode) {
-    try {
-      console.log('🎵 Spotify ile kayıt olma başladı')
-      
-      // 1. Authorization code ile token al
-      const tokens = await spotifyService.getTokens(authCode)
-      console.log('✅ Spotify token alındı')
-      
-      // 2. Spotify'dan kullanıcı bilgilerini al
-      const userProfile = await spotifyService.getUserProfile(tokens.accessToken)
-      console.log('✅ Spotify kullanıcı profili alındı:', userProfile)
-      
-      // 3. Kullanıcı zaten var mı kontrol et
-      const existingUser = await this.checkUserExists(userProfile.id)
-      
-      if (existingUser.exists) {
-        console.log('✅ Kullanıcı zaten mevcut, giriş yapılıyor')
-        return await this.signInWithSpotify(userProfile.id, tokens, userProfile)
+export const spotifyAuthService = {
+  // Spotify ile giriş: Supabase OAuth üzerinden
+  initiateSpotifyLogin: async () => {
+    const scopes = [
+      'user-read-private',
+      'user-read-email',
+      'user-top-read',
+      'user-read-recently-played',
+      'playlist-read-private',
+      'playlist-read-collaborative'
+    ].join(' ');
+
+    const redirectTo = `${window.location.origin}/auth/callback`;
+
+    console.log('🎵 Starting Supabase OAuth (spotify) with redirectTo:', redirectTo);
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'spotify',
+      options: {
+        redirectTo,
+        scopes
       }
-      
-      // 4. Yeni kullanıcı oluştur
-      console.log('🆕 Yeni kullanıcı oluşturuluyor')
-      await this.createNewUser(userProfile, tokens)
-      
-      // 5. Supabase auth session oluştur
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: userProfile.email,
-        password: this.generateSpotifyPassword(userProfile.id)
-      })
-      
-      if (authError) {
-        console.error('❌ Auth session oluşturma hatası:', authError)
-        throw new Error('Oturum oluşturulamadı')
-      }
-      
-      console.log('✅ Yeni kullanıcı başarıyla oluşturuldu ve giriş yapıldı')
-      return {
-        success: true,
-        user: authData.user,
-        session: authData.session,
-        isNewUser: true
-      }
-      
-    } catch (error) {
-      console.error('❌ Spotify ile kayıt olma hatası:', error)
-      throw error
+    });
+
+    if (error) {
+      console.error('❌ Supabase OAuth start error:', error);
+      throw error;
     }
-  }
 
-  // Spotify ile giriş yapma
-  async signInWithSpotify(spotifyUserId, tokens, userProfile) {
-    try {
-      console.log('🎵 Spotify ile giriş yapılıyor')
-      
-      // 1. Kullanıcı bilgilerini güncelle
-      await this.updateUserInfo(spotifyUserId, tokens, userProfile)
-      
-      // 2. Supabase auth session oluştur
-      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: userProfile.email,
-        password: this.generateSpotifyPassword(spotifyUserId)
-      })
-      
-      if (authError) {
-        console.error('❌ Auth session oluşturma hatası:', authError)
-        throw new Error('Giriş yapılamadı')
-      }
-      
-      console.log('✅ Spotify ile giriş başarılı')
-      return {
-        success: true,
-        user: authData.user,
-        session: authData.session,
-        isNewUser: false
-      }
-      
-    } catch (error) {
-      console.error('❌ Spotify ile giriş hatası:', error)
-      throw error
-    }
-  }
+    return data;
+  },
 
-  // Kullanıcı var mı kontrol et
-  async checkUserExists(spotifyUserId) {
+  // Spotify callback'i işle
+  handleSpotifyCallback: async (code) => {
     try {
-      const { data, error } = await supabase
-        .rpc('check_spotify_user_exists', { spotify_user_id_param: spotifyUserId })
+      console.log('🔄 Processing Spotify callback with code:', code);
+      
+      const { data, error } = await supabase.functions.invoke('spotify-auth', {
+        body: { code }
+      });
       
       if (error) {
-        console.error('❌ Kullanıcı kontrol hatası:', error)
-        throw error
+        console.error('❌ Spotify auth function error:', error);
+        return { user: null, profile: null, error: error.message };
       }
       
-      return data[0] || { user_exists: false, user_id: null, email: null }
+      if (!data || !data.success) {
+        console.error('❌ Spotify auth function returned error:', data?.error);
+        return { user: null, profile: null, error: data?.error || 'Authentication failed' };
+      }
+      
+      console.log('✅ Spotify auth successful:', data);
+      return { user: data.user, profile: data.profile, error: null };
+      
     } catch (error) {
-      console.error('❌ Kullanıcı kontrol hatası:', error)
-      return { exists: false, user_id: null, email: null }
+      console.error('❌ Spotify callback processing error:', error);
+      return { user: null, profile: null, error: error.message };
     }
-  }
+  },
 
-  // Yeni kullanıcı oluştur
-  async createNewUser(userProfile, tokens) {
+  // Supabase OAuth sonrası Spotify bağlantısını kur (rate limiting önlemli)
+  setupSpotifyConnection: async (user, providerToken, providerRefreshToken) => {
     try {
-      const { data, error } = await supabase
-        .rpc('create_user_from_spotify', {
-          spotify_user_id_param: userProfile.id,
-          spotify_email_param: userProfile.email,
-          spotify_display_name_param: userProfile.display_name,
-          spotify_country_param: userProfile.country,
-          spotify_product_param: userProfile.product,
-          spotify_images_param: userProfile.images,
-          access_token_param: tokens.accessToken,
-          refresh_token_param: tokens.refreshToken,
-          token_expires_at_param: new Date(Date.now() + tokens.expiresIn * 1000).toISOString()
-        })
+      console.log('🔗 Setting up Spotify connection for user:', user.id);
       
-      if (error) {
-        console.error('❌ Yeni kullanıcı oluşturma hatası:', error)
-        throw error
+      // Rate limiting: Eğer son 5 saniyede aynı kullanıcı için istek atıldıysa bekle
+      const lastRequestKey = `spotify_setup_${user.id}`;
+      const lastRequest = sessionStorage.getItem(lastRequestKey);
+      const now = Date.now();
+      
+      if (lastRequest && (now - parseInt(lastRequest)) < 5000) {
+        console.log('⏳ Rate limiting: Waiting before making Spotify API request...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
       
-      console.log('✅ Yeni kullanıcı oluşturuldu:', data)
-      return data
-    } catch (error) {
-      console.error('❌ Yeni kullanıcı oluşturma hatası:', error)
-      throw error
-    }
-  }
-
-  // Kullanıcı bilgilerini güncelle
-  async updateUserInfo(spotifyUserId, tokens, userProfile) {
-    try {
-      const { data, error } = await supabase
-        .rpc('update_spotify_user_info', {
-          user_id_param: spotifyUserId,
-          spotify_email_param: userProfile.email,
-          spotify_display_name_param: userProfile.display_name,
-          spotify_country_param: userProfile.country,
-          spotify_product_param: userProfile.product,
-          spotify_images_param: userProfile.images,
-          access_token_param: tokens.accessToken,
-          refresh_token_param: tokens.refreshToken,
-          token_expires_at_param: new Date(Date.now() + tokens.expiresIn * 1000).toISOString()
-        })
+      // Son istek zamanını kaydet
+      sessionStorage.setItem(lastRequestKey, now.toString());
       
-      if (error) {
-        console.error('❌ Kullanıcı bilgileri güncelleme hatası:', error)
-        throw error
+      if (!providerToken) {
+        console.log('⚠️ No provider token available, skipping Spotify connection setup');
+        return { success: true, error: null };
+      }
+
+      // Spotify profile'ını al (rate limited)
+      console.log('🎵 Fetching Spotify profile...');
+      const resp = await spotifyRateLimiter.rateLimitedFetch('https://api.spotify.com/v1/me', {
+        headers: { Authorization: `Bearer ${providerToken}` }
+      }, user.id);
+      
+      if (!resp.ok) {
+        console.warn('⚠️ Failed to fetch Spotify profile:', resp.status, resp.statusText);
+        return { success: false, error: `Spotify API error: ${resp.status}` };
       }
       
-      console.log('✅ Kullanıcı bilgileri güncellendi')
-      return data
-    } catch (error) {
-      console.error('❌ Kullanıcı bilgileri güncelleme hatası:', error)
-      throw error
-    }
-  }
-
-  // Spotify password oluştur (güvenlik için)
-  generateSpotifyPassword(spotifyUserId) {
-    // Spotify user ID'den hash oluştur
-    const hash = btoa(spotifyUserId + 'RESPECT_APP_SECRET')
-    return hash.substring(0, 20) // 20 karakter ile sınırla
-  }
-
-  // Spotify bağlantısını kontrol et
-  async checkSpotifyConnection() {
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
+      const profile = await resp.json();
+      console.log('✅ Spotify profile fetched:', profile.id);
       
-      if (!user) {
-        return { connected: false, profile: null }
-      }
-      
-      const { data, error } = await supabase
+      // Mevcut bağlantıyı kontrol et
+      const { data: existingConnection, error: selectError } = await supabase
         .from('spotify_connections')
         .select('*')
         .eq('user_id', user.id)
-        .single()
+        .maybeSingle();
       
-      if (error || !data) {
-        return { connected: false, profile: null }
+      if (selectError) {
+        console.error('❌ Select error:', selectError);
+        return { success: false, error: selectError.message };
       }
       
-      return { 
-        connected: true, 
-        profile: data,
-        expiresAt: data.token_expires_at
+      const connectionData = {
+        spotify_user_id: profile.id,
+        access_token: providerToken,
+        refresh_token: providerRefreshToken || '',
+        token_expires_at: new Date(Date.now() + 55 * 60 * 1000)
+      };
+      
+      if (existingConnection) {
+        // Kayıt varsa güncelle
+        const { error: updateError } = await supabase
+          .from('spotify_connections')
+          .update(connectionData)
+          .eq('user_id', user.id);
+        
+        if (updateError) {
+          console.error('❌ Update error:', updateError);
+          return { success: false, error: updateError.message };
+        }
+        
+        console.log('✅ Spotify connections updated successfully');
+      } else {
+        // Kayıt yoksa ekle
+        const { error: insertError } = await supabase
+          .from('spotify_connections')
+          .insert({
+            user_id: user.id,
+            ...connectionData
+          });
+        
+        if (insertError) {
+          console.error('❌ Insert error:', insertError);
+          return { success: false, error: insertError.message };
+        }
+        
+        console.log('✅ Spotify connections created successfully');
       }
+      
+      return { success: true, error: null };
+      
     } catch (error) {
-      console.error('❌ Spotify bağlantı kontrol hatası:', error)
-      return { connected: false, profile: null }
+      console.error('❌ Spotify connection setup error:', error);
+      return { success: false, error: error.message };
     }
-  }
+  },
 
-  // Spotify bağlantısını yenile
-  async refreshSpotifyConnection() {
+  // Spotify bağlantısını kontrol et
+  checkSpotifyConnection: async (userId) => {
     try {
-      const connection = await this.checkSpotifyConnection()
-      
-      if (!connection.connected) {
-        throw new Error('Spotify bağlantısı bulunamadı')
+      const { data, error } = await supabase
+        .from('spotify_connections')
+        .select('*')
+        .limit(1)
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (error) return { connected: false, data: null, error };
+
+      // Token'ın geçerliliğini kontrol et
+      if (new Date() > new Date(data.token_expires_at)) {
+        // Token'ı yenile
+        const { data: refreshData, error: refreshError } = await supabase.functions.invoke('spotify-refresh-token', {
+          body: { userId, refreshToken: data.refresh_token }
+        });
+
+        if (refreshError) {
+          return { connected: false, data: null, error: refreshError };
+        }
+
+        data.access_token = refreshData.access_token;
+        data.token_expires_at = refreshData.token_expires_at;
       }
-      
-      // Token'ı yenile
-      const newTokens = await spotifyService.refreshTokens(connection.profile.refresh_token)
-      
-      // Yeni token'ı güncelle
+
+      return { connected: true, data, error: null };
+    } catch (error) {
+      console.error('Spotify connection check error:', error);
+      return { connected: false, data: null, error };
+    }
+  },
+
+  // Spotify bağlantısını kaldır
+  disconnectSpotify: async (userId) => {
+    try {
       const { error } = await supabase
         .from('spotify_connections')
-        .update({
-          access_token: newTokens.accessToken,
-          token_expires_at: new Date(Date.now() + newTokens.expiresIn * 1000).toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .eq('user_id', connection.profile.user_id)
-      
-      if (error) {
-        throw error
-      }
-      
-      console.log('✅ Spotify bağlantısı yenilendi')
-      return true
+        .delete()
+        .eq('user_id', userId);
+
+      if (error) throw error;
+
+      return { success: true, error: null };
     } catch (error) {
-      console.error('❌ Spotify bağlantısı yenileme hatası:', error)
-      throw error
+      console.error('Spotify disconnect error:', error);
+      return { success: false, error };
+    }
+  },
+
+  // Spotify verilerini senkronize et
+  syncSpotifyData: async (userId, syncType) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('spotify-sync', {
+        body: { userId, syncType }
+      });
+
+      if (error) throw error;
+
+      return { success: true, data, error: null };
+    } catch (error) {
+      console.error('Spotify sync error:', error);
+      return { success: false, data: null, error };
+    }
+  },
+
+  // Spotify çalma listelerini senkronize et
+  syncSpotifyPlaylists: async (userId) => {
+    try {
+      console.log('🎵 Syncing Spotify playlists for user:', userId);
+      
+      const { data, error } = await supabase.functions.invoke('spotify-sync-playlists', {
+        body: { userId, syncType: 'user_playlists' }
+      });
+
+      if (error) throw error;
+
+      if (!data || !data.success) {
+        throw new Error(data?.error || 'Playlist sync failed');
+      }
+
+      console.log('✅ Spotify playlists synced successfully');
+      return { success: true, data, error: null };
+    } catch (error) {
+      console.error('Spotify playlist sync error:', error);
+      return { success: false, data: null, error };
     }
   }
-}
-
-export default new SpotifyAuthService()
+};

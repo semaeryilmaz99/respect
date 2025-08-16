@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../config/supabase.js'
 import { useAppContext } from '../context/AppContext.jsx'
 import LoadingSpinner from './LoadingSpinner.jsx'
-import spotifyAuthService from '../api/spotifyAuthService.js'
+import { spotifyAuthService } from '../api/spotifyAuthService.js'
 
 const AuthCallback = () => {
   const navigate = useNavigate()
@@ -64,16 +64,26 @@ const AuthCallback = () => {
           const provider = user.app_metadata?.provider
           if (provider === 'spotify' && providerToken) {
             // Spotify bağlantısını arka planda kur (async)
-            spotifyAuthService.checkSpotifyConnection()
-              .then(connection => {
-                if (connection.connected) {
-                  console.log('✅ Spotify connection already exists');
+            spotifyAuthService.setupSpotifyConnection(user, providerToken, providerRefreshToken)
+              .then(result => {
+                if (result.success) {
+                  console.log('✅ Spotify connection setup completed');
+                  
+                  // Çalma listelerini de senkronize et
+                  return spotifyAuthService.syncSpotifyPlaylists(user.id);
                 } else {
-                  console.log('⚠️ No Spotify connection found');
+                  console.warn('⚠️ Spotify connection setup failed:', result.error);
+                }
+              })
+              .then(playlistResult => {
+                if (playlistResult?.success) {
+                  console.log('✅ Spotify playlists synced successfully');
+                } else {
+                  console.warn('⚠️ Spotify playlist sync failed:', playlistResult?.error);
                 }
               })
               .catch(error => {
-                console.error('❌ Spotify connection check error:', error);
+                console.error('❌ Spotify setup error:', error);
               });
           }
 
